@@ -1,0 +1,23 @@
+/* En pantallas angostas se comporta como una barra inferior estándar de
+   Ionic. Desde 768px en adelante se transforma en un riel lateral, de modo
+   que la versión web reutiliza la misma navegación sin duplicar componentes. */
+@media (min-width: 768px) {
+  .ra-tabbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: 88px;
+    height: 100%;
+    flex-direction: column;
+    justify-content: flex-start;
+    gap: var(--ra-space-4, 16px);
+    padding-top: var(--ra-space-6, 32px);
+    border-right: 1px solid var(--ra-color-line, rgba(0, 0, 0, 0.1));
+    border-top: none;
+  }
+
+  .ra-content-with-rail {
+    margin-left: 88px;
+  }
+}

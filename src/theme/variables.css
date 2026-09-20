@@ -1,0 +1,108 @@
+/*
+  Sistema de diseño — Red de Apoyo Oncológico
+  ---------------------------------------------
+  Paleta pensada para acompañar, no para alarmar: un fondo cálido y
+  neutro, un verde bosque como color de confianza/ancla, un tono
+  arcilla-rosado para lo humano/emocional (bitácora, apoyo) y un dorado
+  apagado para los momentos positivos (logros, confirmaciones).
+  Tipografía: Source Serif 4 para títulos (cercana, editorial, no clínica)
+  e Inter para interfaz y cuerpo (legibilidad alta, RNF01).
+*/
+
+:root {
+  /* Paleta base */
+  --ra-color-paper: #efe9df;
+  --ra-color-paper-raised: #f8f4ec;
+  --ra-color-ink: #2a2622;
+  --ra-color-ink-soft: #5b5449;
+  --ra-color-pine: #2f4a45;
+  --ra-color-pine-tint: #4a6a63;
+  --ra-color-pine-shade: #203330;
+  --ra-color-clay: #b96b52;
+  --ra-color-clay-tint: #cf8b74;
+  --ra-color-clay-shade: #954f3c;
+  --ra-color-gold: #c99a44;
+  --ra-color-gold-tint: #ddb977;
+  --ra-color-line: rgba(42, 38, 34, 0.14);
+  --ra-color-danger: #a6403a;
+
+  /* Tipografía */
+  --ra-font-display: 'Source Serif 4', Georgia, 'Times New Roman', serif;
+  --ra-font-body: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+
+  /* Espaciado */
+  --ra-space-1: 4px;
+  --ra-space-2: 8px;
+  --ra-space-3: 12px;
+  --ra-space-4: 16px;
+  --ra-space-5: 24px;
+  --ra-space-6: 32px;
+  --ra-space-7: 48px;
+
+  /* Radios — deliberadamente no uniformes: contenido de lectura casi recto,
+     controles interactivos algo más suaves */
+  --ra-radius-card: 10px;
+  --ra-radius-control: 8px;
+  --ra-radius-pill: 999px;
+
+  /* ---- Mapeo a variables de Ionic ---- */
+  --ion-font-family: var(--ra-font-body);
+  --ion-background-color: var(--ra-color-paper);
+  --ion-text-color: var(--ra-color-ink);
+  --ion-text-color-rgb: 42, 38, 34;
+
+  --ion-color-primary: var(--ra-color-pine);
+  --ion-color-primary-rgb: 47, 74, 69;
+  --ion-color-primary-contrast: #ffffff;
+  --ion-color-primary-contrast-rgb: 255, 255, 255;
+  --ion-color-primary-shade: var(--ra-color-pine-shade);
+  --ion-color-primary-tint: var(--ra-color-pine-tint);
+
+  --ion-color-secondary: var(--ra-color-clay);
+  --ion-color-secondary-rgb: 185, 107, 82;
+  --ion-color-secondary-contrast: #ffffff;
+  --ion-color-secondary-contrast-rgb: 255, 255, 255;
+  --ion-color-secondary-shade: var(--ra-color-clay-shade);
+  --ion-color-secondary-tint: var(--ra-color-clay-tint);
+
+  --ion-color-tertiary: var(--ra-color-gold);
+  --ion-color-tertiary-rgb: 201, 154, 68;
+  --ion-color-tertiary-contrast: #2a2622;
+  --ion-color-tertiary-contrast-rgb: 42, 38, 34;
+  --ion-color-tertiary-shade: #a87e33;
+  --ion-color-tertiary-tint: var(--ra-color-gold-tint);
+
+  --ion-color-danger: var(--ra-color-danger);
+  --ion-color-danger-rgb: 166, 64, 58;
+  --ion-color-danger-contrast: #ffffff;
+  --ion-color-danger-contrast-rgb: 255, 255, 255;
+
+  --ion-color-medium: var(--ra-color-ink-soft);
+  --ion-color-medium-rgb: 91, 84, 73;
+
+  --ion-item-background: var(--ra-color-paper-raised);
+  --ion-toolbar-background: var(--ra-color-paper-raised);
+  --ion-card-background: var(--ra-color-paper-raised);
+  --ion-border-color: var(--ra-color-line);
+}
+
+/* Utilidades tipográficas compartidas por las páginas */
+.ra-display {
+  font-family: var(--ra-font-display);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--ra-color-ink);
+}
+
+.ra-eyebrow {
+  font-family: var(--ra-font-body);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--ra-color-ink-soft);
+}
+
+.ra-surface {
+  background: var(--ra-color-paper-raised);
+  border: 1px solid var(--ra-color-line);
+  border-radius: var(--ra-radius-card);
+}
