@@ -50,6 +50,7 @@ const Registro: React.FC = () => {
     setTocado(true);
     setErrorGeneral(null);
 
+    // Se detiene aquí si fallan las validaciones, pero ahora la UI sí reaccionará
     if (!formularioValido) return;
 
     setEnviando(true);
@@ -63,9 +64,9 @@ const Registro: React.FC = () => {
     }
   };
 
-  // Constructores de clases para manejar el estado visual de error en Ionic
-  const getClaseError = (condicionInvalida: boolean) => 
-    `ra-surface ${tocado && condicionInvalida ? 'ion-invalid ion-touched' : ''}`;
+  // NUEVO: La función devuelve solo las clases de validación para inyectarlas directo al input
+  const claseInputError = (condicionInvalida: boolean) => 
+    tocado && condicionInvalida ? 'ion-invalid ion-touched' : '';
 
   return (
     <IonPage>
@@ -87,8 +88,9 @@ const Registro: React.FC = () => {
           </p>
 
           <form onSubmit={handleSubmit}>
-            <IonItem className={getClaseError(!nombreValido)} style={{ marginBottom: 'var(--ra-space-3)', borderRadius: '8px' }} lines="none">
+            <IonItem className="ra-surface" style={{ marginBottom: 'var(--ra-space-3)', borderRadius: '8px' }} lines="none">
               <IonInput
+                className={claseInputError(!nombreValido)}
                 label="Nombre *"
                 labelPlacement="stacked"
                 placeholder="Ej: Javier"
@@ -98,8 +100,9 @@ const Registro: React.FC = () => {
               />
             </IonItem>
 
-            <IonItem className={getClaseError(correo.length > 0 && !correoValido)} style={{ marginBottom: 'var(--ra-space-3)', borderRadius: '8px' }} lines="none">
+            <IonItem className="ra-surface" style={{ marginBottom: 'var(--ra-space-3)', borderRadius: '8px' }} lines="none">
               <IonInput
+                className={claseInputError(!correoValido)}
                 label="Correo electrónico *"
                 labelPlacement="stacked"
                 type="email"
@@ -110,8 +113,9 @@ const Registro: React.FC = () => {
               />
             </IonItem>
 
-            <IonItem className={getClaseError(password.length > 0 && !passwordValida)} style={{ marginBottom: 'var(--ra-space-3)', borderRadius: '8px' }} lines="none">
+            <IonItem className="ra-surface" style={{ marginBottom: 'var(--ra-space-3)', borderRadius: '8px' }} lines="none">
               <IonInput
+                className={claseInputError(!passwordValida)}
                 label="Contraseña *"
                 labelPlacement="stacked"
                 type="password"
@@ -125,8 +129,9 @@ const Registro: React.FC = () => {
               </IonInput>
             </IonItem>
 
-            <IonItem className={getClaseError(confirmar.length > 0 && !passwordsCoinciden)} style={{ marginBottom: 'var(--ra-space-3)', borderRadius: '8px' }} lines="none">
+            <IonItem className="ra-surface" style={{ marginBottom: 'var(--ra-space-3)', borderRadius: '8px' }} lines="none">
               <IonInput
+                className={claseInputError(!passwordsCoinciden)}
                 label="Confirmar contraseña *"
                 labelPlacement="stacked"
                 type="password"
@@ -139,8 +144,9 @@ const Registro: React.FC = () => {
               </IonInput>
             </IonItem>
 
-            <IonItem className={getClaseError(!tipoRelacion)} style={{ marginBottom: 'var(--ra-space-4)', borderRadius: '8px' }} lines="none">
+            <IonItem className="ra-surface" style={{ marginBottom: 'var(--ra-space-4)', borderRadius: '8px' }} lines="none">
               <IonSelect
+                className={claseInputError(!tipoRelacion)}
                 label="Tipo de relación *"
                 labelPlacement="stacked"
                 placeholder="Selecciona una opción"
@@ -158,6 +164,7 @@ const Registro: React.FC = () => {
             <div style={{ marginBottom: 'var(--ra-space-4)' }}>
               <IonItem lines="none" style={{ '--background': 'transparent', '--padding-start': 0 }}>
                 <IonCheckbox
+                  className={claseInputError(!aceptaTerminos)}
                   slot="start"
                   checked={aceptaTerminos}
                   onIonChange={(e) => setAceptaTerminos(e.detail.checked)}

@@ -37,6 +37,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const salir = async () => {
     await api.cerrarSesion();
     setUsuario(null);
+    window.location.href = '/login';
   };
 
   const actualizarUsuario = async (u: Usuario) => {
