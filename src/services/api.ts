@@ -51,6 +51,7 @@ export async function login(correo: string, _password: string): Promise<Usuario>
   await delay();
   const esAdmin = correo.trim().toLowerCase().startsWith('admin');
   const usuario: Usuario = esAdmin
+  
     ? {
         id: 'admin-1',
         nombre: 'Camilo Alvarez',
@@ -59,7 +60,7 @@ export async function login(correo: string, _password: string): Promise<Usuario>
         perfilConfigurado: true,
       }
     : leerLS<Usuario>(STORAGE_KEYS.usuario, {
-        id: 'user-1',
+        id: 'user-1', 
         nombre: 'Carolina',
         correo,
         rol: 'usuario',
@@ -75,14 +76,20 @@ export async function registrar(datos: {
   tipoRelacion: TipoRelacion;
 }): Promise<Usuario> {
   await delay();
+
+  // 1. Evaluamos dinámicamente si el correo ingresado tiene el prefijo
+  const esAdmin = datos.correo.trim().toLowerCase().startsWith('admin');
+
+  // 2. Construimos el usuario asignando el rol y un ID coherente
   const usuario: Usuario = {
-    id: `user-${Date.now()}`,
+    id: esAdmin ? `admin-${Date.now()}` : `user-${Date.now()}`,
     nombre: datos.nombre,
     correo: datos.correo,
-    rol: 'usuario',
+    rol: esAdmin ? 'administrador' : 'usuario',
     tipoRelacion: datos.tipoRelacion,
     perfilConfigurado: true,
   };
+  
   escribirLS(STORAGE_KEYS.usuario, usuario);
   return usuario;
 }

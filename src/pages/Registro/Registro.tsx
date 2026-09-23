@@ -55,8 +55,12 @@ const Registro: React.FC = () => {
 
     setEnviando(true);
     try {
-      await registrarse({ nombre: nombre.trim(), correo, tipoRelacion: tipoRelacion as TipoRelacion });
-      history.replace('/inicio');
+      // 1. Capturamos el usuario que devuelve la función registrarse
+      const u = await registrarse({ nombre: nombre.trim(), correo, tipoRelacion: tipoRelacion as TipoRelacion });
+      
+      // 2. Evaluamos el rol para enviarlo a la ruta correcta
+      history.replace(u.rol === 'administrador' ? '/admin/inicio' : '/inicio');
+      
     } catch {
       setErrorGeneral('No pudimos crear tu cuenta. Inténtalo nuevamente o verifica si el correo ya existe.');
     } finally {
