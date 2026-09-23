@@ -1,393 +1,254 @@
 # API de Recursos para Redes de Apoyo Oncológico
 
+Frontend de una aplicación web y móvil desarrollada con **Ionic + React + TypeScript**, orientada a familiares, parejas, hijos, amigos y cuidadores de personas con cáncer.
+
+
+--- 
+
+## Índice 
+
+1. [Identificación del Equipo](#1-identificación-del-equipo) 
+2. [Distribución de Responsabilidades](#2-distribución-de-responsabilidades)
+3. [Justificación del Problema](#3-justificación-del-problema)
+4. [Objetivos del Proyecto](#4-objetivos-del-proyecto)
+5. [Usuarios Objetivo](#5-usuarios-objetivo) - [Roles del Sistema](#roles-del-sistema) - [Proto-personas](#proto-personas) - [Supuestos utilizados](#supuestos-utilizados-para-las-proto-personas)
+6. [Requerimientos](#6-requerimientos) - [Requerimientos Funcionales](#requerimientos-funcionales) - [Funcionalidades Transversales](#funcionalidades-transversales) - [Requerimientos No Funcionales](#requerimientos-no-funcionales)
+
+
+---
+
 ## 1. Identificación del Equipo
+
 * **Nombre del Equipo:** Nombre del equipo
 * **Integrantes:**
-  * Javier Poblete - Rol
-  * Joaquin Perez - Rol
-  * Camilo Alvarez - Rol
-  * Vicente Bravo - Rol
+- **Javier Poblete**
+- Desarrollo frontend y diseño UI/UX
+- **Joaquin Perez** - Desarrollo de vistas y componentes frontend
+- **Camilo Alvarez** - Documentación frontend y apoyo en diseño/prototipado
+- **Vicente Bravo** - Arquitectura de navegación y configuración de rutas frontend
 
 ## 2. Distribución de Responsabilidades
-* **Javier:** Configuración del proyecto Ionic, diseño UI/UX en Figma, implementación de vistas frontend.
-* **Joaquin:** Configuración de Node.js/Express, diseño del modelo relacional, despliegue de base de datos.
-* **Camilo:** Redacción de documentación, pruebas de usabilidad, prototipado.
-* **Vicente:** Integración de rutas protegidas, conexión frontend-backend (servicios).
 
-## 3. Descripción General del Sistema
-El sistema es una aplicación móvil y web diseñada para entregar psicoeducación y recursos de contención personalizados a familiares, cuidadores, parejas y amigos de personas diagnosticadas con cáncer. A través de una API REST, la aplicación segmenta y distribuye contenido específico (artículos, guías, contactos) basado en el perfil del usuario, aliviando la carga emocional y facilitando el acceso a redes de apoyo verificadas.
+- **Javier:** Configuración inicial del proyecto Ionic + React, desarrollo de vistas frontend, diseño UI/UX y creación de estilos compartidos.
+- **Joaquin:** Desarrollo de componentes y vistas frontend, implementación de funcionalidades de la interfaz y apoyo en la organización de la estructura del proyecto.
+- **Camilo:** Documentación del frontend, apoyo en el prototipado de Figma y revisión de la experiencia de usuario y consistencia visual.
+- **Vicente:** Arquitectura de navegación frontend, configuración de rutas, protección de vistas y organización de la estructura de navegación según los distintos roles.
 
-## 4. Problema o Necesidad que Aborda 
-El diagnóstico de cáncer genera un impacto psicosocial profundo en la red de apoyo del paciente. Con frecuencia el entorno sufre de ansiedad y depresión. La información actual en la web es excesivamente técnica, generalista y no discrimina al lector: un hijo adolescente necesita contención distinta que un esposo o esposa a cargo de administrar medicamentos. Al carecer de plataformas que dividan la educación según el rol específico del acompañante, la red de apoyo queda desatendida, perjudicando su salud mental y la calidad del cuidado.
-El sistema es una aplicación móvil y web diseñada para entregar psicoeducación y recursos de apoyo personalizados a familiares, cuidadores, hijos, parejas y amigos de personas diagnosticadas con cáncer.
+## 3. Justificación del Problema 
 
-A través de una API REST, la aplicación permite organizar y distribuir contenidos específicos según el perfil del usuario, facilitando el acceso a artículos, guías, recomendaciones y contactos de redes de apoyo.
+El diagnóstico de cáncer no afecta únicamente a la persona diagnosticada. Las personas que forman parte de su red de apoyo pueden enfrentar cambios en sus rutinas, responsabilidades, preocupaciones y necesidades emocionales durante el proceso de acompañamiento. Una dificultad relevante corresponde al acceso a información adecuada para cada tipo de acompañante. La información disponible en Internet puede ser extensa, técnica o estar enfocada principalmente en el paciente, sin considerar las necesidades de familiares, parejas, hijos, amigos o cuidadores. Por ejemplo, una persona que cumple el rol de cuidador puede necesitar información relacionada con autocuidado y apoyo diario, mientras que un hijo puede buscar orientación para comprender cómo acompañar emocionalmente a su familiar. Esta diferencia hace necesario organizar la información de acuerdo con el contexto del usuario. En este contexto, el proyecto propone una aplicación web y móvil que centralice recursos de apoyo y los organice según el perfil del usuario. La plataforma considera recursos educativos, herramientas de autocuidado, una bitácora emocional, favoritos y un directorio de especialistas y grupos de apoyo. La aplicación no busca reemplazar la atención médica o psicológica profesional. Su propósito es facilitar el acceso a información organizada y recursos de apoyo complementarios.
 
-La aplicación también incorpora herramientas de autocuidado, como una bitácora emocional, además de un directorio de especialistas y grupos de apoyo.
+## 4. Objetivos del Proyecto 
 
-El sistema considera dos roles principales:
+### Objetivo General 
 
-* **Usuario:** Familiar, cuidador, pareja, hijo/a o amigo/a de una persona con cáncer.
-* **Administrador:** Encargado de gestionar los recursos y contenidos disponibles en la plataforma.
+Desarrollar una plataforma web y móvil que facilite el acceso a recursos educativos, herramientas de autocuidado y redes de apoyo para familiares, parejas, hijos, amigos y cuidadores de personas con cáncer. 
 
-La aplicación será desarrollada considerando tanto dispositivos móviles como navegadores web.
+### Objetivos Específicos 
 
-## 4. Justificación del Problema
+- Personalizar la presentación de recursos de acuerdo con el tipo de relación del usuario con la persona en tratamiento.
+- Facilitar el acceso a contenidos de apoyo organizados por categorías. - Permitir registrar el estado emocional mediante una bitácora personal.
+- Proporcionar un directorio de especialistas y grupos de apoyo.
+- Permitir guardar recursos de interés para consultarlos posteriormente.
+- Permitir al administrador gestionar los recursos disponibles.
+- Proporcionar métricas básicas de uso para el administrador.
 
-El diagnóstico de cáncer no solo afecta a la persona diagnosticada, sino también a las personas que forman parte de su red de apoyo. Familiares, parejas, hijos, amigos y cuidadores pueden enfrentar cambios en sus rutinas, preocupaciones, responsabilidades y situaciones emocionales asociadas al proceso de acompañamiento.
+## 5. Usuarios Objetivo 
 
-Una de las dificultades existentes corresponde al acceso a información adecuada para cada tipo de acompañante. La información disponible en Internet puede ser extensa, técnica o estar principalmente enfocada en la persona que presenta el diagnóstico, sin considerar las necesidades particulares de quienes cumplen diferentes roles dentro de la red de apoyo.
+La aplicación considera principalmente dos roles: **Usuario** y **Administrador**. 
 
-Por ejemplo, las necesidades de un hijo pueden ser diferentes a las de una pareja que participa directamente en el cuidado diario. Del mismo modo, un amigo puede buscar información sobre cómo brindar apoyo emocional sin necesariamente asumir tareas de cuidado.
+### Usuario 
 
-Esta situación puede dificultar la búsqueda de información pertinente y hacer que las personas tengan que revisar múltiples fuentes antes de encontrar contenido relacionado con su situación.
+Corresponde a una persona que forma parte de la red de apoyo de alguien con cáncer. 
 
-Por este motivo, el proyecto propone una aplicación que centralice recursos de apoyo y los organice considerando el perfil del usuario. El objetivo es facilitar el acceso a información comprensible, organizada y relacionada con las necesidades de cada tipo de acompañante.
+Puede corresponder a: 
+- Pareja.
+- Hijo/a.
+- Padre o madre.
+- Familiar.
+- Amigo/a.
+- Cuidador/a. 
 
-La aplicación no busca reemplazar la atención médica o psicológica profesional. Su función corresponde a proporcionar recursos educativos, herramientas de autocuidado y facilitar el acceso a redes de apoyo.
+### Características generales 
 
-## 5. Objetivos del Proyecto
-* **Objetivo General:** Desarrollar una plataforma completa que ofrezca recursos educativos y herramientas de apoyo personalizadas para la red de soporte de pacientes con cáncer.
-* **Objetivos Específicos:**
-  * Clasificar a los usuarios de acuerdo con su proximidad al paciente para proporcionar contenido personalizado.
-  * Facilitar el monitoreo del estado emocional de los cuidadores mediante una bitácora interactiva.
-  * Proveer un directorio accesible de especialistas y grupos de apoyo psicológico.
- 
-## 6. Principales Funcionalidades
-**Roles del Sistema:**
-1. **Usuario:** (Familiar, Cuidador, Pareja, Amigo).
-2. **Administrador:** (Gestor de contenidos médicos/psicológicos).
+Los usuarios pueden presentar diferentes niveles de experiencia tecnológica y diferentes necesidades de información. Se considera que pueden: 
 
-**Requerimientos Funcionales (RF):**
-* **RF01 - Configuración de Perfil de Apoyo:** El sistema permitirá asignar la relación con el paciente (pareja, hijo, etc.) para adaptar el contenido.
-* **RF02 - Feed de Recursos Adaptativo:** El sistema generará un listado dinámico de artículos filtrados automáticamente según el perfil del usuario.
-* **RF03 - Bitácora Emocional:** El usuario podrá registrar su estado de ánimo diario, desencadenando recomendaciones inmediatas de contención.
-* **RF04 - Directorio de Especialistas:** Buscador con filtros para encontrar psicólogos y grupos de apoyo verificados.
-* **RF05 - Guardado de Favoritos:** El usuario podrá almacenar recursos en una biblioteca personal para acceso rápido.
-* **RF06 - Gestión de Recursos (Admin):** El administrador podrá crear, editar, eliminar y categorizar material de apoyo (CRUD).
-* **RF07 - Panel de Métricas (Admin):** El sistema mostrará al administrador un panel con los recursos más consultados divididos por perfil de usuario.
+- utilizar principalmente dispositivos móviles;
+- consultar información durante períodos breves;
+- buscar contenido fácil de comprender;
+- necesitar recursos relacionados con su rol específico;
+- acceder desde el hogar, trabajo, centros de salud o durante desplazamientos;
+- requerir una navegación clara y predecible.
 
-**Requerimientos No Funcionales (RNF):**
-* **RNF01 - Usabilidad (Accesibilidad):** La interfaz cumplirá con directrices WCAG (alto contraste, tipografía escalable) pensado en cuidadores adultos mayores.
-* **RNF02 - Tolerancia a Errores:** La aplicación deberá interceptar cualquier fallo de comunicación con el backend o pérdida de internet, mostrando un mensaje de alerta amigable (ej. "Revisa tu conexión e intenta de nuevo") y ocultando de la interfaz cualquier código de error técnico o de base de datos.
-* **RNF03 - Seguridad:** Los datos sensibles de la bitácora emocional y contraseñas se almacenarán encriptados usando bcrypt.
-* **RNF04 - Escalabilidad:** Arquitectura frontend modular (componentes, páginas, servicios) para permitir futuras integraciones sin refactorización masiva.
-* **RNF05 - Compatibilidad:**
+### Necesidades principales 
 
-### Objetivo General
+- Encontrar información confiable y organizada.
+- Acceder a recursos relacionados con su rol.
+- Encontrar herramientas de autocuidado.
+- Consultar recursos de apoyo emocional.
+- Encontrar especialistas y grupos de apoyo.
+- Guardar recursos importantes.
+- Acceder desde teléfonos y computadores.
 
-Desarrollar una plataforma web y móvil que ofrezca recursos educativos y herramientas de apoyo personalizados para familiares, cuidadores, hijos, parejas y amigos de personas con cáncer.
+### Posibles dificultades 
 
-### Objetivos Específicos
+- Exceso de información disponible en Internet.
+- Información demasiado técnica.
+- Dificultad para identificar contenido pertinente.
+- Falta de tiempo para búsquedas extensas.
+- Dificultad para encontrar recursos dirigidos a familiares o cuidadores.
+- Diferentes niveles de experiencia tecnológica.
 
-* Personalizar los recursos de acuerdo con el tipo de relación que el usuario mantiene con la persona con cáncer.
-* Facilitar el acceso a contenidos educativos y de apoyo organizados por categorías.
-* Permitir que los usuarios registren su estado emocional mediante una bitácora personal de autocuidado.
-* Proporcionar un directorio de especialistas y grupos de apoyo.
-* Permitir guardar recursos de interés para consultarlos posteriormente.
-* Facilitar la gestión de los recursos disponibles mediante un rol administrador.
-* Proporcionar información sobre el uso de los recursos mediante un panel de métricas para el administrador.
+### Administrador 
 
-## 6. Usuarios Objetivo
+El administrador corresponde a la persona responsable de gestionar los contenidos disponibles en la plataforma. 
 
-La aplicación considera principalmente dos roles:
+Podrá: 
 
-1. **Usuario**
-2. **Administrador**
+- crear recursos;
+- editar recursos;
+- eliminar recursos;
+- categorizar recursos;
+- asociar recursos con perfiles de usuario;
+- consultar métricas básicas de utilización.
 
-El rol de usuario corresponde a personas que forman parte de la red de apoyo de una persona con cáncer.
+## Roles del Sistema 
+- **Usuario:** consulta recursos, configura su perfil de apoyo, registra estados emocionales, consulta el directorio y administra sus favoritos.
+- **Administrador:** gestiona recursos y consulta métricas del sistema.
 
-### Usuario
+## Proto-personas 
 
-El usuario puede corresponder a:
+Las siguientes proto-personas corresponden a **perfiles hipotéticos** construidos a partir del análisis preliminar del problema. No representan resultados obtenidos directamente de usuarios reales. 
 
-* Pareja.
-* Hijo/a.
-* Padre o madre.
-* Familiar.
-* Amigo/a.
-* Cuidador/a.
+### Proto-persona 1: Familiar y cuidadora 
 
-Se considera que estos usuarios pueden presentar diferentes niveles de experiencia tecnológica y diferentes necesidades de información.
+- **Nombre ficticio:** Carolina
+- **Edad:** 42 años
+- **Rol:** Familiar / cuidadora
 
-### Características generales
+#### Características generales 
 
-Los usuarios podrían:
+Carolina acompaña frecuentemente a un familiar durante su tratamiento. Utiliza principalmente su teléfono móvil para buscar información y dispone de poco tiempo continuo durante el día. 
 
-* Utilizar principalmente dispositivos móviles.
-* Consultar información durante períodos cortos de tiempo.
-* Buscar información fácil de comprender.
-* Necesitar recursos relacionados con su rol específico.
-* Tener diferentes niveles de experiencia utilizando aplicaciones.
-* Acceder desde sus hogares, lugares de trabajo, centros de salud o durante desplazamientos.
-* Necesitar información organizada para encontrar rápidamente un recurso.
+#### Necesidades principales 
 
-### Necesidades principales
+- Encontrar información organizada y fácil de comprender.
+- Saber cómo apoyar a su familiar.
+- Acceder a herramientas de autocuidado.
+- Encontrar especialistas o grupos de apoyo.
 
-* Encontrar información confiable y organizada.
-* Acceder a recursos relacionados con su rol.
-* Encontrar herramientas de autocuidado.
-* Consultar recursos de apoyo emocional.
-* Encontrar especialistas y grupos de apoyo.
-* Guardar recursos importantes.
-* Poder acceder desde dispositivos móviles y computadores.
+#### Objetivos de uso 
 
-### Posibles dificultades
+Utilizar la aplicación para consultar recursos relacionados con su rol de cuidadora, registrar cómo se siente y acceder rápidamente a redes de apoyo. 
 
-* Exceso de información disponible en Internet.
-* Información demasiado técnica.
-* Dificultad para determinar qué contenido es pertinente.
-* Falta de tiempo para revisar contenidos extensos.
-* Dificultad para encontrar recursos dirigidos específicamente a familiares o cuidadores.
-* Diferentes niveles de experiencia tecnológica.
+#### Dificultades o puntos de frustración 
 
-### Administrador
+- Información demasiado técnica.
+- Exceso de información en Internet.
+- Poco tiempo disponible.
+- Dificultad para distinguir recursos relevantes.
 
-El administrador corresponde al usuario encargado de gestionar los contenidos de la plataforma.
+#### Funcionalidades que utilizaría 
 
-### Funciones principales
+- Configuración de perfil.
+- Recursos personalizados.
+- Bitácora emocional.
+- Directorio. - Favoritos.
 
-* Crear recursos.
-* Modificar recursos.
-* Eliminar recursos.
-* Categorizar recursos.
-* Asociar recursos a determinados perfiles.
-* Consultar métricas de utilización.
+#### Dispositivo y contexto probable de acceso 
 
-El administrador utilizará principalmente un computador o notebook debido a que sus tareas requieren gestionar una mayor cantidad de información.
+Principalmente teléfono móvil, desde el hogar, trabajo o durante desplazamientos. 
 
-## Proto-personas
+### Proto-persona 2: Hijo/a 
 
-Las siguientes proto-personas corresponden a perfiles hipotéticos construidos a partir del análisis del problema y de las características esperadas de los usuarios de la aplicación.
+- **Nombre ficticio:** Matías
+- **Edad:** 20 años
+- **Rol:** Hijo
 
-**No representan resultados obtenidos directamente de usuarios reales.** Corresponden a una caracterización preliminar basada en fuentes secundarias, análisis de soluciones existentes y supuestos razonados.
+#### Características generales 
 
-### Proto-persona 1: Familiar/cuidadora
+Matías es estudiante universitario y busca información que le permita comprender mejor cómo acompañar a un familiar durante el tratamiento. 
 
-* **Nombre ficticio:** Carolina
-* **Edad:** 42 años
-* **Tipo de usuario o rol:** Familiar / cuidadora
+#### Necesidades principales 
 
-#### Características generales
+- Contenidos claros y breves.
+- Recursos relacionados con su situación familiar.
+- Herramientas de apoyo emocional.
+- Información sobre redes de ayuda.
 
-Carolina tiene un familiar cercano diagnosticado con cáncer y participa frecuentemente en su acompañamiento. Utiliza principalmente su teléfono móvil para buscar información y comunicarse.
+#### Objetivos de uso 
 
-Tiene poco tiempo disponible durante el día y prefiere encontrar información organizada y fácil de comprender.
+Encontrar recursos pertinentes, guardarlos para consultarlos posteriormente y utilizar la bitácora como herramienta de autocuidado. 
 
-#### Necesidades principales
+#### Dificultades o puntos de frustración 
 
-* Encontrar información confiable.
-* Saber cómo apoyar emocionalmente a su familiar.
-* Encontrar recursos relacionados con el autocuidado.
-* Acceder rápidamente a información relevante.
-* Encontrar profesionales o grupos de apoyo.
+- Información médica compleja.
+- Contenidos dirigidos principalmente al paciente.
+- Dificultad para encontrar información específica para hijos.
 
-#### Objetivos de uso
+#### Funcionalidades que utilizaría 
 
-Utilizar la aplicación para encontrar recursos relacionados con su rol de cuidadora, conocer herramientas de autocuidado y acceder a redes de apoyo cuando sea necesario.
+- Recursos personalizados.
+- Detalle de recursos.
+- Bitácora emocional.
+- Favoritos. - Directorio.
 
-#### Dificultades o puntos de frustración
+#### Dispositivo y contexto probable de acceso 
 
-* Información demasiado técnica.
-* Exceso de información en Internet.
-* No saber qué fuentes son confiables.
-* Poco tiempo disponible para buscar información.
-* Dificultad para encontrar contenido específico para cuidadores.
+Principalmente teléfono móvil y secundariamente computador portátil.  
 
-#### Funcionalidades que utilizaría
+## Supuestos utilizados para las proto-personas 
 
-* Perfil de apoyo.
-* Feed personalizado.
-* Recursos educativos.
-* Bitácora emocional.
-* Directorio.
-* Favoritos.
+Los perfiles anteriores se construyen a partir de los siguientes supuestos preliminares: 
 
-#### Dispositivo y contexto probable de acceso
+- Las personas de la red de apoyo pueden buscar información sobre cómo acompañar a una persona con cáncer.
+- Las necesidades de información pueden variar según el tipo de relación.
+- El teléfono móvil constituye un dispositivo relevante para consultas rápidas.
+- Algunos usuarios pueden disponer de poco tiempo para realizar búsquedas extensas.
+- Los usuarios pueden preferir información clara, breve y organizada.
+- Las proto-personas no representan resultados de entrevistas, diagnósticos ni mediciones psicológicas reales.
 
-Utilizaría principalmente un teléfono móvil, desde su hogar, lugar de trabajo o durante desplazamientos.
+# 6. Requerimientos 
 
-### Proto-persona 2: Hijo/a
+## Requerimientos Funcionales 
 
-* **Nombre ficticio:** Matías
-* **Edad:** 20 años
-* **Tipo de usuario o rol:** Hijo
-
-#### Características generales
-
-Matías es estudiante universitario y su padre o madre se encuentra atravesando un tratamiento contra el cáncer.
-
-Tiene experiencia utilizando aplicaciones móviles y busca información que le permita comprender mejor cómo acompañar a su familiar.
-
-Prefiere contenidos breves, claros y fáciles de consultar.
-
-#### Necesidades principales
-
-* Comprender cómo apoyar a su familiar.
-* Encontrar información adaptada a su situación.
-* Manejar sus propias emociones.
-* Encontrar recursos de apoyo.
-* Saber dónde solicitar ayuda.
-
-#### Objetivos de uso
-
-Utilizar la aplicación para acceder a recursos educativos relacionados con el rol de hijo, encontrar herramientas de apoyo emocional y guardar contenidos relevantes.
-
-#### Dificultades o puntos de frustración
-
-* Información médica demasiado compleja.
-* Información que está dirigida principalmente al paciente.
-* No encontrar recursos específicos para hijos.
-* No saber cómo abordar determinadas situaciones emocionales.
-
-#### Funcionalidades que utilizaría
-
-* Perfil de apoyo.
-* Feed personalizado.
-* Recursos educativos.
-* Bitácora emocional.
-* Favoritos.
-* Directorio de apoyo.
-
-#### Dispositivo y contexto probable de acceso
-
-Utilizaría principalmente un teléfono móvil y secundariamente un computador portátil.
-
-### Supuestos utilizados para las proto-personas
-
-Los perfiles anteriores se construyen a partir de los siguientes supuestos:
-
-* Las personas de la red de apoyo pueden buscar información sobre cómo acompañar a una persona con cáncer.
-* Las necesidades de información pueden variar según el tipo de relación con la persona diagnosticada.
-* Los usuarios pueden utilizar principalmente teléfonos móviles para consultar recursos.
-* Algunos usuarios pueden disponer de poco tiempo para realizar búsquedas extensas.
-* Los usuarios pueden preferir información clara y organizada.
-* Las proto-personas no representan diagnósticos, mediciones psicológicas ni resultados de entrevistas reales.
-
-## 7. Requerimientos
-
-### Requerimientos Funcionales
-
-Un requerimiento funcional describe una funcionalidad, servicio o comportamiento que el sistema deberá proporcionar.
+Un requerimiento funcional describe una acción o comportamiento que el sistema deberá proporcionar. 
 
 | ID | Requerimiento funcional | Rol |
 |---|---|---|
-| **RF01** | El sistema deberá permitir al usuario configurar su perfil indicando el tipo de relación que mantiene con la persona con cáncer, como pareja, hijo/a, familiar, amigo/a o cuidador/a. | Usuario |
-| **RF02** | El sistema deberá presentar un feed de recursos personalizados de acuerdo con el perfil y tipo de relación del usuario. | Usuario |
-| **RF03** | El sistema deberá permitir al usuario registrar su estado emocional mediante una bitácora personal y consultar recursos relacionados con el autocuidado. | Usuario |
-| **RF04** | El sistema deberá permitir al usuario buscar y consultar un directorio de especialistas y grupos de apoyo disponibles. | Usuario |
-| **RF05** | El sistema deberá permitir al usuario guardar recursos como favoritos y acceder posteriormente a una biblioteca personal. | Usuario |
-| **RF06** | El sistema deberá permitir al administrador crear, consultar, modificar, eliminar y categorizar recursos de apoyo. | Administrador |
-| **RF07** | El sistema deberá proporcionar al administrador un panel de métricas que permita consultar información sobre los recursos más utilizados según el perfil de usuario. | Administrador |
+| **RF01** | El sistema deberá permitir al usuario configurar su perfil indicando la relación que mantiene con la persona en tratamiento. | Usuario | 
+| **RF02** | El sistema deberá presentar recursos personalizados de acuerdo con el tipo de relación configurado por el usuario. | Usuario |
+| **RF03** | El sistema deberá permitir al usuario registrar su estado emocional mediante una bitácora y asociar una nota opcional al registro. | Usuario | 
+| **RF04** | El sistema deberá permitir buscar y filtrar un directorio de especialistas y grupos de apoyo. | Usuario | 
+| **RF05** | El sistema deberá permitir guardar y quitar recursos de una lista de favoritos. | Usuario |
+| **RF06** | El sistema deberá permitir al administrador crear, consultar, modificar y eliminar recursos, además de asociarlos a categorías y perfiles. | Administrador |
+| **RF07** | El sistema deberá permitir al administrador consultar métricas relacionadas con vistas y guardados de recursos y su distribución por perfil. | Administrador | 
 
-### Funcionalidades Transversales
+Los siete requerimientos funcionales corresponden a funcionalidades de dominio y no consideran registro ni autenticación como parte del conjunto principal, de acuerdo con la definición de la EP1. 
 
-Estas funcionalidades son necesarias para el funcionamiento general del sistema, pero no forman parte de los siete requerimientos funcionales principales:
+## Funcionalidades Transversales 
 
-* **FT01:** Registro de usuario.
-* **FT02:** Inicio de sesión.
-* **FT03:** Cierre de sesión.
-* **FT04:** Recuperación de acceso.
-* **FT05:** Control de acceso según rol.
+Estas funciones apoyan el funcionamiento general del sistema y se documentan separadamente de los siete requerimientos funcionales principales: 
 
-### Requerimientos No Funcionales
+- **FT01:** Registro de usuario.
+- **FT02:** Inicio de sesión.
+- **FT03:** Cierre de sesión.
+- **FT04:** Protección de rutas.
+- **FT05:** Control de acceso según rol.
 
-#### RNF01 - Usabilidad y accesibilidad
+## Requerimientos No Funcionales 
 
-La interfaz deberá utilizar lenguaje claro, tamaños de texto legibles, contraste adecuado y controles fácilmente identificables, considerando usuarios con diferentes niveles de experiencia tecnológica.
+### RNF01 - Usabilidad y accesibilidad La interfaz deberá utilizar lenguaje claro, tamaños de texto legibles, contraste adecuado, controles identificables y una jerarquía visual consistente. 
 
-#### RNF02 - Tolerancia a errores
+### RNF02 - Diseño adaptable La interfaz deberá funcionar en dispositivos móviles y navegadores web, manteniendo accesibles las funciones principales y evitando pérdida de información. 
 
-Ante errores de conexión, solicitudes fallidas o indisponibilidad temporal del backend, la aplicación deberá mostrar mensajes comprensibles para el usuario y evitar exponer códigos de error o información técnica del sistema.
+### RNF03 - Tolerancia a errores Ante errores de conexión o solicitudes fallidas, la aplicación deberá mostrar mensajes comprensibles para el usuario y evitar exponer detalles técnicos del sistema. 
 
-#### RNF03 - Seguridad y privacidad
+### RNF04 - Seguridad y privacidad Las funcionalidades protegidas deberán requerir autenticación y el acceso deberá diferenciarse según el rol. Las credenciales y datos sensibles deberán manejarse de forma segura en la integración con el backend. 
 
-La aplicación deberá proteger las credenciales y la información personal del usuario mediante mecanismos de autenticación, autorización por roles y almacenamiento seguro de las credenciales.
+### RNF05 - Escalabilidad y modularidad El frontend deberá mantener una organización basada en páginas, componentes, rutas, servicios, contexto, tipos y estilos compartidos para facilitar futuras ampliaciones. 
 
-Las contraseñas no deberán almacenarse en texto plano.
+### RNF06 - Compatibilidad La aplicación deberá ser compatible con navegadores web modernos y mantener una experiencia coherente entre computador y dispositivo móvil. 
 
-#### RNF04 - Escalabilidad
-
-El frontend deberá mantener una arquitectura modular basada en páginas, componentes, rutas y servicios, permitiendo incorporar nuevas funcionalidades sin realizar modificaciones masivas en la estructura existente.
-
-#### RNF05 - Compatibilidad
-
-La aplicación deberá funcionar correctamente en dispositivos móviles y navegadores web modernos, manteniendo una experiencia de navegación coherente entre ambas plataformas.
-
-Se considerará compatibilidad con:
-
-* Google Chrome.
-* Mozilla Firefox.
-* Microsoft Edge.
-* Safari.
-* Android.
-* iOS.
-
-#### RNF06 - Rendimiento
-
-Las operaciones habituales de consulta deberán ejecutarse de manera fluida, evitando bloqueos de la interfaz y demoras que interrumpan la interacción del usuario.
-
-#### RNF07 - Protección de información sensible
-
-Los datos personales y registros asociados al usuario deberán manejarse aplicando principios de privacidad y minimización de datos. La aplicación deberá solicitar únicamente la información necesaria para proporcionar sus funcionalidades.
-
-## Puesta en marcha
-
-```bash
-npm install
-npm run dev
-```
-
-
-- Para entrar como **usuario**, usa cualquier correo que **no** empiece con "admin".
-- Para entrar como **administrador**, usa un correo que empiece con "admin" (ej: `admin@redapoyo.cl`).
-- La contraseña no se valida contra un backend real en este scaffold: cualquier valor no vacío funciona.
-
-## Estado actual
-
-El frontend está completo y navegable de punta a punta (rutas públicas,
-protegidas de usuario y de administrador, los 7 requerimientos funcionales y
-los 3 task flows del documento). La capa `src/services/api.ts` concentra
-**toda** la comunicación con el backend: hoy simula la API REST con datos en
-memoria/`localStorage`, y está escrita para que reemplazar cada función por un
-`fetch` real a Node/Express (cuando esté desplegado) no requiera tocar las
-pantallas. La variable `VITE_API_URL` ya está preparada para apuntar a esa API.
-
-## Estructura
-
-```
-src/
-├── components/       # ResourceCard, Header, BottomNavigation, ProtectedRoute
-├── context/          # AuthContext (sesión, rol, perfil)
-├── data/             # Datos semilla + diccionarios de etiquetas (ES)
-├── pages/
-│   ├── Login/ Registro/
-│   ├── Inicio/ Recursos/ Bitacora/ Directorio/ Favoritos/ Perfil/   (Usuario)
-│   └── Admin/         # AdminInicio, GestionRecursos, Crear/EditarRecurso, Metricas
-├── routes/            # AppRoutes.tsx — define rutas públicas/protegidas
-├── services/          # api.ts — capa de acceso a datos
-├── theme/             # variables.css — tokens de diseño y overrides de Ionic
-└── types/             # Modelos TypeScript compartidos
-```
-
-## Rutas
-
-| Ruta | Acceso |
-|---|---|
-| `/login`, `/registro` | Públicas |
-| `/app/*` | Usuario autenticado |
-| `/admin/*` | Administrador autenticado |
-
-Un usuario sin sesión que intente entrar a `/app/*` o `/admin/*` es
-redirigido a `/login`. Un usuario autenticado sin el rol correcto es
-redirigido a la vista principal de su propio rol (`ProtectedRoute.tsx`).
-
-## Diseño
-
-La paleta y tipografía (`src/theme/variables.css`) se alejan deliberadamente
-del azul/verde clínico típico de apps de salud: un fondo cálido neutro, un
-verde bosque como color de confianza, un tono arcilla para lo emocional/humano
-(bitácora, apoyo) y una tipografía serif editorial para títulos. Todo se
-mapea a las variables de Ionic para que los componentes nativos (`IonButton`,
-`IonCard`, etc.) hereden el sistema sin overrides por pantalla.
+### RNF07 - Rendimiento Las operaciones habituales de consulta deberán ejecutarse de forma fluida, evitando bloqueos de la interfaz y demoras innecesarias.
 
