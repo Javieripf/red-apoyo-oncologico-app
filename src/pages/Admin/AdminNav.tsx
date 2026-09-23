@@ -3,7 +3,6 @@ import { IonSegment, IonSegmentButton, IonLabel, IonIcon } from '@ionic/react';
 import { useHistory, useLocation } from 'react-router-dom';
 import { homeOutline, folderOutline, barChartOutline } from 'ionicons/icons';
 
-// Añadimos el ícono correspondiente a cada ruta de la matriz
 const RUTAS = [
   { valor: '/admin/inicio', etiqueta: 'Inicio', icono: homeOutline },
   { valor: '/admin/recursos', etiqueta: 'Recursos', icono: folderOutline },
@@ -14,7 +13,6 @@ const AdminNav: React.FC = () => {
   const history = useHistory();
   const location = useLocation();
   
-  // Garantiza que siempre haya un segmento activo válido al recargar la página
   const activo = RUTAS.find((r) => location.pathname.startsWith(r.valor))?.valor ?? '/admin/inicio';
 
   return (
@@ -22,7 +20,7 @@ const AdminNav: React.FC = () => {
       value={activo} 
       onIonChange={(e) => e.detail.value && history.push(String(e.detail.value))} 
       style={{ marginBottom: 'var(--ra-space-5)' }}
-      mode="md" // Fuerza el diseño Material Design para coherencia, o puedes quitarlo para que se adapte a iOS/Android automáticamente
+      mode="md" 
     >
       {RUTAS.map((r) => (
         <IonSegmentButton key={r.valor} value={r.valor} layout="icon-top">

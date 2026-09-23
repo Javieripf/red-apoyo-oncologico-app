@@ -39,7 +39,7 @@ const ConfigurarPerfil: React.FC = () => {
   };
 
   return (
-    <div style={{ maxWidth: 440, margin: '0 auto', paddingTop: 'var(--ra-space-6)' }}>
+    <div className="ra-config-panel">
       <h1 className="ra-display" style={{ fontSize: 24 }}>
         Antes de comenzar
       </h1>
@@ -111,7 +111,7 @@ const Inicio: React.FC = () => {
       <Header titulo={usuario.perfilConfigurado ? `Hola, ${usuario.nombre.split(' ')[0]}` : 'Bienvenido/a'} mostrarSalir />
       
       <IonContent className="ra-content-with-rail">
-        <div className="ion-padding" style={{ maxWidth: 640, margin: '0 auto' }}>
+        <div className="ra-page-wrap ra-page-narrow">
           {!usuario.perfilConfigurado ? (
             <ConfigurarPerfil />
           ) : (
@@ -120,7 +120,6 @@ const Inicio: React.FC = () => {
                 Recursos para {ETIQUETAS_RELACION[usuario.tipoRelacion as TipoRelacion].toLowerCase()}
               </p>
 
-              {/* Implementación correcta de botón de lista en Ionic */}
               <IonItem 
                 button 
                 detail={true} 
@@ -133,7 +132,7 @@ const Inicio: React.FC = () => {
                   '--padding-end': 'var(--ra-space-2)',
                   '--padding-top': 'var(--ra-space-2)',
                   '--padding-bottom': 'var(--ra-space-2)',
-                  '--background': 'transparent', // Permite que .ra-surface controle el fondo
+                  '--background': 'transparent', 
                   border: '1px solid var(--ra-color-line)',
                   marginBottom: 'var(--ra-space-5)',
                 }}

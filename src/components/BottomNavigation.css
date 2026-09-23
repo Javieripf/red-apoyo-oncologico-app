@@ -1,23 +1,33 @@
-/* En pantallas angostas se comporta como una barra inferior estándar de
-   Ionic. Desde 768px en adelante se transforma en un riel lateral, de modo
-   que la versión web reutiliza la misma navegación sin duplicar componentes. */
+.ra-tabbar {
+  --background: rgba(248, 244, 236, 0.97);
+  --border: 1px solid rgba(42, 38, 34, 0.08);
+  box-shadow: 0 -8px 24px rgba(42, 38, 34, 0.06);
+}
+
+.ra-tabbar ion-tab-button {
+  --color: var(--ra-color-ink-soft);
+  --color-selected: var(--ra-color-pine);
+  min-height: 58px;
+  font-size: 11px;
+  font-weight: 650;
+}
+
+.ra-tabbar ion-tab-button ion-icon {
+  font-size: 21px;
+  margin-bottom: 2px;
+}
+
+.ra-tabbar ion-tab-button.tab-selected {
+  color: var(--ra-color-pine);
+}
+
 @media (min-width: 768px) {
   .ra-tabbar {
-    position: fixed;
-    top: 0;
-    left: 0;
-    bottom: 0;
-    width: 88px;
-    height: 100%;
-    flex-direction: column;
-    justify-content: flex-start;
-    gap: var(--ra-space-4, 16px);
-    padding-top: var(--ra-space-6, 32px);
-    border-right: 1px solid var(--ra-color-line, rgba(0, 0, 0, 0.1));
-    border-top: none;
+    height: 68px;
   }
 
-  .ra-content-with-rail {
-    margin-left: 88px;
+  .ra-tabbar ion-tab-button {
+    min-height: 58px;
+    border-radius: 0;
   }
 }

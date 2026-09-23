@@ -71,7 +71,7 @@ const DetalleRecurso: React.FC = () => {
             </IonText>
           </div>
         ) : (
-          <div className="ion-padding" style={{ maxWidth: 640, margin: '0 auto' }}>
+          <div className="ra-page-wrap ra-page-narrow">
             
             <span className="ra-eyebrow" style={{ color: 'var(--ra-color-clay)' }}>
               {ETIQUETAS_CATEGORIA[recurso.categoria]}

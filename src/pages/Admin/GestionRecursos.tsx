@@ -10,7 +10,7 @@ import {
   IonList, 
   IonItem, 
   IonLabel,
-  useIonViewWillEnter // <- Hook clave de Ionic
+  useIonViewWillEnter 
 } from '@ionic/react';
 import { addOutline, createOutline, trashOutline } from 'ionicons/icons';
 import Header from '@/components/Header';
@@ -24,7 +24,7 @@ const GestionRecursos: React.FC = () => {
   const [cargando, setCargando] = useState(true);
   const [porEliminar, setPorEliminar] = useState<Recurso | null>(null);
   const [mensaje, setMensaje] = useState<string | null>(null);
-  const [error, setError] = useState<string | null>(null); // Añadido estado de error
+  const [error, setError] = useState<string | null>(null); 
 
   const cargar = async () => {
     setCargando(true);
@@ -38,7 +38,6 @@ const GestionRecursos: React.FC = () => {
     }
   };
 
-  // Garantiza que la lista se recargue SIEMPRE que la vista vuelva a ser visible
   useIonViewWillEnter(() => {
     cargar();
   });
@@ -48,7 +47,7 @@ const GestionRecursos: React.FC = () => {
     try {
       await api.eliminarRecurso(porEliminar.id);
       setMensaje('Recurso eliminado exitosamente.');
-      cargar(); // Recargamos para reflejar el borrado
+      cargar(); 
     } catch {
       setError('Ocurrió un error al intentar eliminar el recurso.');
     } finally {
@@ -60,8 +59,8 @@ const GestionRecursos: React.FC = () => {
     <IonPage>
       <Header titulo="Gestión de recursos" mostrarSalir />
       
-      <IonContent className="ra-content-with-rail">
-        <div className="ion-padding" style={{ maxWidth: 760, margin: '0 auto' }}>
+      <IonContent className="ra-content">
+        <div className="ra-page-wrap">
           <AdminNav />
 
           <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: 'var(--ra-space-4)' }}>

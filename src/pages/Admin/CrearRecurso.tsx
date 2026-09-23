@@ -16,8 +16,6 @@ const CrearRecurso: React.FC = () => {
       setError(null);
       await api.crearRecurso(valores);
       
-      // replace en lugar de push elimina este formulario del stack de navegación.
-      // Así, si el admin presiona "Atrás", no volverá accidentalmente a un formulario vacío.
       history.replace('/admin/recursos');
     } catch {
       setError('No pudimos guardar el recurso. Intenta nuevamente.');
@@ -30,8 +28,8 @@ const CrearRecurso: React.FC = () => {
     <IonPage>
       <Header titulo="Nuevo recurso" mostrarVolver defaultHref="/admin/recursos" />
       
-      <IonContent className="ra-content-with-rail">
-        <div className="ion-padding" style={{ maxWidth: 720, margin: '0 auto' }}>
+      <IonContent className="ra-content">
+        <div className="ra-page-wrap">
           <RecursoForm onGuardar={guardar} textoBoton="Registrar recurso" />
         </div>
 

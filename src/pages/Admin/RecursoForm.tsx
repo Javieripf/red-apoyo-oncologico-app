@@ -40,7 +40,6 @@ const RecursoForm: React.FC<RecursoFormProps> = ({ valoresIniciales, onGuardar, 
   const [tocado, setTocado] = useState(false);
   const [guardando, setGuardando] = useState(false);
 
-  // Validaciones de negocio exigidas
   const errores = {
     titulo: titulo.trim().length <= 3,
     resumen: resumen.trim().length <= 3,
@@ -73,13 +72,10 @@ const RecursoForm: React.FC<RecursoFormProps> = ({ valoresIniciales, onGuardar, 
         tiempoLecturaMin 
       });
     } finally {
-      // Nota: El setGuardando a false se maneja en el componente padre (Crear/Editar), 
-      // pero dejarlo aquí es una buena red de seguridad arquitectónica.
       setGuardando(false);
     }
   };
 
-  // Función auxiliar para integrar la API de formularios de Ionic
   const claseError = (errorCondicion: boolean) => 
     `ra-surface ${tocado && errorCondicion ? 'ion-invalid ion-touched' : ''}`;
 
@@ -169,8 +165,7 @@ const RecursoForm: React.FC<RecursoFormProps> = ({ valoresIniciales, onGuardar, 
             </IonItem>
           ))}
         </IonList>
-        
-        {/* MinHeight garantiza que la UI no salte cuando aparece el error */}
+      
         <div style={{ minHeight: '20px', marginTop: '4px' }}>
           {tocado && errores.perfiles && (
             <IonText color="danger">

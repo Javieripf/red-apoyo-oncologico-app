@@ -38,7 +38,6 @@ const Registro: React.FC = () => {
   const [enviando, setEnviando] = useState(false);
   const [errorGeneral, setErrorGeneral] = useState<string | null>(null);
 
-  // Lógica de validación
   const nombreValido = nombre.trim().length > 1;
   const correoValido = CORREO_REGEX.test(correo);
   const passwordValida = password.length >= 8;
@@ -50,15 +49,12 @@ const Registro: React.FC = () => {
     setTocado(true);
     setErrorGeneral(null);
 
-    // Se detiene aquí si fallan las validaciones, pero ahora la UI sí reaccionará
     if (!formularioValido) return;
 
     setEnviando(true);
     try {
-      // 1. Capturamos el usuario que devuelve la función registrarse
       const u = await registrarse({ nombre: nombre.trim(), correo, tipoRelacion: tipoRelacion as TipoRelacion });
       
-      // 2. Evaluamos el rol para enviarlo a la ruta correcta
       history.replace(u.rol === 'administrador' ? '/admin/inicio' : '/inicio');
       
     } catch {
@@ -68,13 +64,12 @@ const Registro: React.FC = () => {
     }
   };
 
-  // NUEVO: La función devuelve solo las clases de validación para inyectarlas directo al input
   const claseInputError = (condicionInvalida: boolean) => 
     tocado && condicionInvalida ? 'ion-invalid ion-touched' : '';
 
   return (
     <IonPage>
-      <IonHeader className="ion-no-border">
+      <IonHeader className="ion-no-border ra-header">
         <IonToolbar>
           <IonButtons slot="start">
             <IonBackButton defaultHref="/login" text="" />
@@ -82,17 +77,18 @@ const Registro: React.FC = () => {
         </IonToolbar>
       </IonHeader>
       
-      <IonContent className="ion-padding">
-        <div style={{ maxWidth: 420, margin: '0 auto' }}>
-          <h1 className="ra-display" style={{ fontSize: 26, margin: '0 0 6px' }}>
+      <IonContent className="ra-auth-content">
+        <div className="ra-auth-shell">
+          <div className="ra-auth-card">
+          <h1 className="ra-auth-title" style={{ fontSize: 26 }}>
             Crea tu cuenta
           </h1>
-          <p style={{ color: 'var(--ra-color-ink-soft)', margin: '0 0 var(--ra-space-5)', lineHeight: 1.5 }}>
+          <p className="ra-section-subtitle">
             Solo pedimos lo necesario para personalizar tus recursos. No solicitamos datos médicos de la persona con cáncer.
           </p>
 
           <form onSubmit={handleSubmit}>
-            <IonItem className="ra-surface" style={{ marginBottom: 'var(--ra-space-3)', borderRadius: '8px' }} lines="none">
+            <IonItem className="ra-surface ra-form-item" lines="none">
               <IonInput
                 className={claseInputError(!nombreValido)}
                 label="Nombre *"
@@ -104,7 +100,7 @@ const Registro: React.FC = () => {
               />
             </IonItem>
 
-            <IonItem className="ra-surface" style={{ marginBottom: 'var(--ra-space-3)', borderRadius: '8px' }} lines="none">
+            <IonItem className="ra-surface ra-form-item" lines="none">
               <IonInput
                 className={claseInputError(!correoValido)}
                 label="Correo electrónico *"
@@ -117,7 +113,7 @@ const Registro: React.FC = () => {
               />
             </IonItem>
 
-            <IonItem className="ra-surface" style={{ marginBottom: 'var(--ra-space-3)', borderRadius: '8px' }} lines="none">
+            <IonItem className="ra-surface ra-form-item" lines="none">
               <IonInput
                 className={claseInputError(!passwordValida)}
                 label="Contraseña *"
@@ -133,7 +129,7 @@ const Registro: React.FC = () => {
               </IonInput>
             </IonItem>
 
-            <IonItem className="ra-surface" style={{ marginBottom: 'var(--ra-space-3)', borderRadius: '8px' }} lines="none">
+            <IonItem className="ra-surface ra-form-item" lines="none">
               <IonInput
                 className={claseInputError(!passwordsCoinciden)}
                 label="Confirmar contraseña *"
@@ -148,7 +144,7 @@ const Registro: React.FC = () => {
               </IonInput>
             </IonItem>
 
-            <IonItem className="ra-surface" style={{ marginBottom: 'var(--ra-space-4)', borderRadius: '8px' }} lines="none">
+            <IonItem className="ra-surface ra-form-item" lines="none">
               <IonSelect
                 className={claseInputError(!tipoRelacion)}
                 label="Tipo de relación *"
@@ -188,10 +184,11 @@ const Registro: React.FC = () => {
               </IonText>
             )}
 
-            <IonButton expand="block" type="submit" disabled={enviando}>
+            <IonButton className="ra-primary-button" expand="block" type="submit" disabled={enviando}>
               Crear cuenta
             </IonButton>
           </form>
+          </div>
         </div>
 
         <IonLoading isOpen={enviando} message="Registrando tus datos..." spinner="crescent" />

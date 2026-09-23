@@ -11,7 +11,6 @@ import {
 import { Route, Redirect } from 'react-router-dom';
 import { homeOutline, bookOutline, heartOutline, bookmarkOutline, personOutline } from 'ionicons/icons';
 
-// Importación de vistas de Usuario Paciente/Familiar
 import Inicio from '@/pages/Inicio/Inicio';
 import Recursos from '@/pages/Recursos/Recursos';
 import DetalleRecurso from '@/pages/Recursos/DetalleRecurso';
@@ -23,7 +22,6 @@ import Perfil from '@/pages/Perfil/Perfil';
 const TabsLayout: React.FC = () => {
   return (
     <IonTabs>
-      {/* Contenedor donde se renderizan las vistas de las pestañas */}
       <IonRouterOutlet>
         <Route exact path="/inicio" component={Inicio} />
         <Route exact path="/recursos" component={Recursos} />
@@ -38,7 +36,7 @@ const TabsLayout: React.FC = () => {
       </IonRouterOutlet>
 
       {/* Barra de navegación inferior móvil */}
-      <IonTabBar slot="bottom" style={{ '--border': '1px solid var(--ra-color-line)', paddingTop: 4 }}>
+      <IonTabBar slot="bottom" className="ra-tabbar">
         <IonTabButton tab="inicio" href="/inicio">
           <IonIcon icon={homeOutline} />
           <IonLabel>Inicio</IonLabel>

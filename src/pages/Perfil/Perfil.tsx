@@ -41,21 +41,19 @@ const Perfil: React.FC = () => {
     }
   };
 
-  // Verifica si el valor actual es distinto al guardado en base de datos
   const sinCambios = tipoRelacion === usuario.tipoRelacion;
 
   return (
     <IonPage>
       <Header titulo="Mi perfil" />
       <IonContent className="ra-content-with-rail">
-        <div className="ion-padding" style={{ maxWidth: 480, margin: '0 auto' }}>
+        <div className="ra-page-wrap ra-page-small">
           
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: 'var(--ra-space-6)' }}>
             <IonIcon icon={personCircleOutline} style={{ fontSize: 80, color: 'var(--ra-color-pine)' }} />
             <h1 className="ra-display" style={{ fontSize: 24, margin: '8px 0 2px' }}>{usuario.nombre}</h1>
             <p style={{ margin: 0, color: 'var(--ra-color-ink-soft)', fontSize: 14 }}>{usuario.correo}</p>
             
-            {/* Distintivo visual si el usuario tiene rol de administrador */}
             {usuario.rol === 'administrador' && (
               <span style={{ 
                 marginTop: '12px', 
@@ -96,7 +94,6 @@ const Perfil: React.FC = () => {
             Guardar cambios
           </IonButton>
 
-          {/* Separador visual para la acción destructiva */}
           <div style={{ marginTop: 'var(--ra-space-6)', borderTop: '1px solid var(--ra-color-line)', paddingTop: 'var(--ra-space-4)' }}>
             <IonButton expand="block" fill="clear" color="danger" onClick={() => salir()}>
               <IonIcon slot="start" icon={logOutOutline} />
@@ -105,7 +102,6 @@ const Perfil: React.FC = () => {
           </div>
         </div>
 
-        {/* Feedback visual nativo */}
         <IonLoading isOpen={guardando} message="Actualizando perfil..." spinner="crescent" />
         <IonToast 
           isOpen={!!mensaje} 

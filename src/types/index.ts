@@ -1,6 +1,3 @@
-// Tipos centrales del sistema — reflejan el modelo descrito en la
-// definición funcional (RF01–RF07) y sirven de contrato con la API REST.
-
 export type RolUsuario = 'usuario' | 'administrador';
 
 export type TipoRelacion =

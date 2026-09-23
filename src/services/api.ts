@@ -10,11 +10,8 @@ import {
 import { DIRECTORIO_MOCK, RECURSOS_MOCK } from '@/data/mockData';
 
 // -----------------------------------------------------------------------
-// Capa de acceso a datos. Hoy simula la API REST (Node/Express) con datos
-// en memoria y una pequeña latencia artificial, para que las pantallas se
-// construyan contra el mismo contrato que tendrá el backend real.
-// Cuando el servicio esté disponible, basta reemplazar cada función por un
-// fetch a `${BASE_URL}/...` manteniendo la misma firma.
+// Capa de acceso a datos. Hoy simula la API REST con datos
+// en memoria para que las pantallas se construyan como  tendrá el backend real.
 // -----------------------------------------------------------------------
 
 export const BASE_URL = import.meta.env.VITE_API_URL ?? 'http://localhost:3000/api';
@@ -41,31 +38,32 @@ function escribirLS<T>(key: string, value: T) {
   try {
     localStorage.setItem(key, JSON.stringify(value));
   } catch {
-    // almacenamiento no disponible: se continúa solo con el estado en memoria
+    
   }
 }
 
-// ---------- Autenticación ----------
+
 
 export async function login(correo: string, _password: string): Promise<Usuario> {
   await delay();
   const esAdmin = correo.trim().toLowerCase().startsWith('admin');
   const usuario: Usuario = esAdmin
   
-    ? {
-        id: 'admin-1',
-        nombre: 'Camilo Alvarez',
-        correo,
-        rol: 'administrador',
-        perfilConfigurado: true,
-      }
-    : leerLS<Usuario>(STORAGE_KEYS.usuario, {
-        id: 'user-1', 
-        nombre: 'Carolina',
-        correo,
-        rol: 'usuario',
-        perfilConfigurado: false,
-      });
+  // Usuario de prueba utilizado para simular la sesión según el rol (aunque se puede probar creando otro)
+  ? {
+      id: 'admin-1',
+      nombre: 'Camilo Alvarez',
+      correo: 'camilo.alvarez@ejemplo.com',
+      rol: 'administrador',
+      perfilConfigurado: true,
+    }
+  : leerLS<Usuario>(STORAGE_KEYS.usuario, {
+      id: 'user-1',
+      nombre: 'Carolina',
+      correo: 'carolina@ejemplo.com',
+      rol: 'usuario',
+      perfilConfigurado: false,
+    });
   escribirLS(STORAGE_KEYS.usuario, usuario);
   return usuario;
 }
@@ -77,10 +75,9 @@ export async function registrar(datos: {
 }): Promise<Usuario> {
   await delay();
 
-  // 1. Evaluamos dinámicamente si el correo ingresado tiene el prefijo
   const esAdmin = datos.correo.trim().toLowerCase().startsWith('admin');
 
-  // 2. Construimos el usuario asignando el rol y un ID coherente
+
   const usuario: Usuario = {
     id: esAdmin ? `admin-${Date.now()}` : `user-${Date.now()}`,
     nombre: datos.nombre,
@@ -109,7 +106,7 @@ export async function cerrarSesion(): Promise<void> {
   localStorage.removeItem(STORAGE_KEYS.usuario);
 }
 
-// ---------- Recursos (RF02, RF06) ----------
+
 
 function obtenerRecursosBase(): Recurso[] {
   return leerLS<Recurso[]>(STORAGE_KEYS.recursos, RECURSOS_MOCK);
@@ -148,7 +145,7 @@ export async function eliminarRecurso(id: string): Promise<void> {
   escribirLS(STORAGE_KEYS.recursos, actuales);
 }
 
-// ---------- Bitácora emocional (RF03) ----------
+
 
 export async function listarBitacora(): Promise<RegistroBitacora[]> {
   await delay(150);
@@ -165,14 +162,13 @@ export async function registrarEstado(registro: Omit<RegistroBitacora, 'id'>): P
   return nuevo;
 }
 
-// ---------- Directorio (RF04) ----------
+
 
 export async function listarDirectorio(): Promise<EntradaDirectorio[]> {
   await delay(200);
   return DIRECTORIO_MOCK;
 }
 
-// ---------- Favoritos (RF05) ----------
 
 export async function listarFavoritos(): Promise<string[]> {
   await delay(100);
@@ -189,7 +185,7 @@ export async function alternarFavorito(recursoId: string): Promise<string[]> {
   return siguiente;
 }
 
-// ---------- Métricas (RF07) ----------
+
 
 export async function obtenerMetricas(): Promise<{
   porRecurso: MetricaRecurso[];

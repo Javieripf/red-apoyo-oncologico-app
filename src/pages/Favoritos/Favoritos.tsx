@@ -19,8 +19,6 @@ const Favoritos: React.FC = () => {
   const [cargando, setCargando] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Reemplazo de useEffect: Garantiza que la lista se refresque 
-  // cada vez que el usuario entra a la pestaña de Favoritos.
   useIonViewWillEnter(() => {
     cargar();
   });
@@ -28,7 +26,6 @@ const Favoritos: React.FC = () => {
   const cargar = async () => {
     setCargando(true);
     try {
-      // Promise.all optimiza los tiempos de espera al lanzar ambas peticiones en paralelo
       const [todos, ids] = await Promise.all([api.listarRecursos(), api.listarFavoritos()]);
       setRecursos(todos.filter((r) => ids.includes(r.id)));
       setFavoritos(ids);
@@ -43,7 +40,6 @@ const Favoritos: React.FC = () => {
     try {
       const nuevos = await api.alternarFavorito(id);
       setFavoritos(nuevos);
-      // Remueve el recurso de la vista inmediatamente para dar una sensación de fluidez
       setRecursos((prev) => prev.filter((r) => nuevos.includes(r.id)));
     } catch (err) {
       setError('Ocurrió un error al actualizar tus favoritos.');
@@ -54,7 +50,7 @@ const Favoritos: React.FC = () => {
     <IonPage>
       <Header titulo="Favoritos" />
       <IonContent className="ra-content-with-rail">
-        <div className="ion-padding" style={{ maxWidth: 640, margin: '0 auto' }}>
+        <div className="ra-page-wrap ra-page-narrow">
           {cargando ? (
             <div style={{ display: 'flex', justifyContent: 'center', padding: 'var(--ra-space-6)' }}>
               <IonSpinner name="crescent" color="primary" />
@@ -77,7 +73,6 @@ const Favoritos: React.FC = () => {
           )}
         </div>
 
-        {/* Retroalimentación visual en caso de que falle la petición GET o POST */}
         <IonToast 
           isOpen={!!error} 
           message={error ?? ''} 

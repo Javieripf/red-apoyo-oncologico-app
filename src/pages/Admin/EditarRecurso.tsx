@@ -23,7 +23,6 @@ const EditarRecurso: React.FC = () => {
   const [guardando, setGuardando] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Reemplazo de useEffect para eludir el caché de vistas de Ionic
   useIonViewWillEnter(() => {
     setCargando(true);
     setError(null);
@@ -48,7 +47,6 @@ const EditarRecurso: React.FC = () => {
       
       await api.actualizarRecurso(id, valores);
       
-      // replace evita que el admin pueda retroceder accidentalmente a esta misma vista
       history.replace('/admin/recursos');
     } catch {
       setError('No pudimos guardar los cambios. Intenta nuevamente.');
@@ -61,8 +59,8 @@ const EditarRecurso: React.FC = () => {
     <IonPage>
       <Header titulo="Editar recurso" mostrarVolver defaultHref="/admin/recursos" />
       
-      <IonContent className="ra-content-with-rail">
-        <div className="ion-padding" style={{ maxWidth: 720, margin: '0 auto' }}>
+      <IonContent className="ra-content">
+        <div className="ra-page-wrap">
           {cargando ? (
             <div style={{ display: 'flex', justifyContent: 'center', padding: 'var(--ra-space-6)' }}>
               <IonSpinner name="crescent" color="primary" />

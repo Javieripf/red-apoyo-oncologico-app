@@ -18,7 +18,6 @@ import * as api from '@/services/api';
 import { MetricaRecurso, MetricasPorPerfil } from '@/types';
 import { ETIQUETAS_RELACION } from '@/data/mockData';
 
-// Refactorizado para usar el componente nativo IonProgressBar
 const BarraHorizontal: React.FC<{ etiqueta: string; valor: number; max: number; color: string }> = ({ etiqueta, valor, max, color }) => {
   const porcentaje = max > 0 ? valor / max : 0;
   
@@ -47,7 +46,7 @@ const Metricas: React.FC = () => {
   const [cargando, setCargando] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Garantiza que las métricas se recarguen cada vez que el admin entra a la pestaña
+  
   useIonViewWillEnter(() => {
     setCargando(true);
     api.obtenerMetricas()
@@ -70,8 +69,8 @@ const Metricas: React.FC = () => {
     <IonPage>
       <Header titulo="Métricas" mostrarSalir />
       
-      <IonContent className="ra-content-with-rail">
-        <div className="ion-padding" style={{ maxWidth: 720, margin: '0 auto' }}>
+      <IonContent className="ra-content">
+        <div className="ra-page-wrap">
           <AdminNav />
 
           {cargando ? (
@@ -80,7 +79,7 @@ const Metricas: React.FC = () => {
             </div>
           ) : (
             <>
-              {/* Uso de IonCard para estructurar el Dashboard nativo */}
+              
               <IonCard className="ion-no-margin" style={{ marginBottom: 'var(--ra-space-5)', boxShadow: 'none', border: '1px solid var(--ra-color-line)' }}>
                 <IonCardHeader>
                   <IonCardTitle style={{ fontSize: 16, color: 'var(--ra-color-ink)' }}>Recursos más consultados</IonCardTitle>

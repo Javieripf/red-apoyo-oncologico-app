@@ -23,7 +23,7 @@ const Recursos: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [mensaje, setMensaje] = useState<string | null>(null);
 
-  // Hook de ciclo de vida nativo de Ionic en lugar de useEffect
+
   useIonViewWillEnter(() => {
     setCargando(true);
     setError(null);
@@ -62,11 +62,11 @@ const Recursos: React.FC = () => {
     <IonPage>
       <Header titulo="Recursos" />
       <IonContent className="ra-content-with-rail">
-        <div className="ion-padding" style={{ maxWidth: 640, margin: '0 auto' }}>
+        <div className="ra-page-wrap ra-page-narrow">
           
           <IonSegment
             scrollable
-            mode="md" // Fuerza el estilo Material Design (línea inferior) por coherencia visual en iOS y Android
+            mode="md" 
             value={categoria}
             onIonChange={(e) => setCategoria((e.detail.value as CategoriaRecurso | 'todos') ?? 'todos')}
             style={{ marginBottom: 'var(--ra-space-4)' }}
@@ -101,7 +101,6 @@ const Recursos: React.FC = () => {
           )}
         </div>
 
-        {/* Notificaciones para el usuario */}
         <IonToast
           isOpen={!!mensaje}
           message={mensaje ?? ''}

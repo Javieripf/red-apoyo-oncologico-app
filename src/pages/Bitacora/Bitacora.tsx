@@ -94,7 +94,7 @@ const Bitacora: React.FC = () => {
     <IonPage>
       <Header titulo="Bitácora emocional" />
       <IonContent className="ra-content-with-rail">
-        <div className="ion-padding" style={{ maxWidth: 560, margin: '0 auto' }}>
+        <div className="ra-page-wrap ra-page-narrow">
           
           {!confirmado ? (
             <>
@@ -102,14 +102,13 @@ const Bitacora: React.FC = () => {
                 ¿Cómo te sientes hoy? Este registro es personal, no es un diagnóstico ni reemplaza una evaluación profesional.
               </p>
 
-              {/* Implementación de IonGrid para maquetación responsiva nativa */}
               <IonGrid className="ion-no-padding" style={{ margin: 'var(--ra-space-5) 0' }}>
                 <IonRow style={{ gap: 'var(--ra-space-3)', justifyContent: 'center' }}>
                   {Object.entries(ETIQUETAS_ESTADO).map(([valor, { label, icon }]) => {
                     const activo = seleccionado === valor;
                     return (
                       <IonCol 
-                        size="5.8" // Aproximadamente 50% menos el gap
+                        size="5.8" 
                         key={valor}
                         onClick={() => setSeleccionado(valor as EstadoEmocional)}
                         className="ra-surface ion-activatable ripple-parent"

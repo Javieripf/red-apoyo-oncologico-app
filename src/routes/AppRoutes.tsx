@@ -3,15 +3,9 @@ import { IonRouterOutlet, IonSpinner } from '@ionic/react';
 import { IonReactRouter } from '@ionic/react-router';
 import { Route, Redirect } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
-
-// Vistas Públicas
 import Login from '@/pages/Login/Login';
 import Registro from '@/pages/Registro/Registro';
-
-// Contenedor de Usuario (Menú inferior)
 import TabsLayout from '@/layouts/TabsLayout';
-
-// Vistas de Administrador
 import AdminInicio from '@/pages/Admin/AdminInicio';
 import GestionRecursos from '@/pages/Admin/GestionRecursos';
 import CrearRecurso from '@/pages/Admin/CrearRecurso';
@@ -33,8 +27,7 @@ const AppRoutes: React.FC = () => {
     <IonReactRouter>
       <IonRouterOutlet>
         
-        {/* ================= RUTAS PÚBLICAS ================= */}
-        {/* Si el usuario ya inició sesión, lo expulsamos del login/registro */}
+
         <Route exact path="/login" render={() => (
           usuario ? <Redirect to={usuario.rol === 'administrador' ? '/admin/inicio' : '/inicio'} /> : <Login />
         )} />
@@ -42,7 +35,7 @@ const AppRoutes: React.FC = () => {
           usuario ? <Redirect to={usuario.rol === 'administrador' ? '/admin/inicio' : '/inicio'} /> : <Registro />
         )} />
 
-        {/* ================= RUTAS ADMINISTRADOR ================= */}
+
         <Route exact path="/admin/inicio" render={() => (
           usuario?.rol === 'administrador' ? <AdminInicio /> : <Redirect to="/login" />
         )} />
@@ -59,8 +52,7 @@ const AppRoutes: React.FC = () => {
           usuario?.rol === 'administrador' ? <Metricas /> : <Redirect to="/login" />
         )} />
 
-        {/* ================= RUTAS DE USUARIO (CON TABS) ================= */}
-        {/* Al pasar un arreglo de rutas exactas, evitamos el choque con /login o /admin */}
+ 
         <Route 
           path={['/inicio', '/recursos', '/directorio', '/bitacora', '/favoritos', '/perfil']} 
           render={() => {
@@ -70,7 +62,6 @@ const AppRoutes: React.FC = () => {
           }} 
         />
 
-        {/* ================= RUTA RAÍZ (PUNTO DE ENTRADA) ================= */}
         <Route exact path="/" render={() => {
           if (!usuario) return <Redirect to="/login" />;
           return usuario.rol === 'administrador' ? <Redirect to="/admin/inicio" /> : <Redirect to="/inicio" />;

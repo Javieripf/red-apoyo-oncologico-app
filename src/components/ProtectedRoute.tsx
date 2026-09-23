@@ -9,10 +9,6 @@ interface ProtectedRouteProps extends RouteProps {
   children: React.ReactNode;
 }
 
-// Controla el acceso según autenticación y rol (RNF03, FT05).
-// - Sin sesión → redirige a /login.
-// - Con sesión pero rol incorrecto → redirige a la vista principal de su rol,
-//   en lugar de dejarlo entrar a rutas administrativas.
 const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ rolRequerido, children, ...rest }) => {
   const { usuario, cargando } = useAuth();
 
@@ -33,7 +29,7 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ rolRequerido, children,
         }
 
         if (rolRequerido && usuario.rol !== rolRequerido) {
-          return <Redirect to={usuario.rol === 'administrador' ? '/admin/inicio' : '/app/inicio'} />;
+          return <Redirect to={usuario.rol === 'administrador' ? '/admin/inicio' : '/inicio'} />;
         }
 
         return children;

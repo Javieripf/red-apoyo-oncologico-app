@@ -25,21 +25,19 @@ const Login: React.FC = () => {
   const [enviando, setEnviando] = useState(false);
   const [tocado, setTocado] = useState(false);
 
-  // Redirección si ya hay sesión activa
   if (!cargando && usuario) {
     return <Redirect to={usuario.rol === 'administrador' ? '/admin/inicio' : '/inicio'} />;
   }
 
-  // Validaciones individuales
+  
   const emailValido = correo.includes('@') && correo.includes('.');
-  const passValida = password.length >= 6; // Validación básica exigida por la rúbrica
+  const passValida = password.length >= 6; 
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setTocado(true);
     setErrorGlobal(null);
 
-    // Bloquea el envío si las validaciones individuales fallan
     if (!emailValido || !passValida) {
       return;
     }
@@ -47,7 +45,6 @@ const Login: React.FC = () => {
     setEnviando(true);
     try {
       const u = await ingresar(correo, password);
-      // Reemplaza el historial para que no puedan volver al login presionando "Atrás"
       history.replace(u.rol === 'administrador' ? '/admin/inicio' : '/inicio');
     } catch {
       setErrorGlobal('No pudimos verificar tus credenciales. Verifica tu correo y contraseña.');
@@ -56,39 +53,28 @@ const Login: React.FC = () => {
     }
   };
 
-  // Funciones auxiliares para clases de error nativas
   const claseErrorEmail = `ra-surface ${tocado && !emailValido ? 'ion-invalid ion-touched' : ''}`;
   const claseErrorPass = `ra-surface ${tocado && !passValida ? 'ion-invalid ion-touched' : ''}`;
 
   return (
     <IonPage>
-      <IonContent fullscreen className="ion-padding">
-        <div style={{ maxWidth: 400, margin: '0 auto', paddingTop: '14vh' }}>
+      <IonContent fullscreen className="ra-auth-content">
+        <div className="ra-auth-shell">
+          <div className="ra-auth-card">
           
-          <div
-            style={{
-              width: 48,
-              height: 48,
-              borderRadius: 12,
-              background: 'var(--ra-color-pine)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              marginBottom: 'var(--ra-space-5)',
-            }}
-          >
+          <div className="ra-brand-mark">
             <IonIcon icon={leafOutline} style={{ color: 'white', fontSize: 24 }} />
           </div>
 
-          <h1 className="ra-display" style={{ fontSize: 30, margin: '0 0 6px' }}>
+          <h1 className="ra-auth-title">
             Red de Apoyo
           </h1>
-          <p style={{ color: 'var(--ra-color-ink-soft)', margin: '0 0 var(--ra-space-6)', lineHeight: 1.5 }}>
+          <p className="ra-section-subtitle">
             Recursos y acompañamiento para quienes sostienen a una persona con cáncer.
           </p>
 
           <form onSubmit={handleSubmit}>
-            <IonItem className={claseErrorEmail} style={{ marginBottom: 'var(--ra-space-3)', borderRadius: '8px' }} lines="none">
+            <IonItem className={claseErrorEmail + ' ra-form-item'} lines="none">
               <IonInput
                 label="Correo electrónico *"
                 labelPlacement="stacked"
@@ -101,7 +87,7 @@ const Login: React.FC = () => {
               />
             </IonItem>
 
-            <IonItem className={claseErrorPass} style={{ marginBottom: 'var(--ra-space-4)', borderRadius: '8px' }} lines="none">
+            <IonItem className={claseErrorPass + ' ra-form-item'} lines="none">
               <IonInput
                 label="Contraseña *"
                 labelPlacement="stacked"
@@ -112,7 +98,6 @@ const Login: React.FC = () => {
                 onIonInput={(e) => setPassword(e.detail.value ?? '')}
                 errorText="La contraseña es obligatoria (mín. 6 caracteres)"
               >
-                {/* Componente nativo para mostrar/ocultar contraseña */}
                 <IonInputPasswordToggle slot="end" />
               </IonInput>
             </IonItem>
@@ -125,24 +110,24 @@ const Login: React.FC = () => {
               </IonText>
             )}
 
-            <IonButton expand="block" type="submit" disabled={enviando} style={{ marginTop: 'var(--ra-space-3)' }}>
+            <IonButton className="ra-primary-button" expand="block" type="submit" disabled={enviando}>
               Iniciar sesión
             </IonButton>
           </form>
 
-          <p style={{ textAlign: 'center', marginTop: 'var(--ra-space-5)', fontSize: 14 }}>
+          <p style={{ textAlign: 'center', marginTop: 16, fontSize: 14 }}>
             ¿Aún no tienes una cuenta?{' '}
             <IonRouterLink routerLink="/registro" style={{ color: 'var(--ra-color-clay)', fontWeight: 600 }}>
               Regístrate
             </IonRouterLink>
           </p>
           
-          <p style={{ textAlign: 'center', marginTop: 'var(--ra-space-4)', fontSize: 12.5, color: 'var(--ra-color-ink-soft)' }}>
+          <p className="ra-auth-footnote">
             Consejo de prueba: ingresa con un correo que empiece con "admin" para ver el panel administrador.
           </p>
+          </div>
         </div>
 
-        {/* Feedback visual de carga que bloquea interacciones */}
         <IonLoading isOpen={enviando} message="Iniciando sesión..." spinner="crescent" />
       </IonContent>
     </IonPage>

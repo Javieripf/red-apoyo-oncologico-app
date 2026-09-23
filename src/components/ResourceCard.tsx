@@ -21,22 +21,15 @@ interface ResourceCardProps {
 const ResourceCard: React.FC<ResourceCardProps> = ({ recurso, esFavorito = false, onToggleFavorito }) => {
   return (
     <IonCard 
-      className="ion-no-margin" 
-      style={{ 
-        marginBottom: 'var(--ra-space-4)', 
-        boxShadow: '0 4px 12px rgba(0,0,0,0.04)', 
-        borderRadius: '12px',
-        border: '1px solid var(--ra-color-line)',
-        background: 'var(--ra-color-paper)'
-      }}
+      className="ion-no-margin ra-resource-card" 
+
     >
-      <IonCardHeader style={{ paddingBottom: '8px' }}>
+      <IonCardHeader>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-          <IonCardSubtitle style={{ color: 'var(--ra-color-clay)', textTransform: 'none', fontWeight: 600, letterSpacing: 'normal', fontSize: '13px' }}>
+          <IonCardSubtitle className="ra-resource-category" style={{ textTransform: 'none', letterSpacing: 'normal' }}>
             {ETIQUETAS_CATEGORIA[recurso.categoria]}
           </IonCardSubtitle>
           
-          {/* Botón de favoritos solo se renderiza si se pasa la función onToggleFavorito */}
           {onToggleFavorito && (
             <IonButton 
               fill="clear" 
@@ -56,30 +49,24 @@ const ResourceCard: React.FC<ResourceCardProps> = ({ recurso, esFavorito = false
           )}
         </div>
         
-        <IonCardTitle style={{ fontSize: '18px', color: 'var(--ra-color-ink)', lineHeight: '1.35', marginTop: '4px' }}>
+        <IonCardTitle className="ra-resource-title">
           {recurso.titulo}
         </IonCardTitle>
       </IonCardHeader>
 
       <IonCardContent>
-        <p style={{ margin: '0 0 16px', fontSize: '14px', color: 'var(--ra-color-ink-soft)', lineHeight: '1.5' }}>
+        <p className="ra-resource-summary">
           {recurso.resumen}
         </p>
         
-        <div style={{ 
-          display: 'flex', 
-          justifyContent: 'space-between', 
-          alignItems: 'center', 
-          borderTop: '1px solid var(--ra-color-line)', 
-          paddingTop: '12px' 
-        }}>
-          <div style={{ display: 'flex', gap: '16px', color: 'var(--ra-color-ink-soft)', fontSize: '13px' }}>
+        <div className="ra-resource-meta">
+          <div className="ra-resource-meta-left">
             <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-              <IonIcon icon={timeOutline} style={{ fontSize: '16px' }} /> 
+              <IonIcon icon={timeOutline} /> 
               {recurso.tiempoLecturaMin} min
             </span>
             <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-              <IonIcon icon={eyeOutline} style={{ fontSize: '16px' }} /> 
+              <IonIcon icon={eyeOutline} /> 
               {recurso.vistas}
             </span>
           </div>
@@ -87,7 +74,7 @@ const ResourceCard: React.FC<ResourceCardProps> = ({ recurso, esFavorito = false
           <IonButton 
             fill="clear" 
             routerLink={`/recursos/${recurso.id}`}
-            style={{ '--color': 'var(--ra-color-pine)', fontWeight: 600, '--padding-end': 0, height: 'auto', margin: 0 }}
+            className="ra-resource-read"
           >
             Leer más
           </IonButton>

@@ -1,16 +1,6 @@
-/*
-  Sistema de diseño — Red de Apoyo Oncológico
-  ---------------------------------------------
-  Paleta pensada para acompañar, no para alarmar: un fondo cálido y
-  neutro, un verde bosque como color de confianza/ancla, un tono
-  arcilla-rosado para lo humano/emocional (bitácora, apoyo) y un dorado
-  apagado para los momentos positivos (logros, confirmaciones).
-  Tipografía: Source Serif 4 para títulos (cercana, editorial, no clínica)
-  e Inter para interfaz y cuerpo (legibilidad alta, RNF01).
-*/
 
 :root {
-  /* Paleta base */
+
   --ra-color-paper: #efe9df;
   --ra-color-paper-raised: #f8f4ec;
   --ra-color-ink: #2a2622;
@@ -26,11 +16,9 @@
   --ra-color-line: rgba(42, 38, 34, 0.14);
   --ra-color-danger: #a6403a;
 
-  /* Tipografía */
   --ra-font-display: 'Source Serif 4', Georgia, 'Times New Roman', serif;
   --ra-font-body: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
 
-  /* Espaciado */
   --ra-space-1: 4px;
   --ra-space-2: 8px;
   --ra-space-3: 12px;
@@ -39,13 +27,10 @@
   --ra-space-6: 32px;
   --ra-space-7: 48px;
 
-  /* Radios — deliberadamente no uniformes: contenido de lectura casi recto,
-     controles interactivos algo más suaves */
   --ra-radius-card: 10px;
   --ra-radius-control: 8px;
   --ra-radius-pill: 999px;
 
-  /* ---- Mapeo a variables de Ionic ---- */
   --ion-font-family: var(--ra-font-body);
   --ion-background-color: var(--ra-color-paper);
   --ion-text-color: var(--ra-color-ink);
@@ -86,7 +71,6 @@
   --ion-border-color: var(--ra-color-line);
 }
 
-/* Utilidades tipográficas compartidas por las páginas */
 .ra-display {
   font-family: var(--ra-font-display);
   font-weight: 600;

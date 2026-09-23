@@ -24,7 +24,7 @@ const AdminInicio: React.FC = () => {
   const [cargando, setCargando] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Garantiza que el contador se actualice si el admin vuelve de crear/editar un recurso
+  
   useIonViewWillEnter(() => {
     setCargando(true);
     api.listarRecursos()
@@ -44,8 +44,8 @@ const AdminInicio: React.FC = () => {
     <IonPage>
       <Header titulo="Panel administrador" mostrarSalir />
       
-      <IonContent className="ra-content-with-rail ion-padding">
-        <div style={{ maxWidth: 720, margin: '0 auto' }}>
+      <IonContent className="ra-content">
+        <div className="ra-page-wrap">
           <AdminNav />
 
           <p style={{ color: 'var(--ra-color-ink-soft)', marginTop: 0 }}>

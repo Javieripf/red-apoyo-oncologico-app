@@ -39,7 +39,7 @@ const Directorio: React.FC = () => {
   const [busqueda, setBusqueda] = useState('');
   const [tipo, setTipo] = useState<TipoDirectorio | 'todos'>('todos');
 
-  // Asegura que el directorio siempre esté actualizado al entrar a la vista
+ 
   useIonViewWillEnter(() => {
     setCargando(true);
     api.listarDirectorio()
@@ -67,7 +67,7 @@ const Directorio: React.FC = () => {
     <IonPage>
       <Header titulo="Directorio de apoyo" mostrarVolver defaultHref="/inicio" />
       <IonContent className="ra-content-with-rail">
-        <div className="ion-padding" style={{ maxWidth: 640, margin: '0 auto' }}>
+        <div className="ra-page-wrap ra-page-narrow">
           
           <IonSearchbar
             placeholder="Buscar por nombre, especialidad o ciudad"
@@ -103,7 +103,6 @@ const Directorio: React.FC = () => {
             </div>
           ) : (
             visibles.map((e) => (
-              // Implementación de IonCard para cumplir con el estándar estructural de Ionic
               <IonCard 
                 key={e.id} 
                 className="ion-no-margin" 
