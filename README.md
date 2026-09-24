@@ -252,3 +252,188 @@ Estas funciones apoyan el funcionamiento general del sistema y se documentan sep
 
 ### RNF07 - Rendimiento Las operaciones habituales de consulta deberán ejecutarse de forma fluida, evitando bloqueos de la interfaz y demoras innecesarias.
 
+# 7. Arquitectura de Navegación y UX 
+
+## Rutas principales y secundarias 
+
+### Rutas públicas 
+| Ruta | Vista | Descripción |
+|---|---|---|
+| `/login` | Inicio de sesión | Permite ingresar al sistema. | 
+| `/registro` | Registro | Permite crear una cuenta. | 
+
+### Rutas protegidas del Usuario
+
+| Ruta | Vista | Descripción |
+|---|---|---|
+| `/inicio` | Inicio | Presenta recursos priorizados y acceso al directorio. | 
+| `/recursos` | Recursos | Permite explorar y filtrar recursos por categoría. | 
+| `/recursos/:id` | Detalle de recurso | Permite consultar el contenido de un recurso específico. | 
+| `/directorio` | Directorio | Permite buscar y filtrar especialistas y grupos de apoyo. |
+| `/bitacora` | Bitácora emocional | Permite registrar estados emocionales y notas. | 
+| `/favoritos` | Favoritos | Presenta los recursos guardados por el usuario. |
+| `/perfil` | Perfil | Permite consultar y actualizar la relación con la persona en tratamiento. | 
+
+### Rutas protegidas del Administrador 
+
+| Ruta | Vista | Descripción |
+|---|---|---| 
+| `/admin/inicio` | Inicio administrador | Presenta el acceso general a la administración. |
+| `/admin/recursos` | Gestión de recursos | Lista los recursos y permite administrarlos. | 
+| `/admin/recursos/nuevo` | Crear recurso | Permite registrar un nuevo recurso. |
+| `/admin/recursos/:id/editar` | Editar recurso | Permite modificar un recurso existente. | 
+| `/admin/metricas` | Métricas | Presenta métricas de uso de recursos y perfiles. |
+
+## Relaciones jerárquicas entre vistas 
+
+```text 
+
+Aplicación
+│
+├── Rutas públicas
+│ ├── Login
+│ └── Registro
+│
+└── Rutas protegidas
+    │
+    ├── Usuario
+    │ ├── Inicio
+    │ ├── Recursos
+    │ │ └── Detalle de recurso
+    │ ├── Directorio
+    │ ├── Bitácora
+    │ ├── Favoritos
+    │ └── Perfil
+    │
+    └── Administrador
+        ├── Inicio
+        ├── Gestión de recursos
+        │ ├── Crear recurso
+        │ └── Editar recurso
+        └── Métricas
+```
+
+## Diferenciación de acceso según roles 
+
+El acceso a las vistas protegidas depende del estado de sesión y del rol del usuario. 
+
+### Matriz de acceso por 
+
+rol | Funcionalidad | Usuario | Administrador | 
+|---|:---:|:---:| 
+| Configurar perfil de apoyo | ✓ | — | 
+| Consultar recursos personalizados | ✓ | — | 
+| Consultar detalle de recurso | ✓ | ✓ | 
+| Registrar estado emocional | ✓ | — | 
+| Consultar directorio | ✓ | — | 
+| Gestionar favoritos | ✓ | — | 
+| Crear recursos | — | ✓ |
+| Editar recursos | — | ✓ | 
+| Eliminar recursos | — | ✓ | 
+| Consultar métricas | — | ✓ | 
+
+### Control de acceso a rutas Las rutas públicas permiten el acceso sin sesión. 
+
+Las rutas protegidas redirigen a `/login` cuando no existe una sesión válida. Un usuario con rol de administrador es enviado al área administrativa y un usuario normal al área principal de usuario. 
+
+## Flujos de Tareas 
+
+### Flujo de Tarea 1: Configuración del perfil y consulta de recursos 
+
+**Rol:** Usuario 
+**Objetivo:** configurar su relación con la persona en tratamiento y consultar recursos personalizados. 
+
+```text 
+Inicio
+  ↓
+Login
+  ↓
+Inicio de usuario
+  ↓
+¿Perfil configurado?
+  ├── No → Seleccionar relación → Guardar perfil
+  │                              ↓
+  └──────────────────────────────┘
+                ↓
+  Cargar recursos por perfil
+                ↓
+        Consultar recurso
+                ↓
+    Ver detalle del recurso
+                ↓
+        Guardar favorito
+```
+
+### Flujo de Tarea 2: Registro en la bitácora emocional 
+
+**Rol:** Usuario 
+**Objetivo:** registrar el estado emocional y consultar recursos sugeridos. 
+```text 
+Inicio
+  ↓
+Bitácora
+  ↓
+Seleccionar estado emocional
+  ↓
+Escribir nota opcional
+  ↓
+Guardar registro
+  ↓
+Mostrar confirmación
+  ↓
+Consultar recursos sugeridos
+```
+
+### Flujo de Tarea 3: Gestión de recursos 
+
+**Rol:** Administrador 
+
+**Objetivo:** crear, modificar o eliminar un recurso. 
+```text 
+Inicio administrador
+        ↓
+Gestión de recursos
+        ↓
+Seleccionar acción
+    ┌────┼───────────┐
+    ↓    ↓           ↓
+Crear  Editar     Eliminar
+    ↓    ↓           ↓
+  Completar formulario
+         ↓
+    Validar datos
+         ↓
+  Guardar / confirmar
+         ↓
+  Volver al listado
+```
+
+## Puntos críticos de interacción 
+
+1. **Inicio de sesión y acceso según rol:** los errores deben comunicarse claramente y las rutas no autorizadas deben redirigirse correctamente.
+2. **Configuración del perfil:** el usuario debe entender que la relación elegida se utiliza para organizar los recursos que verá primero.
+3. **Consulta de recursos:** las categorías y tarjetas deben facilitar la identificación del contenido y evitar una presentación excesivamente densa.
+4. **Bitácora emocional:** el registro debe entregar retroalimentación clara al guardar el estado y no perder el contenido ingresado accidentalmente.
+5. **Directorio:** la búsqueda y los filtros deben ser visibles y fáciles de utilizar.
+6. **Favoritos:** el cambio de estado debe entregar una confirmación clara y permitir consultar posteriormente los recursos guardados.
+7. **Cambio entre móvil y web:** la ubicación visual puede adaptarse al dispositivo, pero las etiquetas y comportamientos principales deben mantenerse consistentes. La navegación principal del usuario utiliza una **barra inferior tanto en móvil como en web**.
+
+## Justificación Técnica 
+
+### Usabilidad 
+
+Se utiliza una estructura de navegación simple y consistente, con acceso directo a las funciones principales del usuario. La barra inferior permite reconocer rápidamente Inicio, Recursos, Bitácora, Favoritos y Perfil. 
+
+### Eficiencia de interacción 
+
+Las acciones frecuentes se encuentran a pocos pasos de distancia. El detalle de los recursos utiliza rutas específicas y la gestión de favoritos puede realizarse desde el listado o desde el detalle. 
+
+### Claridad estructural 
+
+La aplicación separa las rutas públicas, las rutas de usuario y las rutas de administrador. 
+
+Esto facilita comprender qué funcionalidades corresponden a cada rol. 
+
+### Escalabilidad 
+
+La implementación mantiene una separación entre `pages`, `components`, `routes`, `services`, `context`, `types` y `theme`, permitiendo incorporar nuevas funcionalidades sin concentrar toda la lógica en una sola vista.
