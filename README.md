@@ -15,7 +15,7 @@ Frontend de una aplicación web y móvil desarrollada con **Ionic + React + Type
 6. [Requerimientos](#6-requerimientos) - [Requerimientos Funcionales](#requerimientos-funcionales) - [Funcionalidades Transversales](#funcionalidades-transversales) - [Requerimientos No Funcionales](#requerimientos-no-funcionales)
 7. [Arquitectura de Navegación y UX](#7-arquitectura-de-navegación-y-ux) - [Rutas principales y secundarias](#rutas-principales-y-secundarias) - [Relaciones jerárquicas](#relaciones-jerárquicas-entre-vistas) - [Diferenciación por roles](#diferenciación-de-acceso-según-roles) - [Flujos principales](#flujos-de-tareas) - [Puntos críticos](#puntos-críticos-de-interacción) - [Justificación técnica](#justificación-técnica)
 8. [Bocetos UI/UX y Figma](#8-bocetos-uiux-y-figma)
-9. [Frontend con Ionic React](#9-frontend-con-ionic-react) - [Pantallas implementadas](#pantallas-implementadas) - [Estructura del proyecto](#estructura-del-proyecto) - [Librerías principales](#librerías-principales)
+9. [Frontend con Ionic React](#9-frontend-con-ionic-react) - [Pantallas implementadas](#pantallas-implementadas) - [Estructura del proyecto](#estructura-del-proyecto) 
 10. [Instalación y ejecución](#10-instalación-y-ejecución)
 
 
