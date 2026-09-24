@@ -13,16 +13,17 @@ Frontend de una aplicación web y móvil desarrollada con **Ionic + React + Type
 4. [Objetivos del Proyecto](#4-objetivos-del-proyecto)
 5. [Usuarios Objetivo](#5-usuarios-objetivo) - [Roles del Sistema](#roles-del-sistema) - [Proto-personas](#proto-personas) - [Supuestos utilizados](#supuestos-utilizados-para-las-proto-personas)
 6. [Requerimientos](#6-requerimientos) - [Requerimientos Funcionales](#requerimientos-funcionales) - [Funcionalidades Transversales](#funcionalidades-transversales) - [Requerimientos No Funcionales](#requerimientos-no-funcionales)
+7. [Arquitectura de Navegación y UX](#7-arquitectura-de-navegación-y-ux) - [Rutas principales y secundarias](#rutas-principales-y-secundarias) - [Relaciones jerárquicas](#relaciones-jerárquicas-entre-vistas) - [Diferenciación por roles](#diferenciación-de-acceso-según-roles) - [Flujos principales](#flujos-de-tareas) - [Puntos críticos](#puntos-críticos-de-interacción) - [Justificación técnica](#justificación-técnica)
+8. [Bocetos UI/UX y Figma](#8-bocetos-uiux-y-figma)
+9. [Frontend con Ionic React](#9-frontend-con-ionic-react) - [Pantallas implementadas](#pantallas-implementadas) - [Estructura del proyecto](#estructura-del-proyecto) - [Librerías principales](#librerías-principales)
+10. [Instalación y ejecución](#10-instalación-y-ejecución)
 
 
 ---
 
 ## 1. Identificación del Equipo
 
-* **Nombre del Equipo:** Nombre del equipo
-* **Integrantes:**
-- **Javier Poblete**
-- Desarrollo frontend y diseño UI/UX
+- **Javier Poblete** - Desarrollo frontend y diseño UI/UX
 - **Joaquin Perez** - Desarrollo de vistas y componentes frontend
 - **Camilo Alvarez** - Documentación frontend y apoyo en diseño/prototipado
 - **Vicente Bravo** - Arquitectura de navegación y configuración de rutas frontend
@@ -434,6 +435,137 @@ La aplicación separa las rutas públicas, las rutas de usuario y las rutas de a
 
 Esto facilita comprender qué funcionalidades corresponden a cada rol. 
 
+
+
 ### Escalabilidad 
 
 La implementación mantiene una separación entre `pages`, `components`, `routes`, `services`, `context`, `types` y `theme`, permitiendo incorporar nuevas funcionalidades sin concentrar toda la lógica en una sola vista.
+
+# 8. Bocetos UI/UX y Figma
+
+**Figma:**
+
+# 9. Frontend con Ionic React
+
+## Pantallas implementadas 
+
+El frontend actual contiene más de cuatro vistas funcionales y utiliza componentes propios de Ionic. 
+
+### Usuario 
+- Login.
+- Registro.
+- Inicio.
+- Recursos.
+- Detalle de recurso.
+- Directorio.
+- Bitácora emocional.
+- Favoritos.
+- Perfil.
+
+### Administrador 
+
+- Inicio administrador.
+- Gestión de recursos.
+- Crear recurso.
+- Editar recurso.
+- Métricas.
+
+### Componentes Ionic utilizados 
+
+Entre los componentes utilizados se encuentran: 
+
+- `IonPage`
+- `IonHeader`
+- `IonContent`
+- `IonTabs`
+- `IonTabBar`
+- `IonTabButton`
+- `IonRouterOutlet`
+- `IonInput`
+- `IonTextarea`
+- `IonSelect`
+- `IonSelectOption`
+- `IonButton`
+- `IonCard`
+- `IonSearchbar`
+- `IonSegment`
+- `IonSegmentButton`
+- `IonCheckbox`
+- `IonToast`
+- `IonSpinner`
+- `IonLoading`
+
+## Estructura del proyecto 
+```text 
+src/
+├── components/
+│     ├── BottomNavigation
+│     ├── Header
+│     ├── ProtectedRoute
+│     └── ResourceCard
+│
+├── context/
+│     └── AuthContext.tsx
+│
+├── data/
+│     └── mockData.ts
+│
+├── pages/
+│     ├── Login/
+│     ├── Registro/
+│     ├── Inicio/
+│     ├── Recursos/
+│     ├── Bitacora/
+│     ├── Directorio/
+│     ├── Favoritos/
+│     ├── Perfil/
+│     └── Admin/
+│
+├── routes/
+│     └── AppRoutes.tsx
+│
+├── services/
+│     └── api.ts
+│
+├── theme/
+│     ├── variables.css
+│     └── app.css
+│
+└── types/
+       └── index.ts
+```
+
+# 10. Instalación y ejecución 
+
+## Requisitos 
+
+- Node.js instalado.
+- npm instalado.
+- Navegador web moderno.
+
+## Instalación 
+
+```bash 
+npm install
+```
+## Ejecución en desarrollo 
+
+```bash 
+npm run dev
+```
+La aplicación estará disponible abriendo el link se salga en la terminal
+
+
+## Datos de demostración 
+
+La EP1 utiliza datos simulados y `localStorage` para demostrar la navegación y las funcionalidades del frontend mientras se implementa el backend. 
+
+Para demostración: 
+
+- Un correo que no comience con `admin` entra como **usuario**.
+- Un correo que comience con `admin` entra como **administrador**, por ejemplo `admin@redapoyo.cl`.
+- En esta etapa la contraseña no se valida contra un backend real.
+
+> Esta lógica es únicamente de demostración para la EP1 y despues se reemplazara por autenticación real con backend en la EP2.
+
+
