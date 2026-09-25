@@ -318,9 +318,9 @@ Aplicación
 
 El acceso a las vistas protegidas depende del estado de sesión y del rol del usuario. 
 
-### Matriz de acceso por 
+### Matriz de acceso por rol 
 
-rol | Funcionalidad | Usuario | Administrador | 
+| Funcionalidad | Usuario | Administrador | 
 |---|:---:|:---:| 
 | Configurar perfil de apoyo | ✓ | — | 
 | Consultar recursos personalizados | ✓ | — | 
@@ -558,7 +558,7 @@ La aplicación estará disponible abriendo el link se salga en la terminal
 
 ## Datos de demostración 
 
-La EP1 utiliza datos simulados y `localStorage` para demostrar la navegación y las funcionalidades del frontend mientras se implementa el backend. 
+La EP1 utiliza datos simulados para demostrar la navegación y las funcionalidades del frontend mientras se implementa el backend. 
 
 Para demostración: 
 
