@@ -37,7 +37,20 @@ Frontend de una aplicación web y móvil desarrollada con **Ionic + React + Type
 
 ## 3. Justificación del Problema 
 
-El diagnóstico de cáncer no afecta únicamente a la persona diagnosticada. Las personas que forman parte de su red de apoyo pueden enfrentar cambios en sus rutinas, responsabilidades, preocupaciones y necesidades emocionales durante el proceso de acompañamiento. Una dificultad relevante corresponde al acceso a información adecuada para cada tipo de acompañante. La información disponible en Internet puede ser extensa, técnica o estar enfocada principalmente en el paciente, sin considerar las necesidades de familiares, parejas, hijos, amigos o cuidadores. Por ejemplo, una persona que cumple el rol de cuidador puede necesitar información relacionada con autocuidado y apoyo diario, mientras que un hijo puede buscar orientación para comprender cómo acompañar emocionalmente a su familiar. Esta diferencia hace necesario organizar la información de acuerdo con el contexto del usuario. En este contexto, el proyecto propone una aplicación web y móvil que centralice recursos de apoyo y los organice según el perfil del usuario. La plataforma considera recursos educativos, herramientas de autocuidado, una bitácora emocional, favoritos y un directorio de especialistas y grupos de apoyo. La aplicación no busca reemplazar la atención médica o psicológica profesional. Su propósito es facilitar el acceso a información organizada y recursos de apoyo complementarios.
+- El diagnóstico de cáncer no afecta únicamente a la persona diagnosticada, sino también a las personas que forman parte de su entorno cercano. Familiares, parejas, amigos y cuidadores pueden asumir tareas de apoyo cotidiano, coordinación de cuidados y acompañamiento emocional, además de enfrentar necesidades propias de información y autocuidado.
+
+- Una dificultad relevante corresponde al acceso a información adecuada para quienes cumplen estos roles. Una revisión sistemática sobre las necesidades de información de familiares y parejas de personas con cáncer identificó diversas categorías de información requerida y señaló que las necesidades relacionadas con el apoyo y los cuidados pueden permanecer insatisfechas. Asimismo, una revisión sistemática sobre pacientes con cáncer avanzado y sus cuidadores identificó las necesidades de información y de cuidado entre las principales necesidades no satisfechas de los cuidadores informales.
+
+- El acceso a información mediante Internet también presenta dificultades. Una evaluación de recursos disponibles en línea para cuidadores de personas con cáncer encontró problemas relacionados con su adecuación, legibilidad, calidad y utilidad, lo que evidencia que disponer de información en Internet no garantiza que esta sea clara o apropiada para las necesidades de quienes cuidan.
+
+- En este contexto, el proyecto propone una aplicación web y móvil que centralice recursos de apoyo y los organice según el perfil del usuario. La plataforma considera recursos educativos, herramientas de autocuidado, una bitácora emocional, favoritos y un directorio de especialistas y grupos de apoyo. La aplicación no busca reemplazar la atención médica o psicológica profesional. Su propósito es facilitar el acceso a información organizada y recursos de apoyo complementarios.
+
+### Fuentes secundarias
+
+- National Cancer Institute (NCI). [Cuidadores informales de pacientes con cáncer (PDQ®)](https://www.cancer.gov/espanol/cancer/sobrellevar/familia-y-amigos/familiares-a-cargo-pdq)
+- Ministerio de Salud de Chile (MINSAL). [Hospital Fricke desarrolla taller de autocuidado para cuidadores de enfermos oncológicos](https://www.minsal.cl/hospital-fricke-desarrolla-taller-de-autocuidado-para-cuidadores-de-enfermos-oncologicos/)
+- SciELO Chile. [Bienestar psicológico, estrategias de afrontamiento y apoyo social en cuidadores informales](https://www.scielo.cl/scielo.php?pid=S0718-69242016000300010&script=sci_arttext)
+- Ministerio de Salud de Chile (MINSAL). [Recomendaciones para linfoma y tumores sólidos pediátricos](https://diprece.minsal.cl/guias-de-practica-clinicas/linfoma-y-tumores-solidos-pediatricos/)
 
 ## 4. Objetivos del Proyecto 
 
@@ -239,19 +252,19 @@ Estas funciones apoyan el funcionamiento general del sistema y se documentan sep
 
 ## Requerimientos No Funcionales 
 
-### RNF01 - Usabilidad y accesibilidad La interfaz deberá utilizar lenguaje claro, tamaños de texto legibles, contraste adecuado, controles identificables y una jerarquía visual consistente. 
+### RNF01 - Usabilidad y accesibilidad: La interfaz deberá utilizar lenguaje claro, tamaños de texto legibles, contraste adecuado, controles identificables y una jerarquía visual consistente. 
 
-### RNF02 - Diseño adaptable La interfaz deberá funcionar en dispositivos móviles y navegadores web, manteniendo accesibles las funciones principales y evitando pérdida de información. 
+### RNF02 - Diseño adaptable: La interfaz deberá funcionar en dispositivos móviles y navegadores web, manteniendo accesibles las funciones principales y evitando pérdida de información. 
 
-### RNF03 - Tolerancia a errores Ante errores de conexión o solicitudes fallidas, la aplicación deberá mostrar mensajes comprensibles para el usuario y evitar exponer detalles técnicos del sistema. 
+### RNF03 - Tolerancia a errores: Ante errores de conexión o solicitudes fallidas, la aplicación deberá mostrar mensajes comprensibles para el usuario y evitar exponer detalles técnicos del sistema. 
 
-### RNF04 - Seguridad y privacidad Las funcionalidades protegidas deberán requerir autenticación y el acceso deberá diferenciarse según el rol. Las credenciales y datos sensibles deberán manejarse de forma segura en la integración con el backend. 
+### RNF04 - Seguridad y privacidad: Las funcionalidades protegidas deberán requerir autenticación y el acceso deberá diferenciarse según el rol. Las credenciales y datos sensibles deberán manejarse de forma segura en la integración con el backend. 
 
-### RNF05 - Escalabilidad y modularidad El frontend deberá mantener una organización basada en páginas, componentes, rutas, servicios, contexto, tipos y estilos compartidos para facilitar futuras ampliaciones. 
+### RNF05 - Escalabilidad y modularidad: El frontend deberá mantener una organización basada en páginas, componentes, rutas, servicios, contexto, tipos y estilos compartidos para facilitar futuras ampliaciones. 
 
-### RNF06 - Compatibilidad La aplicación deberá ser compatible con navegadores web modernos y mantener una experiencia coherente entre computador y dispositivo móvil. 
+### RNF06 - Compatibilidad: La aplicación deberá ser compatible con navegadores web modernos y mantener una experiencia coherente entre computador y dispositivo móvil. 
 
-### RNF07 - Rendimiento Las operaciones habituales de consulta deberán ejecutarse de forma fluida, evitando bloqueos de la interfaz y demoras innecesarias.
+### RNF07 - Rendimiento: Las operaciones habituales de consulta deberán ejecutarse de forma fluida, evitando bloqueos de la interfaz y demoras innecesarias.
 
 # 7. Arquitectura de Navegación y UX 
 
