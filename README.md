@@ -442,8 +442,14 @@ Esto facilita comprender qué funcionalidades corresponden a cada rol.
 La implementación mantiene una separación entre `pages`, `components`, `routes`, `services`, `context`, `types` y `theme`, permitiendo incorporar nuevas funcionalidades sin concentrar toda la lógica en una sola vista.
 
 # 8. Bocetos UI/UX y Figma
+## Prototipo del Proyecto en Figma
 
-**Figma:**
+Puede revisar y probar el prototipo interactivo de la aplicación móvil en Figma a través del siguiente botón o enlace directo:
+
+[![Figma](https://img.shields.io/badge/Figma-Prototipo_Móvil-F24E1E?style=for-the-badge&logo=figma&logoColor=white)](https://www.figma.com/design/ArFJgsRMkSPx9ynuS6EP2q/Ingeneria-Web-y-Movil?node-id=0-1&t=wJgUQyJEX9MYP6sl-1)
+
+> **Enlace directo:** [Ver Prototipo Interactivo en Figma](https://www.figma.com/proto/ArFJgsRMkSPx9ynuS6EP2q/Ingeneria-Web-y-Movil?node-id=21-172&t=eQtSfggjVVPXrLnN-1&scaling=scale-down&content-scaling=fixed&page-id=0%3A1&starting-point-node-id=21%3A172)
+
 
 # 9. Frontend con Ionic React
 
