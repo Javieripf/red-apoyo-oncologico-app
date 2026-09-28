@@ -463,8 +463,11 @@ Puede revisar y probar el prototipo interactivo de la aplicación móvil en Figm
 
 > **Enlace directo:** [Ver Prototipo Interactivo Movil en Figma](https://www.figma.com/proto/ArFJgsRMkSPx9ynuS6EP2q/Ingeneria-Web-y-Movil?node-id=21-172&t=eQtSfggjVVPXrLnN-1&scaling=scale-down&content-scaling=fixed&page-id=0%3A1&starting-point-node-id=21%3A172)
 
+
 Puede revisar y probar el prototipo interactivo de la aplicación Web en Figma a través del siguiente botón o enlace directo:
-[![Figma](https://img.shields.io/badge/Figma-Prototipo_Web-F24E1E?style=for-the-badge&logo=figma&logoColor=white)]([https://www.figma.com/design/ArFJgsRMkSPx9ynuS6EP2q/Ingeneria-Web-y-Movil?node-id=0-1&t=wJgUQyJEX9MYP6sl-1]
+
+[![Figma](https://img.shields.io/badge/Figma-Prototipo_Web-F24E1E?style=for-the-badge&logo=figma&logoColor=white)](https://www.figma.com/design/ArFJgsRMkSPx9ynuS6EP2q/Ingeneria-Web-y-Movil?node-id=1-2&t=es6vxbOcyCaW4nyd-1)
+
 > **Enlace directo:** [Ver Prototipo Interactivo Web en Figma](https://www.figma.com/design/ArFJgsRMkSPx9ynuS6EP2q/Ingeneria-Web-y-Movil?node-id=1-2&t=es6vxbOcyCaW4nyd-1)
 
 # 9. Frontend con Ionic React
