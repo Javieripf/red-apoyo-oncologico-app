@@ -229,16 +229,21 @@ Los perfiles anteriores se construyen a partir de los siguientes supuestos preli
 Un requerimiento funcional describe una acción o comportamiento que el sistema deberá proporcionar. 
 
 | ID | Requerimiento funcional | Rol |
-|---|---|---|
-| **RF01** | El sistema deberá permitir al usuario configurar su perfil indicando la relación que mantiene con la persona en tratamiento. | Usuario | 
-| **RF02** | El sistema deberá presentar recursos personalizados de acuerdo con el tipo de relación configurado por el usuario. | Usuario |
-| **RF03** | El sistema deberá permitir al usuario registrar su estado emocional mediante una bitácora y asociar una nota opcional al registro. | Usuario | 
-| **RF04** | El sistema deberá permitir buscar y filtrar un directorio de especialistas y grupos de apoyo. | Usuario | 
-| **RF05** | El sistema deberá permitir guardar y quitar recursos de una lista de favoritos. | Usuario |
-| **RF06** | El sistema deberá permitir al administrador crear, consultar, modificar y eliminar recursos, además de asociarlos a categorías y perfiles. | Administrador |
-| **RF07** | El sistema deberá permitir al administrador consultar métricas relacionadas con vistas y guardados de recursos y su distribución por perfil. | Administrador | 
+|---|---|---|---|
+| **RF01** | La plataforma registra la relación del usuario con la persona en tratamiento para configurar su perfil de apoyo. | Usuario | 
+| **RF02** | La plataforma filtra los recursos educativos de acuerdo con el perfil configurado para presentar información pertinente. | Usuario | 
+| **RF03** | La plataforma almacena el estado emocional seleccionado para mantener un registro personal de autocuidado. | Usuario | 
+| **RF04** | La plataforma permite buscar entradas del directorio para localizar especialistas y redes de apoyo. | Usuario | 
+| **RF05** | La plataforma filtra los resultados del directorio según el tipo de apoyo para facilitar la identificación de especialistas y grupos. | Usuario | 
+| **RF06** | La plataforma guarda un recurso seleccionado en la lista de favoritos para permitir su consulta posterior. | Usuario | 
+| **RF07** | La plataforma retira un recurso de favoritos para mantener actualizada la lista personal. | Usuario | 
+| **RF08** | La plataforma registra nuevos recursos educativos para ampliar el catálogo disponible. | Administrador | 
+| **RF09** | La plataforma modifica los datos de un recurso existente para mantener su información actualizada. | Administrador |
+| **RF10** | La plataforma elimina un recurso del catálogo para retirar contenido que ya no corresponde mantener disponible. | Administrador | 
+| **RF11** | La plataforma presenta métricas de utilización para apoyar la administración de los recursos disponibles. | Administrador | 
+| **RF12** | La plataforma organiza cronológicamente los registros de la bitácora para facilitar la consulta del historial emocional. | Usuario | 
 
-Los siete requerimientos funcionales corresponden a funcionalidades de dominio y no consideran registro ni autenticación como parte del conjunto principal, de acuerdo con la definición de la EP1. 
+
 
 ## Funcionalidades Transversales 
 
@@ -252,19 +257,16 @@ Estas funciones apoyan el funcionamiento general del sistema y se documentan sep
 
 ## Requerimientos No Funcionales 
 
-### RNF01 - Usabilidad y accesibilidad: La interfaz deberá utilizar lenguaje claro, tamaños de texto legibles, contraste adecuado, controles identificables y una jerarquía visual consistente. 
+| ID | Requerimiento no funcional |
+|---|---|---|
+| **RNF01** | **Usabilidad y accesibilidad:** La aplicación deberá utilizar textos legibles, controles identificables y contraste adecuado. | 
+| **RNF02** | **Diseño adaptable:** La interfaz deberá mantener disponibles las funcionalidades principales en distintos tamaños de pantalla. |
+| **RNF03** | **Tolerancia a errores:** La aplicación deberá informar cuando una operación falle o se complete correctamente. | 
+| **RNF04** | **Seguridad y privacidad:** Los datos personales deberán estar disponibles únicamente para el usuario autorizado. | 
+| **RNF05** | **Protección de credenciales:** Las contraseñas deberán almacenarse de manera segura. | 
+| **RNF06** | **Rendimiento:** Las consultas frecuentes deberán ejecutarse sin demoras excesivas. |
+| **RNF07** | **Compatibilidad:** La aplicación deberá funcionar correctamente en navegadores modernos. | 
 
-### RNF02 - Diseño adaptable: La interfaz deberá funcionar en dispositivos móviles y navegadores web, manteniendo accesibles las funciones principales y evitando pérdida de información. 
-
-### RNF03 - Tolerancia a errores: Ante errores de conexión o solicitudes fallidas, la aplicación deberá mostrar mensajes comprensibles para el usuario y evitar exponer detalles técnicos del sistema. 
-
-### RNF04 - Seguridad y privacidad: Las funcionalidades protegidas deberán requerir autenticación y el acceso deberá diferenciarse según el rol. Las credenciales y datos sensibles deberán manejarse de forma segura en la integración con el backend. 
-
-### RNF05 - Escalabilidad y modularidad: El frontend deberá mantener una organización basada en páginas, componentes, rutas, servicios, contexto, tipos y estilos compartidos para facilitar futuras ampliaciones. 
-
-### RNF06 - Compatibilidad: La aplicación deberá ser compatible con navegadores web modernos y mantener una experiencia coherente entre computador y dispositivo móvil. 
-
-### RNF07 - Rendimiento: Las operaciones habituales de consulta deberán ejecutarse de forma fluida, evitando bloqueos de la interfaz y demoras innecesarias.
 
 # 7. Arquitectura de Navegación y UX 
 
