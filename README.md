@@ -229,7 +229,7 @@ Los perfiles anteriores se construyen a partir de los siguientes supuestos preli
 Un requerimiento funcional describe una acción o comportamiento que el sistema deberá proporcionar. 
 
 | ID | Requerimiento funcional | Rol |
-|---|---|---|---|
+|---|---|---|
 | **RF01** | La plataforma registra la relación del usuario con la persona en tratamiento para configurar su perfil de apoyo. | Usuario | 
 | **RF02** | La plataforma filtra los recursos educativos de acuerdo con el perfil configurado para presentar información pertinente. | Usuario | 
 | **RF03** | La plataforma almacena el estado emocional seleccionado para mantener un registro personal de autocuidado. | Usuario | 
@@ -258,7 +258,7 @@ Estas funciones apoyan el funcionamiento general del sistema y se documentan sep
 ## Requerimientos No Funcionales 
 
 | ID | Requerimiento no funcional |
-|---|---|---|
+|---|---|
 | **RNF01** | **Usabilidad y accesibilidad:** La aplicación deberá utilizar textos legibles, controles identificables y contraste adecuado. | 
 | **RNF02** | **Diseño adaptable:** La interfaz deberá mantener disponibles las funcionalidades principales en distintos tamaños de pantalla. |
 | **RNF03** | **Tolerancia a errores:** La aplicación deberá informar cuando una operación falle o se complete correctamente. | 
