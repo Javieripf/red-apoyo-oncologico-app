@@ -53,7 +53,7 @@ const Registro: React.FC = () => {
 
     setEnviando(true);
     try {
-      const u = await registrarse({ nombre: nombre.trim(), correo, tipoRelacion: tipoRelacion as TipoRelacion });
+      const u = await registrarse({ nombre: nombre.trim(), correo, password, tipoRelacion: tipoRelacion as TipoRelacion });
       
       history.replace(u.rol === 'administrador' ? '/admin/inicio' : '/inicio');
       

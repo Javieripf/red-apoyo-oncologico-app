@@ -1,4 +1,4 @@
-import {
+import type {
   EntradaDirectorio,
   MetricaRecurso,
   MetricasPorPerfil,
@@ -7,206 +7,148 @@ import {
   TipoRelacion,
   Usuario,
 } from '@/types';
-import { DIRECTORIO_MOCK, RECURSOS_MOCK } from '@/data/mockData';
 
-// -----------------------------------------------------------------------
-// Capa de acceso a datos. Hoy simula la API REST con datos
-// en memoria para que las pantallas se construyan como  tendrá el backend real.
-// -----------------------------------------------------------------------
+// EP2: solicitudes reales a Express + PostgreSQL. Sin datos simulados.
+export const BASE_URL = (import.meta.env.VITE_API_URL ?? 'http://localhost:3000/api').replace(/\/$/, '');
+const TOKEN_KEY = 'ra_ep2_jwt';
 
-export const BASE_URL = import.meta.env.VITE_API_URL ?? 'http://localhost:3000/api';
+interface ApiResponse<T> { data: T }
+interface ApiErrorResponse { error?: { codigo?: string; mensaje?: string } }
 
-const delay = (ms = 300) => new Promise((resolve) => setTimeout(resolve, ms));
+type Method = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
 
-const STORAGE_KEYS = {
-  usuario: 'ra_usuario',
-  bitacora: 'ra_bitacora',
-  favoritos: 'ra_favoritos',
-  recursos: 'ra_recursos',
-};
-
-function leerLS<T>(key: string, fallback: T): T {
-  try {
-    const raw = localStorage.getItem(key);
-    return raw ? (JSON.parse(raw) as T) : fallback;
-  } catch {
-    return fallback;
+export class ApiError extends Error {
+  constructor(public status: number, message: string) {
+    super(message);
+    this.name = 'ApiError';
   }
 }
 
-function escribirLS<T>(key: string, value: T) {
+function getToken(): string | null { return sessionStorage.getItem(TOKEN_KEY); }
+function saveToken(token: string) { sessionStorage.setItem(TOKEN_KEY, token); }
+function clearToken() { sessionStorage.removeItem(TOKEN_KEY); }
+
+async function request<T>(path: string, method: Method = 'GET', body?: unknown): Promise<T> {
+  const token = getToken();
+  let response: Response;
   try {
-    localStorage.setItem(key, JSON.stringify(value));
-  } catch {
-    
-  }
-}
-
-
-
-export async function login(correo: string, _password: string): Promise<Usuario> {
-  await delay();
-  const esAdmin = correo.trim().toLowerCase().startsWith('admin');
-  const usuario: Usuario = esAdmin
-  
-  // Usuario de prueba utilizado para simular la sesión según el rol (aunque se puede probar creando otro)
-  ? {
-      id: 'admin-1',
-      nombre: 'Camilo Alvarez',
-      correo: 'camilo.alvarez@ejemplo.com',
-      rol: 'administrador',
-      perfilConfigurado: true,
-    }
-  : leerLS<Usuario>(STORAGE_KEYS.usuario, {
-      id: 'user-1',
-      nombre: 'Carolina',
-      correo: 'carolina@ejemplo.com',
-      rol: 'usuario',
-      perfilConfigurado: false,
+    response = await fetch(`${BASE_URL}${path}`, {
+      method,
+      headers: {
+        ...(body !== undefined ? { 'Content-Type': 'application/json' } : {}),
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      },
+      ...(body !== undefined ? { body: JSON.stringify(body) } : {}),
     });
-  escribirLS(STORAGE_KEYS.usuario, usuario);
-  return usuario;
+  } catch {
+    throw new Error('No se pudo conectar con el backend. Comprueba que npm run dev esté activo en el servidor.');
+  }
+  if (!response.ok) {
+    const errorBody = (await response.json().catch(() => ({}))) as ApiErrorResponse;
+    if (response.status === 401 && token) {
+      clearToken();
+      window.dispatchEvent(new Event('ra:session-expired'));
+    }
+    throw new ApiError(response.status, errorBody.error?.mensaje ?? `Error HTTP ${response.status}`);
+  }
+  if (response.status === 204) return undefined as T;
+  const result = (await response.json()) as ApiResponse<T>;
+  return result.data;
+}
+
+interface AuthResult { usuario: Usuario; token: string }
+export async function login(correo: string, password: string): Promise<Usuario> {
+  const result = await request<AuthResult>('/auth/login', 'POST', { correo, password });
+  saveToken(result.token);
+  return result.usuario;
 }
 
 export async function registrar(datos: {
   nombre: string;
   correo: string;
+  password: string;
   tipoRelacion: TipoRelacion;
 }): Promise<Usuario> {
-  await delay();
+  const result = await request<AuthResult>('/auth/register', 'POST', datos);
+  saveToken(result.token);
+  return result.usuario;
+}
 
-  const esAdmin = datos.correo.trim().toLowerCase().startsWith('admin');
-
-
-  const usuario: Usuario = {
-    id: esAdmin ? `admin-${Date.now()}` : `user-${Date.now()}`,
-    nombre: datos.nombre,
-    correo: datos.correo,
-    rol: esAdmin ? 'administrador' : 'usuario',
-    tipoRelacion: datos.tipoRelacion,
-    perfilConfigurado: true,
-  };
-  
-  escribirLS(STORAGE_KEYS.usuario, usuario);
-  return usuario;
+export async function restaurarSesion(): Promise<Usuario | null> {
+  if (!getToken()) return null;
+  try {
+    return await request<Usuario>('/auth/me');
+  } catch {
+    clearToken();
+    return null;
+  }
 }
 
 export async function actualizarPerfil(usuario: Usuario): Promise<Usuario> {
-  await delay(150);
-  escribirLS(STORAGE_KEYS.usuario, usuario);
-  return usuario;
-}
-
-export function obtenerSesion(): Usuario | null {
-  return leerLS<Usuario | null>(STORAGE_KEYS.usuario, null);
+  return request<Usuario>('/auth/me', 'PATCH', { tipoRelacion: usuario.tipoRelacion });
 }
 
 export async function cerrarSesion(): Promise<void> {
-  await delay(100);
-  localStorage.removeItem(STORAGE_KEYS.usuario);
-}
-
-
-
-function obtenerRecursosBase(): Recurso[] {
-  return leerLS<Recurso[]>(STORAGE_KEYS.recursos, RECURSOS_MOCK);
+  clearToken();
 }
 
 export async function listarRecursos(filtroPerfil?: TipoRelacion): Promise<Recurso[]> {
-  await delay();
-  const todos = obtenerRecursosBase();
-  if (!filtroPerfil) return todos;
-  return todos.filter((r) => r.perfiles.includes(filtroPerfil));
+  const params = filtroPerfil ? `?perfil=${encodeURIComponent(filtroPerfil)}` : '';
+  return request<Recurso[]>(`/recursos${params}`);
 }
 
 export async function obtenerRecurso(id: string): Promise<Recurso | undefined> {
-  await delay(150);
-  return obtenerRecursosBase().find((r) => r.id === id);
+  try {
+    return await request<Recurso>(`/recursos/${encodeURIComponent(id)}`);
+  } catch (error) {
+    if (error instanceof ApiError && error.status === 404) return undefined;
+    throw error;
+  }
 }
 
 export async function crearRecurso(recurso: Omit<Recurso, 'id' | 'vistas' | 'guardados'>): Promise<Recurso> {
-  await delay();
-  const nuevo: Recurso = { ...recurso, id: `r-${Date.now()}`, vistas: 0, guardados: 0 };
-  const actuales = [nuevo, ...obtenerRecursosBase()];
-  escribirLS(STORAGE_KEYS.recursos, actuales);
-  return nuevo;
+  return request<Recurso>('/recursos', 'POST', recurso);
 }
 
 export async function actualizarRecurso(id: string, cambios: Partial<Recurso>): Promise<Recurso | undefined> {
-  await delay();
-  const actuales = obtenerRecursosBase().map((r) => (r.id === id ? { ...r, ...cambios } : r));
-  escribirLS(STORAGE_KEYS.recursos, actuales);
-  return actuales.find((r) => r.id === id);
+  return request<Recurso>(`/recursos/${encodeURIComponent(id)}`, 'PUT', cambios);
 }
 
 export async function eliminarRecurso(id: string): Promise<void> {
-  await delay();
-  const actuales = obtenerRecursosBase().filter((r) => r.id !== id);
-  escribirLS(STORAGE_KEYS.recursos, actuales);
+  return request<void>(`/recursos/${encodeURIComponent(id)}`, 'DELETE');
 }
 
-
-
 export async function listarBitacora(): Promise<RegistroBitacora[]> {
-  await delay(150);
-  return leerLS<RegistroBitacora[]>(STORAGE_KEYS.bitacora, []).sort((a, b) =>
-    b.fecha.localeCompare(a.fecha)
-  );
+  return request<RegistroBitacora[]>('/bitacora');
 }
 
 export async function registrarEstado(registro: Omit<RegistroBitacora, 'id'>): Promise<RegistroBitacora> {
-  await delay();
-  const nuevo: RegistroBitacora = { ...registro, id: `b-${Date.now()}` };
-  const actuales = [nuevo, ...leerLS<RegistroBitacora[]>(STORAGE_KEYS.bitacora, [])];
-  escribirLS(STORAGE_KEYS.bitacora, actuales);
-  return nuevo;
+  // La fecha se asigna en PostgreSQL, no en el navegador.
+  return request<RegistroBitacora>('/bitacora', 'POST', { estado: registro.estado, nota: registro.nota });
 }
-
-
 
 export async function listarDirectorio(): Promise<EntradaDirectorio[]> {
-  await delay(200);
-  return DIRECTORIO_MOCK;
+  return request<EntradaDirectorio[]>('/directorio');
 }
 
-
 export async function listarFavoritos(): Promise<string[]> {
-  await delay(100);
-  return leerLS<string[]>(STORAGE_KEYS.favoritos, []);
+  return request<string[]>('/favoritos');
 }
 
 export async function alternarFavorito(recursoId: string): Promise<string[]> {
-  await delay(100);
-  const actuales = leerLS<string[]>(STORAGE_KEYS.favoritos, []);
-  const siguiente = actuales.includes(recursoId)
-    ? actuales.filter((id) => id !== recursoId)
-    : [...actuales, recursoId];
-  escribirLS(STORAGE_KEYS.favoritos, siguiente);
-  return siguiente;
+  const actuales = await listarFavoritos();
+  const path = `/favoritos/${encodeURIComponent(recursoId)}`;
+  if (actuales.includes(recursoId)) {
+    await request<void>(path, 'DELETE');
+  } else {
+    await request<{ recursoId: string }>(path, 'POST');
+  }
+  return listarFavoritos();
 }
-
-
 
 export async function obtenerMetricas(): Promise<{
   porRecurso: MetricaRecurso[];
   porPerfil: MetricasPorPerfil[];
 }> {
-  await delay(250);
-  const recursos = obtenerRecursosBase();
-  const porRecurso: MetricaRecurso[] = recursos
-    .map((r) => ({ recursoId: r.id, titulo: r.titulo, vistas: r.vistas, guardados: r.guardados }))
-    .sort((a, b) => b.vistas - a.vistas);
-
-  const acumulado = new Map<TipoRelacion, number>();
-  recursos.forEach((r) => {
-    r.perfiles.forEach((perfil) => {
-      acumulado.set(perfil, (acumulado.get(perfil) ?? 0) + r.vistas);
-    });
-  });
-  const porPerfil: MetricasPorPerfil[] = Array.from(acumulado.entries()).map(([tipoRelacion, vistas]) => ({
-    tipoRelacion,
-    vistas,
-  }));
-
-  return { porRecurso, porPerfil };
+  return request<{ porRecurso: MetricaRecurso[]; porPerfil: MetricasPorPerfil[] }>('/metricas');
 }

@@ -123,7 +123,7 @@ const Login: React.FC = () => {
           </p>
           
           <p className="ra-auth-footnote">
-            Consejo de prueba: ingresa con un correo que empiece con "admin" para ver el panel administrador.
+            Ingresa con una cuenta registrada. El acceso a administración depende del rol asignado por el servidor.
           </p>
           </div>
         </div>

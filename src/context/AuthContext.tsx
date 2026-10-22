@@ -18,8 +18,17 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [cargando, setCargando] = useState(true);
 
   useEffect(() => {
-    setUsuario(api.obtenerSesion());
-    setCargando(false);
+    let activo = true;
+    api.restaurarSesion()
+      .then((sesion) => { if (activo) setUsuario(sesion); })
+      .finally(() => { if (activo) setCargando(false); });
+
+    const sesionVencida = () => setUsuario(null);
+    window.addEventListener('ra:session-expired', sesionVencida);
+    return () => {
+      activo = false;
+      window.removeEventListener('ra:session-expired', sesionVencida);
+    };
   }, []);
 
   const ingresar: AuthContextValue['ingresar'] = async (correo, password) => {
