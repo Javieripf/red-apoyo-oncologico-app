@@ -85,6 +85,5 @@ backend/
 [![Node.js Version](https://img.shields.io/badge/Node.js->=20.0.0-green.svg)](https://nodejs.org/)
 [![Framework](https://img.shields.io/badge/Express-4.21.2-blue.svg)](https://expressjs.com/)
 [![Database](https://img.shields.io/badge/PostgreSQL-14+-blue.svg)](https://www.postgresql.org/)
-[![License](https://img.shields.io/badge/License-MIT-yellow.svg)](#)
 
 ---
