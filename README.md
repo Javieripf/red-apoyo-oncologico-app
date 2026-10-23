@@ -4,10 +4,10 @@
 
 ## 1. Identificación del Equipo y Distribución de Responsabilidades (Backend)
 
-* **Javier Poblete:** Configuración del servidor Express, arquitectura de rutas (`routes/`), controladores principales (`controllers/`) y manejo unificado de respuestas y errores HTTP.
-* **Joaquin Perez:** Configuración de la base de datos PostgreSQL (`config/db.js`), diseño del esquema relacional (`schema.sql`), modelos de datos (`models/`) y consultas parametrizadas para la prevención de SQL Injection.
-* **Camilo Alvarez:** Desarrollo del script de datos semilla (`seed.sql`), implementación de pruebas unitarias/funcionales (`node --test`), documentación técnica y elaboración de la colección de endpoints para pruebas.
-* **Vicente Bravo:** Middlewares de seguridad y autenticación (`authMiddleware.js`), implementación de JSON Web Tokens (JWT), cifrado de contraseñas con `bcryptjs` y configuración de políticas CORS.
+* **Javier Poblete:** Configuración del servidor Express, arquitectura de rutas routes, controladores principales controllers y manejo unificado de respuestas y errores HTTP.
+* **Joaquin Perez:** Configuración de la base de datos PostgreSQL config/db.js, diseño del esquema relacional schema.sql, modelos de datos models y consultas parametrizadas para la prevención de SQL Injection.
+* **Camilo Alvarez:** Desarrollo del script de datos semilla seed.sql, implementación de pruebas unitarias/funcionales (node --test), documentación técnica y elaboración de la colección de endpoints para pruebas.
+* **Vicente Bravo:** Middlewares de seguridad y autenticación authMiddleware.js, implementación de JSON Web Tokens (JWT), cifrado de contraseñas con bcryptjs y configuración de políticas CORS.
 
 ---
 
@@ -22,9 +22,9 @@ Durante el proceso oncológico, los cuidadores informales enfrentan una alta sob
 
 ## 3. Funcionalidades Principales
 
-* **Autenticación y Seguridad:** Registro e inicio de sesión seguro con encriptación de contraseñas mediante `bcryptjs` y firmas digitales `JWT`.
-* **Control de Acceso Basado en Roles (RBAC):** Middlewares para restringir accesos según rol (`usuario` o `administrador`).
-* **CRUD de Recursos e Información:** Creación, edición, consulta y eliminación de recursos con filtrado por categoría y perfil (`pareja`, `hijo_a`, `cuidador_a`, etc.).
+* **Autenticación y Seguridad:** Registro e inicio de sesión seguro con encriptación de contraseñas mediante bcryptjs y firmas digitales JWT.
+* **Control de Acceso Basado en Roles (RBAC):** Middlewares para restringir accesos según rol usuario o administrador.
+* **CRUD de Recursos e Información:** Creación, edición, consulta y eliminación de recursos con filtrado por categoría y perfil (pareja, hijo_a, cuidador_a, etc.).
 * **Bitácora Emocional:** Almacenamiento e historial cronológico de estados anímicos y notas personales.
 * **Directorio y Favoritos:** Búsqueda de especialistas/grupos de apoyo y guardado de recursos.
 * **Métricas para Administradores:** Indicadores de consumo, recursos más visualizados y guardados.
@@ -36,10 +36,10 @@ Durante el proceso oncológico, los cuidadores informales enfrentan una alta sob
 * **Entorno de Ejecución:** Node.js (v20)
 * **Framework Backend:** Express.js (v4.21.2)
 * **Base de Datos Relacional:** PostgreSQL (v14)
-* **Autenticación y Cifrado:** JSON Web Token (`jsonwebtoken`), `bcryptjs`
-* **Conector BD:** Driver nativo `pg` (Pool de conexiones y consultas parametrizadas)
-* **Seguridad y CORS:** Middleware `cors` configurado para orígenes explícitos
-* **Pruebas:** Test runner nativo de Node.js (`node --test`)
+* **Autenticación y Cifrado:** JSON Web Token (jsonwebtoken), bcryptjs
+* **Conector BD:** Driver nativo pg (Pool de conexiones y consultas parametrizadas)
+* **Seguridad y CORS:** Middleware cors configurado para orígenes explícitos
+* **Pruebas:** Test runner nativo de Node.js (node --test)
 
 ---
 
@@ -76,12 +76,15 @@ backend/
 ├── app.js                # Configuración principal de Express y CORS
 ├── package.json          # Dependencias y scripts de Node.js
 ├── seed-admin.js         # Script para seeding de usuario Administrador inicial
-└── server.js             # Entry point del servidor
-
+└── server.js             # Entry point del servidor;
+```
 ---
 
-## Bibliografia
+## 6. Bibliografía
+
 [![Node.js Version](https://img.shields.io/badge/Node.js->=20.0.0-green.svg)](https://nodejs.org/)
 [![Framework](https://img.shields.io/badge/Express-4.21.2-blue.svg)](https://expressjs.com/)
 [![Database](https://img.shields.io/badge/PostgreSQL-14+-blue.svg)](https://www.postgresql.org/)
 [![License](https://img.shields.io/badge/License-MIT-yellow.svg)](#)
+
+---
