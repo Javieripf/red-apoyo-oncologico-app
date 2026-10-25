@@ -1,5 +1,19 @@
 # Red de Apoyo Oncológico — Backend API RESTful
 
+## Índice
+
+1. [Descripción y alcance](#1-descripción-y-alcance)
+2. [Identificación del Equipo y Distribución de Responsabilidades (Backend)](#2-identificación-del-equipo-y-distribución-de-responsabilidades-backend)
+3. [Tecnologías utilizadas](#3-tecnologías-utilizadas)
+4. [Arquitectura y estructura de carpetas](#4-arquitectura-y-estructura-de-carpetas)
+5. [Preparación y ejecución local](#5-preparación-y-ejecución-local)
+6. [Documentación de la API REST](#6-documentación-de-la-api-rest)
+7. [Seguridad y autenticación JWT](#7-seguridad-y-autenticación-jwt)
+8. [Integración frontend–backend](#8-integración-frontendbackend)
+9. [Pruebas funcionales y evidencias EP2](#9-pruebas-funcionales-y-evidencias-ep2)
+10. [Modelo relacional PostgreSQL](#10-modelo-relacional-postgresql)
+
+
 ---
 ## 1. Descripción y alcance
 
@@ -327,7 +341,7 @@ El directorio se consulta con `GET /api/directorio`; la interfaz permite filtrar
 | CORS | Lista configurada mediante `FRONTEND_ORIGIN` | Configurado en `app.js` |
 | Manejo de errores | Códigos HTTP y mensajes JSON controlados | Casos 401/403/404 comprobados |
 | Minimización de datos | La API no devuelve `password_hash` en las respuestas de perfil y login | Implementado en consultas/controlador |
-| Separación de bitácoras | Consultas por `req.user.id` | Revisado en el código; no equivale a auditoría externa |
+| Separación de bitácoras | Consultas por `req.user.id` | Revisado en el código |
 
 ## 8. Integración frontend–backend
 
@@ -342,7 +356,7 @@ En **EP1**, parte de la interfaz utilizaba información simulada. En **EP2**, `s
 | Bitácora emocional | `/bitacora` | Sí, registro y lectura |
 | Favoritos | `/favoritos`, `/favoritos/:id` | Sí, agregar, consultar, persistir y eliminar |
 | Directorio | `/directorio` | Sí, listado y filtros |
-| Métricas administrativas | `/metricas` | Confirmado en Postman; falta verificación definitiva de la vista Ionic |
+| Métricas administrativas | `/metricas` | Confirmado en Postman |
 
 ### Flujo de prueba realizado
 
