@@ -452,3 +452,49 @@ erDiagram
 ```
 
 Se utilizan claves primarias, claves foráneas, restricciones `CHECK`, índices y eliminaciones en cascada para información dependiente. `recursos` y `usuarios` utilizan identificadores de tipo texto; los recursos iniciales están identificados como `r1`–`r8` y los nuevos usuarios/recursos reciben UUID generados en la aplicación. La tabla `directorio` contiene **solo entradas ficticias** de prueba.
+
+
+## Evidencias de Pruebas y Funcionamiento (API REST Backend)
+
+### 1. Autenticación y Control de Acceso (`/api/auth`)
+* **Registro de nuevo usuario (`POST /api/auth/register` - `201 Created`):**
+  ![Registro de Usuario](Activos/Imágenes/Postman_registrar_usuario.png)
+
+* **Denegación de acceso sin Token JWT (`401 Unauthorized`):**
+  ![Error 401 Sin Token](Activos/Imágenes/Postman_acceso_sin_token.png)
+
+* **Denegación por falta de Permisos / Rol Insuficiente (`403 Forbidden`):**
+  ![Error 403 Sin Permisos](Activos/Imágenes/Postman_usuario_sin_permisos.png)
+
+---
+
+### 2. Operaciones CRUD en Recursos (`/api/recursos`)
+* **Crear Recurso (`POST /api/recursos` - `201 Created` - Exclusivo Admin):**
+  ![Crear Recurso](Activos/Imágenes/Postman_crear_recurso.png)
+
+* **Consultar Recurso por ID (`GET /api/recursos/:id` - `200 OK`):**
+  ![Consultar Recurso](Activos/Imágenes/Postman_consultar_recurso.png)
+
+* **Editar Recurso (`PUT /api/recursos/:id` - `200 OK` - Exclusivo Admin):**
+  ![Editar Recurso](Activos/Imágenes/Postman_editar_recurso.png)
+
+* **Eliminar Recurso (`DELETE /api/recursos/:id` - `204 No Content` - Exclusivo Admin):**
+  ![Eliminar Recurso](Activos/Imágenes/Postman_eliminar_recurso.png)
+
+---
+
+### 3. Módulos del Dominio (`/api/bitacora`, `/api/directorio`, `/api/favoritos`, `/api/metricas`)
+* **Registrar y Consultar Bitácora Emocional (`/api/bitacora`):**
+  ![Registrar Bitácora](Activos/Imágenes/Probar_la_bitácora_emocional_Registrar_un_estado_emocional.png)
+  ![Consultar Bitácora](Activos/Imágenes/Probar_la_bitácora_emocional_Consultar_el_historial_de_la_bitácora.png)
+
+* **Consultar Directorio de Apoyo (`GET /api/directorio`):**
+  ![Consultar Directorio](Activos/Imágenes/Comprobar_el_directorio.png)
+
+* **Gestión de Recursos Favoritos (`/api/favoritos`):**
+  ![Agregar Favorito](Activos/Imágenes/Probar_los_favoritos_Agregar_un_recurso_a_favoritos.png)
+  ![Consultar Favoritos](Activos/Imágenes/Probar_los_favoritos_Consultar_los_favoritos.png)
+  ![Eliminar Favorito](Activos/Imágenes/Probar_los_favoritos_Elimina_el_favorito.png)
+
+* **Consultar Métricas del Sistema (`GET /api/metricas` - Exclusivo Admin):**
+  ![Consultar Métricas](Activos/Imágenes/Consultar_las_métricas.png)
