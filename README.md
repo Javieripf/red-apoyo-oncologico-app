@@ -378,3 +378,63 @@ En **EP1**, parte de la interfaz utilizaba información simulada. En **EP2**, `s
 | P14 | Listar directorio | `200 OK` |
 | P15 | Consultar métricas administrativas | `200 OK` en Postman |
 
+### 9.2. Pruebas automatizadas del backend
+
+Ejecutadas desde la raíz de la rama `backend`:
+
+```powershell
+npm test
+```
+
+**Resultado reportado:**
+
+```text
+ℹ tests 8
+ℹ pass 8
+ℹ fail 0
+ℹ skipped 0
+```
+
+Estas ocho pruebas revisan: normalización y validación de correos, longitud mínima de contraseña, recurso válido, perfiles duplicados, categoría inválida, tiempo de lectura negativo y relación no reconocida. **Son pruebas de validación**, no una batería exhaustiva de seguridad o integración de la base de datos.
+
+### 9.3. Compilación del frontend
+
+Ejecutada desde la carpeta de la rama `frontend`:
+
+```powershell
+npm run build
+```
+
+**Resultado reportado:** `tsc && vite build`, **253 módulos transformados** y compilación completada en **2,72 segundos**. Vite emitió una advertencia de un chunk JavaScript superior a **500 kB**, que no impidió la compilación.
+
+### 9.4. Evidencias
+
+Las capturas reales se organizan en [`docs/evidencias/`](docs/evidencias/)
+
+## 10. Modelo relacional PostgreSQL
+
+El modelo se encuentra en [`sql/schema.sql`](sql/schema.sql) y sus datos de demostración en [`sql/seed.sql`](sql/seed.sql). Contiene **siete tablas**:
+
+| Tabla | Propósito |
+|---|---|
+| `usuarios` | Cuentas, rol y tipo de relación de apoyo |
+| `recursos` | Material educativo y metadatos |
+| `recurso_perfiles` | Relación de muchos a muchos entre recursos y perfiles |
+| `favoritos` | Recursos guardados por cada usuario |
+| `bitacora` | Registros emocionales privados por usuario |
+| `directorio` | Especialistas/grupos de demostración |
+| `visualizaciones` | Visitas a recursos utilizadas para métricas |
+
+### Relaciones principales
+
+```mermaid
+erDiagram
+    USUARIOS ||--o{ BITACORA : registra
+    USUARIOS ||--o{ FAVORITOS : guarda
+    RECURSOS ||--o{ FAVORITOS : recibe
+    RECURSOS ||--o{ RECURSO_PERFILES : corresponde
+    USUARIOS ||--o{ VISUALIZACIONES : realiza
+    RECURSOS ||--o{ VISUALIZACIONES : recibe
+```
+
+Se utilizan claves primarias, claves foráneas, restricciones `CHECK`, índices y eliminaciones en cascada para información dependiente. `recursos` y `usuarios` utilizan identificadores de tipo texto; los recursos iniciales están identificados como `r1`–`r8` y los nuevos usuarios/recursos reciben UUID generados en la aplicación. La tabla `directorio` contiene **solo entradas ficticias** de prueba.
