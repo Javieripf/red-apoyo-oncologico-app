@@ -69,37 +69,46 @@ El sistema diferencia dos roles: **usuario**, que utiliza los recursos y registr
 
 
 ```text
+
 backend/
 ├── config/
-│   ├── db.js             # Configuración de pg.Pool y transacciones SQL
-│   └── env.js            # Validación de variables de entorno (.env)
+│   ├── db.js                  # Configuración de pg.Pool y transacciones SQL
+│   └── env.js                 # Validación de variables de entorno (.env)
 ├── controllers/
-│   ├── authController.js     # Lógica de Autenticación, Login y Perfil
-│   ├── domainController.js   # Lógica de Bitácora, Directorio y Favoritos
-│   └── resourceController.js # Lógica CRUD de Recursos
+│   ├── authController.js      # Lógica de Autenticación, Login y Perfil
+│   ├── domainController.js    # Lógica de Bitácora, Directorio y Favoritos
+│   └── resourceController.js  # Lógica CRUD de Recursos
 ├── middlewares/
-│   └── authMiddleware.js     # Validación de JWT y control de roles (requireAuth, requireRole)
+│   └── authMiddleware.js      # Validación de JWT y control de roles
 ├── models/
-│   ├── domainModel.js    # Consultas SQL para Bitácora y Directorio
-│   ├── resourceModel.js  # Consultas SQL para Recursos y Filtros
-│   └── userModel.js      # Consultas SQL para Usuarios y Administradores
+│   ├── domainModel.js         # Consultas SQL para Bitácora y Directorio
+│   ├── resourceModel.js       # Consultas SQL para Recursos y Filtros
+│   └── userModel.js           # Consultas SQL para Usuarios y Administradores
 ├── routes/
-│   ├── authRoutes.js     # Endpoints de autenticación (/api/auth)
-│   ├── domainRoutes.js   # Endpoints de bitácora, directorio y métricas (/api)
-│   └── resourceRoutes.js # Endpoints CRUD de recursos (/api/recursos)
+│   ├── authRoutes.js          # Endpoints de autenticación (/api/auth)
+│   ├── domainRoutes.js        # Endpoints de bitácora, directorio y métricas
+│   └── resourceRoutes.js      # Endpoints CRUD (/api/recursos)
 ├── sql/
-│   ├── schema.sql        # Creación de tablas, PK, FK, restricciones e índices
-│   └── seed.sql          # Datos iniciales para pruebas del sistema
+│   ├── schema.sql             # Creación de tablas, PK, FK, restricciones e índices
+│   └── seed.sql               # Datos iniciales para pruebas del sistema
 ├── tests/
-│   └── validation.test.js # Pruebas unitarias con node --test
+│   └── validation.test.js     # Pruebas unitarias con node --test
 ├── utils/
-│   ├── http.js           # Manejo centralizado de respuestas HTTP y HttpError
-│   └── validation.js     # Validaciones de datos de entrada
-├── .env.example          # Ejemplo de variables de entorno
-├── app.js                # Configuración principal de Express y CORS
-├── package.json          # Dependencias y scripts de Node.js
-├── seed-admin.js         # Script para seeding de usuario Administrador inicial
-└── server.js             # Entry point del servidor;
+│   ├── http.js                # Manejo centralizado de respuestas HTTP
+│   └── validation.js          # Validaciones de datos de entrada
+├── docs/
+│   ├── evidencias/            # Capturas de pruebas en Ionic y Postman
+│   ├── EP2_MODELO_RELACIONAL.md  # Documentación del modelo PostgreSQL                          
+│   └── Red de Apoyo Oncológico/ # Colección Postman con 21 solicitudes HTTP               
+├── .env.example               # Ejemplo de variables de entorno
+├── .gitignore                 # Exclusión de archivos sensibles
+├── app.js                     # Configuración principal de Express y CORS
+├── package.json               # Dependencias y scripts de Node.js
+├── package-lock.json          # Versiones de dependencias
+├── seed-admin.js              # Creación del administrador inicial
+├── server.js                  # Punto de entrada del servidor
+└── README.md                  # Documentación general de EP2
+
 ```
 
 ---
@@ -148,7 +157,7 @@ ADMIN_PASSWORD=CLAVE_ADMINISTRADOR_LOCAL
 ADMIN_NAME=Administrador
 ```
 
-Los valores anteriores son marcadores de ejemplo, **no claves utilizables**. No publicar `.env`, tokens JWT ni contraseñas. Usar `.env.example` solo con valores ficticios.
+Los valores anteriores son marcadores de ejemplo, **no claves utilizables**.
 
 ### 5.3. Iniciar el backend
 
