@@ -1,0 +1,19 @@
+$kind: http-request
+url: "{{base_url}}/auth/login"
+method: POST
+headers:
+  Content-Type: application/json
+body:
+  type: json
+  content: |-
+    {
+      "correo": "{{admin_email}}",
+      "password": "{{admin_password}}"
+    }
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test("HTTP 200", () => pm.response.to.have.status(200));
+      const d=pm.response.json().data; pm.collectionVariables.set('admin_token',d.token); pm.test('Rol administrador',()=>pm.expect(d.usuario.rol).to.eql('administrador'));
+    language: text/javascript
+order: 13000

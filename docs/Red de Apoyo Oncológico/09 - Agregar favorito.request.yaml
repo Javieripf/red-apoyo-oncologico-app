@@ -1,0 +1,10 @@
+$kind: http-request
+url: "{{base_url}}/favoritos/r1"
+method: POST
+headers:
+  Authorization: Bearer {{user_token}}
+scripts:
+  - type: afterResponse
+    code: pm.test("HTTP 201", () => pm.response.to.have.status(201));
+    language: text/javascript
+order: 9000
