@@ -16,7 +16,10 @@ import {
   IonRow,
   IonCol,
   IonSpinner,
-  useIonViewWillEnter
+  useIonViewWillEnter,
+  IonAlert,
+  IonSelect,
+  IonSelectOption
 } from '@ionic/react';
 import Header from '@/components/Header';
 import ResourceCard from '@/components/ResourceCard';
@@ -24,11 +27,11 @@ import * as api from '@/services/api';
 import { EstadoEmocional, Recurso, RegistroBitacora } from '@/types';
 import { ETIQUETAS_ESTADO } from '@/data/mockData';
 
-const CATEGORIA_SUGERIDA: Partial<Record<EstadoEmocional, string[]>> = {
-  ansioso_a: ['r7', 'r2'],
-  triste: ['r1', 'r4'],
-  cansado_a: ['r2', 'r7'],
-  abrumado_a: ['r2', 'r6'],
+const CATEGORIA_SUGERIDA: Partial<Record<EstadoEmocional, Recurso['categoria'][]>> = {
+  ansioso_a: ['apoyo_emocional','autocuidado'],
+  triste: ['apoyo_emocional'],
+  cansado_a: ['autocuidado'],
+  abrumado_a: ['apoyo_emocional','aspectos_practicos'],
 };
 
 const Bitacora: React.FC = () => {
@@ -43,6 +46,36 @@ const Bitacora: React.FC = () => {
   const [cargandoHistorial, setCargandoHistorial] = useState(true);
   
   const [error, setError] = useState<string | null>(null);
+  const [editandoId, setEditandoId] = useState<string | null>(null);
+  const [editEstado, setEditEstado] = useState<EstadoEmocional>('tranquilo_a');
+  const [editNota, setEditNota] = useState('');
+  const [eliminandoId, setEliminandoId] = useState<string | null>(null);
+  const [modificando, setModificando] = useState(false);
+
+  const iniciarEdicion = (item: RegistroBitacora) => {
+    setEditandoId(item.id); setEditEstado(item.estado); setEditNota(item.nota ?? '');
+  };
+  const guardarEdicion = async () => {
+    if (!editandoId || editNota.trim().length > 2000) return;
+    setModificando(true); setError(null);
+    try {
+      const actualizado = await api.modificarRegistroBitacora(editandoId, { estado: editEstado, nota: editNota.trim() });
+      setHistorial((items) => items.map((item) => item.id === editandoId ? actualizado : item));
+      setEditandoId(null);
+    } catch { setError('No se pudo modificar el registro.'); }
+    finally { setModificando(false); }
+  };
+  const confirmarEliminacion = async () => {
+    if (!eliminandoId) return;
+    const id=eliminandoId;
+    setEliminandoId(null); setModificando(true); setError(null);
+    try {
+      await api.eliminarRegistroBitacora(id);
+      setHistorial((items) => items.filter((item) => item.id !== id));
+      if (editandoId === id) setEditandoId(null);
+    } catch { setError('No se pudo eliminar el registro.'); }
+    finally { setModificando(false); }
+  };
 
   useIonViewWillEnter(() => {
     setCargandoHistorial(true);
@@ -64,18 +97,21 @@ const Bitacora: React.FC = () => {
     
     try {
       const registro = await api.registrarEstado({ 
-        fecha: new Date().toISOString(), 
         estado: seleccionado, 
         nota: nota.trim() || undefined 
       });
       
       setHistorial((h) => [registro, ...h]);
 
-      const idsSugeridos = CATEGORIA_SUGERIDA[seleccionado] ?? ['r7'];
-      const todos = await api.listarRecursos();
-      setSugeridos(todos.filter((r) => idsSugeridos.includes(r.id)));
-
       setConfirmado(true);
+      // Sugerencias opcionales: si la consulta falla, el registro sí quedó guardado.
+      try {
+        const categoriasSugeridas = CATEGORIA_SUGERIDA[seleccionado] ?? ['autocuidado'];
+        const todos = await api.listarRecursos();
+        setSugeridos(todos.filter((r) => categoriasSugeridas.includes(r.categoria)).slice(0, 3));
+      } catch {
+        setSugeridos([]);
+      }
     } catch (e) {
       setError('Ocurrió un error al guardar tu registro. Intenta nuevamente.');
     } finally {
@@ -146,6 +182,7 @@ const Bitacora: React.FC = () => {
                   labelPlacement="stacked"
                   placeholder="Si quieres, cuenta un poco más sobre cómo te sientes…"
                   autoGrow
+                  maxlength={2000}
                   value={nota}
                   onIonInput={(e) => setNota(e.detail.value ?? '')}
                 />
@@ -200,18 +237,35 @@ const Bitacora: React.FC = () => {
               <IonList className="ion-no-padding" style={{ background: 'transparent' }}>
                 {historial.slice(0, 8).map((h) => (
                   <IonItem key={h.id} lines="full" style={{ '--background': 'transparent', '--padding-start': 0 }}>
-                    <span slot="start" style={{ fontSize: 26, margin: '0 16px 0 0' }}>
+                    <span slot="start" style={{ fontSize: 26, margin: '0 12px 0 0' }} aria-hidden="true">
                       {ETIQUETAS_ESTADO[h.estado].icon}
                     </span>
                     <IonLabel>
-                      <h3 style={{ fontSize: 15, fontWeight: 500 }}>
-                        {ETIQUETAS_ESTADO[h.estado].label}
-                      </h3>
-                      {h.nota && <p style={{ fontSize: 13, color: 'var(--ra-color-ink-soft)', whiteSpace: 'normal', marginTop: '4px' }}>{h.nota}</p>}
+                      {editandoId === h.id ? (
+                        <div style={{ padding: '8px 0' }}>
+                          <IonSelect label="Estado emocional" labelPlacement="stacked" value={editEstado}
+                            onIonChange={(e) => setEditEstado(e.detail.value as EstadoEmocional)}>
+                            {Object.entries(ETIQUETAS_ESTADO).map(([valor, datos]) =>
+                              <IonSelectOption key={valor} value={valor}>{datos.label}</IonSelectOption>)}
+                          </IonSelect>
+                          <IonTextarea label="Nota" labelPlacement="stacked" autoGrow maxlength={2000}
+                            value={editNota} onIonInput={(e) => setEditNota(e.detail.value ?? '')} />
+                          <IonButton size="small" disabled={modificando} onClick={guardarEdicion}>Guardar</IonButton>
+                          <IonButton size="small" fill="clear" onClick={() => setEditandoId(null)}>Cancelar</IonButton>
+                        </div>
+                      ) : (
+                        <>
+                          <h3 style={{ fontSize: 15, fontWeight: 500 }}>{ETIQUETAS_ESTADO[h.estado].label}</h3>
+                          {h.nota && <p style={{ fontSize: 13, color: 'var(--ra-color-ink-soft)', whiteSpace: 'normal' }}>{h.nota}</p>}
+                          <p style={{ fontSize: 12, color: 'var(--ra-color-clay)' }}>
+                            {new Date(h.fecha).toLocaleDateString('es-CL', { day: 'numeric', month: 'short' })}
+                          </p>
+                          <IonButton size="small" fill="outline" disabled={modificando} onClick={() => iniciarEdicion(h)}>Editar</IonButton>
+                          <IonButton size="small" fill="clear" color="danger" disabled={modificando}
+                            onClick={() => setEliminandoId(h.id)}>Eliminar</IonButton>
+                        </>
+                      )}
                     </IonLabel>
-                    <span slot="end" style={{ fontSize: 12, color: 'var(--ra-color-clay)' }}>
-                      {new Date(h.fecha).toLocaleDateString('es-CL', { day: 'numeric', month: 'short' })}
-                    </span>
                   </IonItem>
                 ))}
               </IonList>
@@ -219,6 +273,10 @@ const Bitacora: React.FC = () => {
           </div>
         </div>
 
+        <IonAlert isOpen={!!eliminandoId} header="¿Eliminar el registro?" message="Este cambio no se puede deshacer."
+          buttons={[{ text: 'Cancelar', role: 'cancel', handler: () => setEliminandoId(null) },
+            { text: 'Eliminar', role: 'destructive', handler: () => { void confirmarEliminacion(); } }]}
+          onDidDismiss={() => setEliminandoId(null)} />
         <IonLoading isOpen={guardando} message="Guardando tu registro..." spinner="crescent" />
         <IonToast 
           isOpen={!!error} 

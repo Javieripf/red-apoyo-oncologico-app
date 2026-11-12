@@ -1,11 +1,12 @@
 import React from 'react';
 import { IonSegment, IonSegmentButton, IonLabel, IonIcon } from '@ionic/react';
 import { useHistory, useLocation } from 'react-router-dom';
-import { homeOutline, folderOutline, barChartOutline } from 'ionicons/icons';
+import { homeOutline, folderOutline, barChartOutline, peopleOutline } from 'ionicons/icons';
 
 const RUTAS = [
   { valor: '/admin/inicio', etiqueta: 'Inicio', icono: homeOutline },
   { valor: '/admin/recursos', etiqueta: 'Recursos', icono: folderOutline },
+  { valor: '/admin/directorio', etiqueta: 'Directorio', icono: peopleOutline },
   { valor: '/admin/metricas', etiqueta: 'Métricas', icono: barChartOutline },
 ];
 

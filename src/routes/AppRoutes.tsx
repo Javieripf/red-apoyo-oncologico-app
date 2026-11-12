@@ -11,6 +11,7 @@ import GestionRecursos from '@/pages/Admin/GestionRecursos';
 import CrearRecurso from '@/pages/Admin/CrearRecurso';
 import EditarRecurso from '@/pages/Admin/EditarRecurso';
 import Metricas from '@/pages/Admin/Metricas';
+import GestionDirectorio from '@/pages/Admin/GestionDirectorio';
 
 const AppRoutes: React.FC = () => {
   const { usuario, cargando } = useAuth();
@@ -50,6 +51,9 @@ const AppRoutes: React.FC = () => {
         )} />
         <Route exact path="/admin/metricas" render={() => (
           usuario?.rol === 'administrador' ? <Metricas /> : <Redirect to="/login" />
+        )} />
+        <Route exact path="/admin/directorio" render={() => (
+          usuario?.rol === 'administrador' ? <GestionDirectorio /> : <Redirect to="/login" />
         )} />
 
  

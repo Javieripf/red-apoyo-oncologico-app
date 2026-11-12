@@ -31,7 +31,7 @@ const Login: React.FC = () => {
 
   
   const emailValido = correo.includes('@') && correo.includes('.');
-  const passValida = password.length >= 6; 
+  const passValida = password.length >= 8; 
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -96,7 +96,7 @@ const Login: React.FC = () => {
                 placeholder="Ingresa tu contraseña"
                 value={password}
                 onIonInput={(e) => setPassword(e.detail.value ?? '')}
-                errorText="La contraseña es obligatoria (mín. 6 caracteres)"
+                errorText="La contraseña es obligatoria (mín. 8 caracteres)"
               >
                 <IonInputPasswordToggle slot="end" />
               </IonInput>

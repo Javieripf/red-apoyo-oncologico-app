@@ -122,13 +122,32 @@ export async function listarBitacora(): Promise<RegistroBitacora[]> {
   return request<RegistroBitacora[]>('/bitacora');
 }
 
-export async function registrarEstado(registro: Omit<RegistroBitacora, 'id'>): Promise<RegistroBitacora> {
+export async function registrarEstado(registro: Omit<RegistroBitacora, 'id' | 'fecha'>): Promise<RegistroBitacora> {
   // La fecha se asigna en PostgreSQL, no en el navegador.
   return request<RegistroBitacora>('/bitacora', 'POST', { estado: registro.estado, nota: registro.nota });
 }
 
+export async function modificarRegistroBitacora(id: string, cambios: Partial<Pick<RegistroBitacora, 'estado' | 'nota'>>): Promise<RegistroBitacora> {
+  return request<RegistroBitacora>(`/bitacora/${encodeURIComponent(id)}`, 'PATCH', cambios);
+}
+
+export async function eliminarRegistroBitacora(id: string): Promise<void> {
+  return request<void>(`/bitacora/${encodeURIComponent(id)}`, 'DELETE');
+}
+
 export async function listarDirectorio(): Promise<EntradaDirectorio[]> {
   return request<EntradaDirectorio[]>('/directorio');
+}
+
+export type DatosDirectorio = Omit<EntradaDirectorio, 'id'>;
+export async function crearEntradaDirectorio(datos: DatosDirectorio): Promise<EntradaDirectorio> {
+  return request<EntradaDirectorio>('/directorio', 'POST', datos);
+}
+export async function modificarEntradaDirectorio(id: string, datos: DatosDirectorio): Promise<EntradaDirectorio> {
+  return request<EntradaDirectorio>(`/directorio/${encodeURIComponent(id)}`, 'PUT', datos);
+}
+export async function eliminarEntradaDirectorio(id: string): Promise<void> {
+  return request<void>(`/directorio/${encodeURIComponent(id)}`, 'DELETE');
 }
 
 export async function listarFavoritos(): Promise<string[]> {

@@ -241,7 +241,13 @@ Un requerimiento funcional describe una acción o comportamiento que el sistema 
 | **RF09** | La plataforma modifica los datos de un recurso existente para mantener su información actualizada. | Administrador |
 | **RF10** | La plataforma elimina un recurso del catálogo para retirar contenido que ya no corresponde mantener disponible. | Administrador | 
 | **RF11** | La plataforma presenta métricas de utilización para apoyar la administración de los recursos disponibles. | Administrador | 
-| **RF12** | La plataforma organiza cronológicamente los registros de la bitácora para facilitar la consulta del historial emocional. | Usuario | 
+| **RF12** | La plataforma organiza cronológicamente los registros de la bitácora para facilitar la consulta del historial emocional. | Usuario |
+| **RF13** | La plataforma modifica el estado emocional de un registro propio para corregir una selección anterior. | Usuario |
+| **RF14** | La plataforma actualiza la nota de un registro propio para corregir su contenido. | Usuario |
+| **RF15** | La plataforma elimina un registro propio de la bitácora para permitir al usuario administrar su historial. | Usuario |
+| **RF16** | La plataforma registra una entrada en el directorio para ampliar la información de apoyo disponible. | Administrador |
+| **RF17** | La plataforma modifica una entrada del directorio para mantener sus datos actualizados. | Administrador |
+| **RF18** | La plataforma elimina una entrada del directorio para retirar información desactualizada. | Administrador | 
 
 
 
@@ -259,13 +265,13 @@ Estas funciones apoyan el funcionamiento general del sistema y se documentan sep
 
 | ID | Requerimiento no funcional |
 |---|---|
-| **RNF01** | **Usabilidad y accesibilidad:** La aplicación deberá utilizar textos legibles, controles identificables y contraste adecuado. | 
-| **RNF02** | **Diseño adaptable:** La interfaz deberá mantener disponibles las funcionalidades principales en distintos tamaños de pantalla. |
-| **RNF03** | **Tolerancia a errores:** La aplicación deberá informar cuando una operación falle o se complete correctamente. | 
-| **RNF04** | **Seguridad y privacidad:** Los datos personales deberán estar disponibles únicamente para el usuario autorizado. | 
-| **RNF05** | **Protección de credenciales:** Las contraseñas deberán almacenarse de manera segura. | 
-| **RNF06** | **Rendimiento:** Las consultas frecuentes deberán ejecutarse sin demoras excesivas. |
-| **RNF07** | **Compatibilidad:** La aplicación deberá funcionar correctamente en navegadores modernos. | 
+| **RNF01** | **Accesibilidad:** las pantallas principales deberán cumplir al menos los criterios WCAG 2.2 AA aplicables; textos normales con contraste mínimo 4,5:1 y navegación por teclado en los controles. Validar con auditoría Lighthouse/axe y revisión manual. |
+| **RNF02** | **Adaptabilidad:** no deberá producirse desplazamiento horizontal en vistas de 360, 768 y 1280 px de ancho; las rutas principales seguirán accesibles. Verificar en navegador responsivo. |
+| **RNF03** | **Tolerancia a errores:** el 100 % de las respuestas HTTP 4xx esperadas en formularios y operaciones deberá mostrarse mediante mensajes entendibles sin rastros de pila. Probar casos 400, 401, 403, 404, 409 y 429. |
+| **RNF04** | **Privacidad:** el 100 % de las solicitudes a bitácora y favoritos deberá requerir JWT válido; no se podrán consultar, editar ni eliminar registros de otra cuenta. Verificar con dos usuarios. |
+| **RNF05** | **Protección de contraseñas:** el 100 % de las contraseñas almacenadas deberá utilizar hashes bcrypt con costo mínimo 12; nunca se entregarán hashes en respuestas públicas. Verificar base de datos y API. |
+| **RNF06** | **Rendimiento (meta):** el 95 % de GET `/api/recursos` y `/api/directorio` deberá responder en menos de 800 ms con 1.000 entradas y 20 peticiones simultáneas en un ambiente de pruebas definido. Requiere medición de carga; **no verificado aún**. |
+| **RNF07** | **Compatibilidad (meta):** las funcionalidades principales deberán superar una matriz de pruebas en las dos últimas versiones estables de Chrome, Firefox, Edge y Safari, en móvil y escritorio. **Pendiente prueba manual**. |
 
 
 # 7. Arquitectura de Navegación y UX 
@@ -580,19 +586,54 @@ npm install
 ```bash 
 npm run dev
 ```
-La aplicación estará disponible abriendo el link se salga en la terminal
+La aplicación estará disponible en la URL que indique Vite (normalmente `http://localhost:5173`).
 
 
-## Datos de demostración 
+## Integración real con el backend (EP2)
 
-La EP1 utiliza datos simulados para demostrar la navegación y las funcionalidades del frontend mientras se implementa el backend. 
+Esta versión **no usa inicio de sesión simulado**: las rutas de `src/services/api.ts` consumen la API Express + PostgreSQL con `fetch`. Las credenciales se verifican en el backend mediante bcrypt; la API entrega un JWT temporal en el login/registro y el frontend lo guarda en `sessionStorage`. Los permisos de usuario/administrador se verifican en el servidor, no por el prefijo del correo.
 
-Para demostración: 
+1. Preparar PostgreSQL, ejecutar `sql/schema.sql` y `sql/seed.sql` desde el backend (ver README de la rama `backend`).
+2. Iniciar el backend con `npm install`, `.env` local y `npm run dev`.
+3. En este frontend, copiar `.env.example` a `.env` y ajustar `VITE_API_URL` según el host de la API.
+4. Ejecutar `npm install` y `npm run dev` (por defecto `http://localhost:5173`).
+5. Crear una cuenta de usuario en `/registro` e iniciar sesión desde `/login`. Para probar administración, generar la cuenta mediante `npm run seed:admin` del backend con variables de entorno locales.
 
-- Un correo que no comience con `admin` entra como **usuario**.
-- Un correo que comience con `admin` entra como **administrador**, por ejemplo `admin@redapoyo.cl`.
-- En esta etapa la contraseña no se valida contra un backend real.
+```dotenv
+VITE_API_URL=http://localhost:3000/api
+```
 
-> Esta lógica es únicamente de demostración para la EP1 y despues se reemplazara por autenticación real con backend en la EP2.
+> El archivo `.env` no se versiona. No guardar secretos en variables `VITE_*`, pues se incorporan al cliente.
 
+## Pruebas y alcance
 
+- `npm test`: pruebas sin dependencias sobre contratos básicos de la interfaz (validación de 8 caracteres, cliente JWT, rutas y métodos). **No sustituyen** a pruebas de navegador de extremo a extremo.
+- `npm run build`: compilación TypeScript y Vite para detectar errores de frontend.
+- El directorio tiene filtros para el usuario y una vista de administración en `/admin/directorio`.
+- La bitácora permite crear, consultar, **modificar y eliminar registros propios**.
+- Las recomendaciones de la bitácora se filtran por categoría real, no por identificadores semilla predefinidos.
+- El repositorio conserva `src/data/mockData.ts` para **etiquetas visuales y nombres de categorías**, no para autenticar ni suplantar la base de datos.
+
+## Evidencia UI/UX y observaciones EP1
+
+El prototipo móvil y web vigente está enlazado en la sección 8. La comparación histórica debe realizarse contra la versión de **27 de septiembre a las 23:41** que indicó el evaluador, no contra cambios posteriores. No se incluye aquí una captura histórica que no fue entregada en los ZIP.
+
+### Mapa de navegación implementado (a partir del código)
+
+```mermaid
+flowchart LR
+  A[Bienvenida / Login] --> B[Registro]
+  A --> C{Rol autenticado}
+  C -->|Usuario| D[Inicio]
+  D --> E[Recursos y detalles]
+  D --> F[Directorio]
+  D --> G[Bitácora]
+  D --> H[Favoritos]
+  D --> I[Perfil]
+  C -->|Administrador| J[Panel admin]
+  J --> K[CRUD recursos]
+  J --> L[CRUD directorio]
+  J --> M[Métricas]
+```
+
+**Pendiente de evidencia externa:** adjuntar manualmente al README las capturas originales del mapa de pantallas de Figma, y la comparación pantalla por pantalla con el prototipo existente al corte, identificando fecha y vista móvil/web. Un diagrama actual no reemplaza esa evidencia histórica.
