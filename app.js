@@ -2,7 +2,6 @@ import express from 'express';
 import cors from 'cors';
 import { getConfig } from './config/env.js';
 import { query } from './config/db.js';
-import { requireAuth } from './middlewares/authMiddleware.js';
 import { auth } from './routes/authRoutes.js';
 import { resources } from './routes/resourceRoutes.js';
 import { domain } from './routes/domainRoutes.js';
@@ -18,7 +17,7 @@ app.get('/api/health', asyncHandler(async (req,res) => {
   success(res, { status:'ok', database:'connected' });
 }));
 app.use('/api/auth', auth);
-app.use('/api/recursos', requireAuth, resources);
-app.use('/api', requireAuth, domain);
+app.use('/api/recursos', resources);
+app.use('/api', domain);
 app.use((req,res,next) => next(new HttpError(404,'Ruta no encontrada.','NO_ENCONTRADO')));
 app.use(errorHandler);

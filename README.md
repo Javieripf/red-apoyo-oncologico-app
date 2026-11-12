@@ -127,10 +127,16 @@ backend/
 Crear la base de datos denominada `red_apoyo` y, desde la carpeta raíz del backend, ejecutar:
 
 ```powershell
-createdb -U postgres red_apoyo
+# Windows PowerShell: prepara una base nueva o existente (schema/seed idempotentes)
+.\scripts\init-db.ps1
+
+# Alternativa manual
+createdb -U postgres red_apoyo  # solo si la base todavía no existe
 psql -U postgres -d red_apoyo -f sql/schema.sql
 psql -U postgres -d red_apoyo -f sql/seed.sql
 ```
+
+En Linux/macOS puede utilizar `bash scripts/init-db.sh`. Si ya existían visualizaciones duplicadas en una base **anterior**, ejecutar primero la migración `psql -U postgres -d red_apoyo -f sql/migrations/2026-11-11_visualizaciones_unicas.sql` **antes de volver a aplicar `schema.sql`**, porque el nuevo índice único no permite duplicados por usuario/recurso/día UTC.
 
 Si `createdb` o `psql` no está disponible en la terminal, realizar los mismos pasos en **pgAdmin**: crear la base de datos, ejecutar primero `schema.sql` y luego `seed.sql` desde el Query Tool.
 
@@ -461,3 +467,33 @@ erDiagram
 ```
 
 Se utilizan claves primarias, claves foráneas, restricciones `CHECK`, índices y eliminaciones en cascada para información dependiente. `recursos` y `usuarios` utilizan identificadores de tipo texto; los recursos iniciales están identificados como `r1`–`r8` y los nuevos usuarios/recursos reciben UUID generados en la aplicación. La tabla `directorio` contiene **solo entradas ficticias** de prueba.
+
+
+## 11. Correcciones realizadas después de las observaciones EP1/EP2
+
+### Cambios funcionales de EP2
+
+| Observación | Implementación | Prueba sugerida |
+|---|---|---|
+| URL desconocida bajo `/api` sin token | El control JWT se aplica a rutas válidas, no a todo el prefijo `/api` | `GET /api/ruta-inexistente` sin token: 404 |
+| Bitácora propia editable/eliminable | `PATCH /api/bitacora/:id` y `DELETE /api/bitacora/:id`, ambos solo para rol `usuario` y `usuario_id` del JWT | Segundo usuario no puede alterar una entrada ajena: 404 |
+| CRUD del directorio | `GET /api/directorio` para usuarios autenticados; `POST`, `PUT /:id`, `DELETE /:id` solo administración | Ver colección Postman exportada |
+| Favoritos repetidos | Primera inserción 201; si ya existe, 200 y `creado:false` | Ejecutar dos POST consecutivos |
+| Visualizaciones repetidas al refrescar | Índice único SQL por usuario/recurso/día UTC + `INSERT ... ON CONFLICT DO NOTHING` | Hacer GET al mismo recurso varias veces y comparar métricas |
+| Intentos de login | 429 tras 10 intentos fallidos por IP en 15 minutos | Probar con credenciales incorrectas |
+| Errores JSON inválido | 400 con código `JSON_INVALIDO`, mensaje fijo | Enviar cuerpo malformado |
+| Configuración segura | `.gitignore` y `.env.example` | Verificar que `.env` no se publica |
+
+### Pruebas automatizadas y colección
+
+- `npm test`: pruebas de validación, límites de autenticación y sanitización del error de JSON, además de las pruebas anteriores.
+- Importar `docs/postman/Red-Apoyo-EP2.postman_collection.json` y `docs/postman/Red-Apoyo-EP2.postman_environment.json` en Postman; establecer `admin_email` y `admin_password` **solo en el entorno local**. Para las solicitudes administrativas, ejecutar `npm run seed:admin` previamente.
+- La colección incluye casos 400, 401, 403, 404, autorización de registros de terceros, CRUD de recursos/directorio y favoritos duplicados. Ejecutar con la base preparada y los recursos semilla cargados.
+- Las pruebas automatizadas sin base no sustituyen las pruebas de integración con PostgreSQL.
+
+### Limitaciones de despliegue
+
+- El limitador de intentos conserva contadores en memoria de **una instancia del servidor**. Para producción con varias instancias conviene Redis o limitación en proxy/WAF.
+- Una visualización corresponde a **un usuario, un recurso y un día UTC**, no a cada solicitud HTTP; documentar la definición al presentar las métricas.
+- El directorio de `seed.sql` contiene datos ficticios y no representa prestadores reales.
+- El cambio del código no modifica el historial de commits de GitHub. Cada integrante debe subir cambios propios con su autoría real; nunca fabricar contribuciones históricas.
