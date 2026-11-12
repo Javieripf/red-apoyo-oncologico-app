@@ -616,8 +616,6 @@ VITE_API_URL=http://localhost:3000/api
 
 ## Evidencia UI/UX y observaciones EP1
 
-El prototipo móvil y web vigente está enlazado en la sección 8. La comparación histórica debe realizarse contra la versión de **27 de septiembre a las 23:41** que indicó el evaluador, no contra cambios posteriores. No se incluye aquí una captura histórica que no fue entregada en los ZIP.
-
 ### Mapa de navegación implementado (a partir del código)
 
 ```mermaid
