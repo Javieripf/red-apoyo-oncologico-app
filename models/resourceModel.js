@@ -25,7 +25,8 @@ export async function findResources({ perfil, categoria } = {}) {
   return rows;
 }
 export async function recordView(userId, resourceId) {
-  await query('INSERT INTO visualizaciones (usuario_id,recurso_id) VALUES ($1,$2)', [userId,resourceId]);
+  // Un recuento por recurso/usuario/día UTC. El índice único descarta recargas de la página.
+  await query('INSERT INTO visualizaciones (usuario_id,recurso_id) VALUES ($1,$2) ON CONFLICT DO NOTHING', [userId,resourceId]);
 }
 export async function createResourceRecord(id,b) {
   await transaction(async client => {

@@ -7,6 +7,8 @@ export const asyncHandler = fn => (req, res, next) => Promise.resolve(fn(req, re
 export const success = (res, data, status = 200) => res.status(status).json({ data });
 export const errorHandler = (err, req, res, next) => {
   if (res.headersSent) return next(err);
+  if (err.type === 'entity.parse.failed' || (err instanceof SyntaxError && err.status === 400 && 'body' in err))
+    return res.status(400).json({ error: { codigo: 'JSON_INVALIDO', mensaje: 'El cuerpo JSON no es válido.' } });
   if (err.code === '23505') return res.status(409).json({ error: { codigo: 'DUPLICADO', mensaje: 'Ya existe un registro con esos datos.' } });
   if (err.code === '23503') return res.status(409).json({ error: { codigo: 'RELACION_INEXISTENTE', mensaje: 'No existe el registro relacionado.' } });
   if (err.code === '22P02') return res.status(400).json({ error: { codigo: 'FORMATO_INVALIDO', mensaje: 'Uno de los valores tiene un formato incorrecto.' } });

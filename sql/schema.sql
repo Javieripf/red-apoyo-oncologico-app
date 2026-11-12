@@ -1,5 +1,4 @@
--- Ejecutar en la base de datos 'red_apoyo': psql -U postgres -d red_apoyo -f sql/schema.sql
--- PostgreSQL 14+. La aplicación gestiona ID UUID como texto, además de IDs semilla (r1...r8).
+
 CREATE TABLE IF NOT EXISTS usuarios (
   id TEXT PRIMARY KEY,
   nombre VARCHAR(100) NOT NULL CHECK (length(trim(nombre)) >= 2),
@@ -59,3 +58,6 @@ CREATE INDEX IF NOT EXISTS idx_bitacora_usuario_fecha ON bitacora(usuario_id, fe
 CREATE INDEX IF NOT EXISTS idx_visualizaciones_recurso ON visualizaciones(recurso_id);
 CREATE INDEX IF NOT EXISTS idx_visualizaciones_usuario ON visualizaciones(usuario_id);
 CREATE INDEX IF NOT EXISTS idx_recurso_perfiles_tipo ON recurso_perfiles(tipo_relacion);
+
+CREATE UNIQUE INDEX IF NOT EXISTS uq_visualizacion_por_dia
+ON visualizaciones (usuario_id,recurso_id,((fecha AT TIME ZONE 'UTC')::date));

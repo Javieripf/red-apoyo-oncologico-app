@@ -39,3 +39,31 @@ export function validateResource(b) {
     tiempoLecturaMin: min, destacado: b.destacado === undefined ? null : b.destacado,
   };
 }
+
+export const tiposDirectorio = ['especialista', 'grupo_de_apoyo'];
+export const modalidadesDirectorio = ['presencial', 'online', 'mixta'];
+
+export function validateDiaryUpdate(body) {
+  if (!body || typeof body !== 'object' || Array.isArray(body) ||
+      (!Object.hasOwn(body, 'estado') && !Object.hasOwn(body, 'nota')))
+    throw new HttpError(400, 'Indica el estado o la nota a actualizar.', 'VALIDACION');
+  const estado = Object.hasOwn(body, 'estado') ? choice(body.estado, estados, 'Estado') : undefined;
+  const nota = Object.hasOwn(body, 'nota')
+    ? (body.nota === null || body.nota === '' ? null : string(body.nota, 'Nota', 1, 2000))
+    : undefined;
+  return { estado, nota };
+}
+
+export function validateDirectory(body) {
+  if (!body || typeof body !== 'object' || Array.isArray(body))
+    throw new HttpError(400, 'El directorio requiere un objeto JSON.', 'VALIDACION');
+  return {
+    nombre: string(body.nombre, 'Nombre', 2, 180),
+    tipo: choice(body.tipo, tiposDirectorio, 'Tipo de entrada'),
+    especialidad: string(body.especialidad, 'Especialidad', 2, 200),
+    modalidad: choice(body.modalidad, modalidadesDirectorio, 'Modalidad'),
+    ciudad: string(body.ciudad, 'Ciudad', 2, 100),
+    contacto: string(body.contacto, 'Contacto', 2, 200),
+    descripcion: string(body.descripcion, 'Descripción', 5, 5000),
+  };
+}
