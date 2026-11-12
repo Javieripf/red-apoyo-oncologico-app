@@ -484,16 +484,4 @@ Se utilizan claves primarias, claves foráneas, restricciones `CHECK`, índices 
 | Errores JSON inválido | 400 con código `JSON_INVALIDO`, mensaje fijo | Enviar cuerpo malformado |
 | Configuración segura | `.gitignore` y `.env.example` | Verificar que `.env` no se publica |
 
-### Pruebas automatizadas y colección
 
-- `npm test`: pruebas de validación, límites de autenticación y sanitización del error de JSON, además de las pruebas anteriores.
-- Importar `docs/postman/Red-Apoyo-EP2.postman_collection.json` y `docs/postman/Red-Apoyo-EP2.postman_environment.json` en Postman; establecer `admin_email` y `admin_password` **solo en el entorno local**. Para las solicitudes administrativas, ejecutar `npm run seed:admin` previamente.
-- La colección incluye casos 400, 401, 403, 404, autorización de registros de terceros, CRUD de recursos/directorio y favoritos duplicados. Ejecutar con la base preparada y los recursos semilla cargados.
-- Las pruebas automatizadas sin base no sustituyen las pruebas de integración con PostgreSQL.
-
-### Limitaciones de despliegue
-
-- El limitador de intentos conserva contadores en memoria de **una instancia del servidor**. Para producción con varias instancias conviene Redis o limitación en proxy/WAF.
-- Una visualización corresponde a **un usuario, un recurso y un día UTC**, no a cada solicitud HTTP; documentar la definición al presentar las métricas.
-- El directorio de `seed.sql` contiene datos ficticios y no representa prestadores reales.
-- El cambio del código no modifica el historial de commits de GitHub. Cada integrante debe subir cambios propios con su autoría real; nunca fabricar contribuciones históricas.
