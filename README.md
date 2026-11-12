@@ -636,4 +636,4 @@ flowchart LR
   J --> M[Métricas]
 ```
 
-**Pendiente de evidencia externa:** adjuntar manualmente al README las capturas originales del mapa de pantallas de Figma, y la comparación pantalla por pantalla con el prototipo existente al corte, identificando fecha y vista móvil/web. Un diagrama actual no reemplaza esa evidencia histórica.
+
