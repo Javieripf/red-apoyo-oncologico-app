@@ -1,0 +1,11 @@
+{
+  "name": "red-apoyo-pruebas-aceptacion",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "test": "node --env-file=../.env escenarios.cjs"
+  },
+  "devDependencies": {
+    "playwright-core": "1.62.1"
+  }
+}

@@ -1,0 +1,24 @@
+$kind: http-request
+url: "{{base_url}}/auth/register"
+method: POST
+headers:
+  Content-Type: application/json
+body:
+  type: json
+  content: |-
+    {
+      "nombre": "Usuario Prueba G10",
+      "correo": "{{demo_email}}",
+      "password": "{{demo_password}}",
+      "tipoRelacion": "familiar"
+    }
+scripts:
+  - type: beforeRequest
+    code: pm.collectionVariables.set('demo_email', 'g10.' + Date.now() + '@example.com');
+    language: text/javascript
+  - type: afterResponse
+    code: |-
+      pm.test("HTTP 201", () => pm.response.to.have.status(201));
+      const d=pm.response.json().data; pm.collectionVariables.set('user_token',d.token); pm.test('Rol usuario',()=>pm.expect(d.usuario.rol).to.eql('usuario')); 
+    language: text/javascript
+order: 3000

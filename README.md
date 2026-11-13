@@ -3,4 +3,9 @@
 
 Sabemos que enfrentar el diagnóstico de un ser querido es un proceso complejo. Por ello, esta plataforma utiliza una **API centralizada** que filtra y entrega recomendaciones educativas específicas según el rol de acompañamiento del usuario (*Cuidador Principal, Pareja, Hijo/a, Amigo o Familiar*)
 
-**En el Fronted podrá encontrar toda la información necesaria para familiarizarse con nuestra Red de apoyo.**
+## Entrega final v1.0.0
+
+- [Instalación con Docker, roles y arquitectura](README_ENTREGA_FINAL.md)
+- [Requerimientos RF01–RF18, pruebas por escenario y evolución desde EP1](docs/TRAZABILIDAD.md)
+- [Documentación del frontend](red-apoyo-oncologico-app-frontend/README.md)
+- [Documentación del backend](red-apoyo-oncologico-app-backend/README.md)

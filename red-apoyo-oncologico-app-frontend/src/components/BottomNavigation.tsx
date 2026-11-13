@@ -1,0 +1,32 @@
+import React from 'react';
+import { IonTabBar, IonTabButton, IonIcon, IonLabel } from '@ionic/react';
+import { homeOutline, libraryOutline, heartOutline, bookmarkOutline, personOutline } from 'ionicons/icons';
+import './BottomNavigation.css';
+
+
+const BottomNavigation: React.FC = () => (
+  <IonTabBar slot="bottom" className="ra-tabbar">
+    <IonTabButton tab="inicio" href="/inicio">
+      <IonIcon aria-hidden="true" icon={homeOutline} />
+      <IonLabel>Inicio</IonLabel>
+    </IonTabButton>
+    <IonTabButton tab="recursos" href="/recursos">
+      <IonIcon aria-hidden="true" icon={libraryOutline} />
+      <IonLabel>Recursos</IonLabel>
+    </IonTabButton>
+    <IonTabButton tab="bitacora" href="/bitacora">
+      <IonIcon aria-hidden="true" icon={heartOutline} />
+      <IonLabel>Bitácora</IonLabel>
+    </IonTabButton>
+    <IonTabButton tab="favoritos" href="/favoritos">
+      <IonIcon aria-hidden="true" icon={bookmarkOutline} />
+      <IonLabel>Favoritos</IonLabel>
+    </IonTabButton>
+    <IonTabButton tab="perfil" href="/perfil">
+      <IonIcon aria-hidden="true" icon={personOutline} />
+      <IonLabel>Perfil</IonLabel>
+    </IonTabButton>
+  </IonTabBar>
+);
+
+export default BottomNavigation;

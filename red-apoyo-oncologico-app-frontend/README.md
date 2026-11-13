@@ -1,0 +1,686 @@
+# API de Recursos para Redes de Apoyo Oncológico
+
+Frontend de una aplicación web y móvil desarrollada con **Ionic + React + TypeScript**, orientada a familiares, parejas, hijos, amigos y cuidadores de personas con cáncer.
+
+**Estado de Entrega Final:** frontend integrado con la API y PostgreSQL, compilado para producción y desplegado con Nginx mediante Docker Compose. Las secciones 1–10 conservan el contexto y las decisiones de EP1/EP2; la sección 11 documenta las mejoras y pruebas de EF.
+
+
+--- 
+
+## Índice 
+
+1. [Identificación del Equipo](#1-identificación-del-equipo) 
+2. [Distribución de Responsabilidades](#2-distribución-de-responsabilidades)
+3. [Justificación del Problema](#3-justificación-del-problema)
+4. [Objetivos del Proyecto](#4-objetivos-del-proyecto)
+5. [Usuarios Objetivo](#5-usuarios-objetivo) - [Roles del Sistema](#roles-del-sistema) - [Proto-personas](#proto-personas) - [Supuestos utilizados](#supuestos-utilizados-para-las-proto-personas)
+6. [Requerimientos](#6-requerimientos) - [Requerimientos Funcionales](#requerimientos-funcionales) - [Funcionalidades Transversales](#funcionalidades-transversales) - [Requerimientos No Funcionales](#requerimientos-no-funcionales)
+7. [Arquitectura de Navegación y UX](#7-arquitectura-de-navegación-y-ux) - [Rutas principales y secundarias](#rutas-principales-y-secundarias) - [Relaciones jerárquicas](#relaciones-jerárquicas-entre-vistas) - [Diferenciación por roles](#diferenciación-de-acceso-según-roles) - [Flujos principales](#flujos-de-tareas) - [Puntos críticos](#puntos-críticos-de-interacción) - [Justificación técnica](#justificación-técnica)
+8. [Bocetos UI/UX y Figma](#8-bocetos-uiux-y-figma)
+9. [Frontend con Ionic React](#9-frontend-con-ionic-react) - [Pantallas implementadas](#pantallas-implementadas) - [Estructura del proyecto](#estructura-del-proyecto) 
+10. [Instalación y ejecución](#10-instalación-y-ejecución)
+11. [Entrega Final: interfaz, rendimiento e integración](#11-entrega-final-interfaz-rendimiento-e-integración)
+
+
+---
+
+## 1. Identificación del Equipo
+
+- **Javier Poblete** - Desarrollo frontend y diseño UI/UX
+- **Joaquin Perez** - Desarrollo de vistas y componentes frontend
+- **Camilo Alvarez** - Documentación frontend y apoyo en diseño/prototipado
+- **Vicente Bravo** - Arquitectura de navegación y configuración de rutas frontend
+
+## 2. Distribución de Responsabilidades
+
+- **Javier:** Configuración inicial del proyecto Ionic + React, desarrollo de vistas frontend, diseño UI/UX y creación de estilos compartidos.
+- **Joaquin:** Desarrollo de componentes y vistas frontend, implementación de funcionalidades de la interfaz y apoyo en la organización de la estructura del proyecto.
+- **Camilo:** Documentación del frontend, apoyo en el prototipado de Figma y revisión de la experiencia de usuario y consistencia visual.
+- **Vicente:** Arquitectura de navegación frontend, configuración de rutas, protección de vistas y organización de la estructura de navegación según los distintos roles.
+
+## 3. Justificación del Problema 
+
+- El diagnóstico de cáncer no afecta únicamente a la persona diagnosticada, sino también a las personas que forman parte de su entorno cercano. Familiares, parejas, amigos y cuidadores pueden asumir tareas de apoyo cotidiano, coordinación de cuidados y acompañamiento emocional, además de enfrentar necesidades propias de información y autocuidado.
+
+- Una dificultad relevante corresponde al acceso a información adecuada para quienes cumplen estos roles. Una revisión sistemática sobre las necesidades de información de familiares y parejas de personas con cáncer identificó diversas categorías de información requerida y señaló que las necesidades relacionadas con el apoyo y los cuidados pueden permanecer insatisfechas. Asimismo, una revisión sistemática sobre pacientes con cáncer avanzado y sus cuidadores identificó las necesidades de información y de cuidado entre las principales necesidades no satisfechas de los cuidadores informales.
+
+- El acceso a información mediante Internet también presenta dificultades. Una evaluación de recursos disponibles en línea para cuidadores de personas con cáncer encontró problemas relacionados con su adecuación, legibilidad, calidad y utilidad, lo que evidencia que disponer de información en Internet no garantiza que esta sea clara o apropiada para las necesidades de quienes cuidan.
+
+- En este contexto, el proyecto propone una aplicación web y móvil que centralice recursos de apoyo y los organice según el perfil del usuario. La plataforma considera recursos educativos, herramientas de autocuidado, una bitácora emocional, favoritos y un directorio de especialistas y grupos de apoyo. La aplicación no busca reemplazar la atención médica o psicológica profesional. Su propósito es facilitar el acceso a información organizada y recursos de apoyo complementarios.
+
+### Fuentes secundarias
+
+- National Cancer Institute (NCI). [Cuidadores informales de pacientes con cáncer (PDQ®)](https://www.cancer.gov/espanol/cancer/sobrellevar/familia-y-amigos/familiares-a-cargo-pdq)
+- Ministerio de Salud de Chile (MINSAL). [Hospital Fricke desarrolla taller de autocuidado para cuidadores de enfermos oncológicos](https://www.minsal.cl/hospital-fricke-desarrolla-taller-de-autocuidado-para-cuidadores-de-enfermos-oncologicos/)
+- SciELO Chile. [Bienestar psicológico, estrategias de afrontamiento y apoyo social en cuidadores informales](https://www.scielo.cl/scielo.php?pid=S0718-69242016000300010&script=sci_arttext)
+- Ministerio de Salud de Chile (MINSAL). [Recomendaciones para linfoma y tumores sólidos pediátricos](https://diprece.minsal.cl/guias-de-practica-clinicas/linfoma-y-tumores-solidos-pediatricos/)
+
+## 4. Objetivos del Proyecto 
+
+### Objetivo General 
+
+Desarrollar una plataforma web y móvil que facilite el acceso a recursos educativos, herramientas de autocuidado y redes de apoyo para familiares, parejas, hijos, amigos y cuidadores de personas con cáncer. 
+
+### Objetivos Específicos 
+
+- Personalizar la presentación de recursos de acuerdo con el tipo de relación del usuario con la persona en tratamiento.
+- Facilitar el acceso a contenidos de apoyo organizados por categorías. - Permitir registrar el estado emocional mediante una bitácora personal.
+- Proporcionar un directorio de especialistas y grupos de apoyo.
+- Permitir guardar recursos de interés para consultarlos posteriormente.
+- Permitir al administrador gestionar los recursos disponibles.
+- Proporcionar métricas básicas de uso para el administrador.
+
+## 5. Usuarios Objetivo 
+
+La aplicación considera principalmente dos roles: **Usuario** y **Administrador**. 
+
+### Usuario 
+
+Corresponde a una persona que forma parte de la red de apoyo de alguien con cáncer. 
+
+Puede corresponder a: 
+- Pareja.
+- Hijo/a.
+- Padre o madre.
+- Familiar.
+- Amigo/a.
+- Cuidador/a. 
+
+### Características generales 
+
+Los usuarios pueden presentar diferentes niveles de experiencia tecnológica y diferentes necesidades de información. Se considera que pueden: 
+
+- utilizar principalmente dispositivos móviles;
+- consultar información durante períodos breves;
+- buscar contenido fácil de comprender;
+- necesitar recursos relacionados con su rol específico;
+- acceder desde el hogar, trabajo, centros de salud o durante desplazamientos;
+- requerir una navegación clara y predecible.
+
+### Necesidades principales 
+
+- Encontrar información confiable y organizada.
+- Acceder a recursos relacionados con su rol.
+- Encontrar herramientas de autocuidado.
+- Consultar recursos de apoyo emocional.
+- Encontrar especialistas y grupos de apoyo.
+- Guardar recursos importantes.
+- Acceder desde teléfonos y computadores.
+
+### Posibles dificultades 
+
+- Exceso de información disponible en Internet.
+- Información demasiado técnica.
+- Dificultad para identificar contenido pertinente.
+- Falta de tiempo para búsquedas extensas.
+- Dificultad para encontrar recursos dirigidos a familiares o cuidadores.
+- Diferentes niveles de experiencia tecnológica.
+
+### Administrador 
+
+El administrador corresponde a la persona responsable de gestionar los contenidos disponibles en la plataforma. 
+
+Podrá: 
+
+- crear recursos;
+- editar recursos;
+- eliminar recursos;
+- categorizar recursos;
+- asociar recursos con perfiles de usuario;
+- consultar métricas básicas de utilización.
+
+## Roles del Sistema 
+- **Usuario:** consulta recursos, configura su perfil de apoyo, registra estados emocionales, consulta el directorio y administra sus favoritos.
+- **Administrador:** gestiona recursos y consulta métricas del sistema.
+
+## Proto-personas 
+
+Las siguientes proto-personas corresponden a **perfiles hipotéticos** construidos a partir del análisis preliminar del problema. No representan resultados obtenidos directamente de usuarios reales. 
+
+### Proto-persona 1: Familiar y cuidadora 
+
+- **Nombre ficticio:** Carolina
+- **Edad:** 42 años
+- **Rol:** Familiar / cuidadora
+
+#### Características generales 
+
+Carolina acompaña frecuentemente a un familiar durante su tratamiento. Utiliza principalmente su teléfono móvil para buscar información y dispone de poco tiempo continuo durante el día. 
+
+#### Necesidades principales 
+
+- Encontrar información organizada y fácil de comprender.
+- Saber cómo apoyar a su familiar.
+- Acceder a herramientas de autocuidado.
+- Encontrar especialistas o grupos de apoyo.
+
+#### Objetivos de uso 
+
+Utilizar la aplicación para consultar recursos relacionados con su rol de cuidadora, registrar cómo se siente y acceder rápidamente a redes de apoyo. 
+
+#### Dificultades o puntos de frustración 
+
+- Información demasiado técnica.
+- Exceso de información en Internet.
+- Poco tiempo disponible.
+- Dificultad para distinguir recursos relevantes.
+
+#### Funcionalidades que utilizaría 
+
+- Configuración de perfil.
+- Recursos personalizados.
+- Bitácora emocional.
+- Directorio. - Favoritos.
+
+#### Dispositivo y contexto probable de acceso 
+
+Principalmente teléfono móvil, desde el hogar, trabajo o durante desplazamientos. 
+
+### Proto-persona 2: Hijo/a 
+
+- **Nombre ficticio:** Matías
+- **Edad:** 20 años
+- **Rol:** Hijo
+
+#### Características generales 
+
+Matías es estudiante universitario y busca información que le permita comprender mejor cómo acompañar a un familiar durante el tratamiento. 
+
+#### Necesidades principales 
+
+- Contenidos claros y breves.
+- Recursos relacionados con su situación familiar.
+- Herramientas de apoyo emocional.
+- Información sobre redes de ayuda.
+
+#### Objetivos de uso 
+
+Encontrar recursos pertinentes, guardarlos para consultarlos posteriormente y utilizar la bitácora como herramienta de autocuidado. 
+
+#### Dificultades o puntos de frustración 
+
+- Información médica compleja.
+- Contenidos dirigidos principalmente al paciente.
+- Dificultad para encontrar información específica para hijos.
+
+#### Funcionalidades que utilizaría 
+
+- Recursos personalizados.
+- Detalle de recursos.
+- Bitácora emocional.
+- Favoritos. - Directorio.
+
+#### Dispositivo y contexto probable de acceso 
+
+Principalmente teléfono móvil y secundariamente computador portátil.  
+
+## Supuestos utilizados para las proto-personas 
+
+Los perfiles anteriores se construyen a partir de los siguientes supuestos preliminares: 
+
+- Las personas de la red de apoyo pueden buscar información sobre cómo acompañar a una persona con cáncer.
+- Las necesidades de información pueden variar según el tipo de relación.
+- El teléfono móvil constituye un dispositivo relevante para consultas rápidas.
+- Algunos usuarios pueden disponer de poco tiempo para realizar búsquedas extensas.
+- Los usuarios pueden preferir información clara, breve y organizada.
+- Las proto-personas no representan resultados de entrevistas, diagnósticos ni mediciones psicológicas reales.
+
+# 6. Requerimientos 
+
+## Requerimientos Funcionales 
+
+Un requerimiento funcional describe una acción o comportamiento que el sistema deberá proporcionar. 
+
+| ID | Requerimiento funcional | Rol |
+|---|---|---|
+| **RF01** | La plataforma registra la relación del usuario con la persona en tratamiento para configurar su perfil de apoyo. | Usuario | 
+| **RF02** | La plataforma filtra los recursos educativos de acuerdo con el perfil configurado para presentar información pertinente. | Usuario | 
+| **RF03** | La plataforma almacena el estado emocional seleccionado para mantener un registro personal de autocuidado. | Usuario | 
+| **RF04** | La plataforma permite buscar entradas del directorio para localizar especialistas y redes de apoyo. | Usuario | 
+| **RF05** | La plataforma filtra los resultados del directorio según el tipo de apoyo para facilitar la identificación de especialistas y grupos. | Usuario | 
+| **RF06** | La plataforma guarda un recurso seleccionado en la lista de favoritos para permitir su consulta posterior. | Usuario | 
+| **RF07** | La plataforma retira un recurso de favoritos para mantener actualizada la lista personal. | Usuario | 
+| **RF08** | La plataforma registra nuevos recursos educativos para ampliar el catálogo disponible. | Administrador | 
+| **RF09** | La plataforma modifica los datos de un recurso existente para mantener su información actualizada. | Administrador |
+| **RF10** | La plataforma elimina un recurso del catálogo para retirar contenido que ya no corresponde mantener disponible. | Administrador | 
+| **RF11** | La plataforma presenta métricas de utilización para apoyar la administración de los recursos disponibles. | Administrador | 
+| **RF12** | La plataforma organiza cronológicamente los registros de la bitácora para facilitar la consulta del historial emocional. | Usuario |
+| **RF13** | La plataforma modifica el estado emocional de un registro propio para corregir una selección anterior. | Usuario |
+| **RF14** | La plataforma actualiza la nota de un registro propio para corregir su contenido. | Usuario |
+| **RF15** | La plataforma elimina un registro propio de la bitácora para permitir al usuario administrar su historial. | Usuario |
+| **RF16** | La plataforma registra una entrada en el directorio para ampliar la información de apoyo disponible. | Administrador |
+| **RF17** | La plataforma modifica una entrada del directorio para mantener sus datos actualizados. | Administrador |
+| **RF18** | La plataforma elimina una entrada del directorio para retirar información desactualizada. | Administrador | 
+
+
+
+## Funcionalidades Transversales 
+
+Estas funciones apoyan el funcionamiento general del sistema y se documentan separadamente de los siete requerimientos funcionales principales: 
+
+- **FT01:** Registro de usuario.
+- **FT02:** Inicio de sesión.
+- **FT03:** Cierre de sesión.
+- **FT04:** Protección de rutas.
+- **FT05:** Control de acceso según rol.
+
+## Requerimientos No Funcionales 
+
+| ID | Requerimiento no funcional |
+|---|---|
+| **RNF01** | **Accesibilidad:** las pantallas principales deberán cumplir al menos los criterios WCAG 2.2 AA aplicables; textos normales con contraste mínimo 4,5:1 y navegación por teclado en los controles. Validar con auditoría Lighthouse/axe y revisión manual. |
+| **RNF02** | **Adaptabilidad:** no deberá producirse desplazamiento horizontal en vistas de 360, 768 y 1280 px de ancho; las rutas principales seguirán accesibles. Verificar en navegador responsivo. |
+| **RNF03** | **Tolerancia a errores:** el 100 % de las respuestas HTTP 4xx esperadas en formularios y operaciones deberá mostrarse mediante mensajes entendibles sin rastros de pila. Probar casos 400, 401, 403, 404, 409 y 429. |
+| **RNF04** | **Privacidad:** el 100 % de las solicitudes a bitácora y favoritos deberá requerir JWT válido; no se podrán consultar, editar ni eliminar registros de otra cuenta. Verificar con dos usuarios. |
+| **RNF05** | **Protección de contraseñas:** el 100 % de las contraseñas almacenadas deberá utilizar hashes bcrypt con costo mínimo 12; nunca se entregarán hashes en respuestas públicas. Verificar base de datos y API. |
+| **RNF06** | **Rendimiento (meta):** el 95 % de GET `/api/recursos` y `/api/directorio` deberá responder en menos de 800 ms con 1.000 entradas y 20 peticiones simultáneas en un ambiente de pruebas definido. **Verificado en Docker local:** p95 de 160,5 ms y 136,8 ms, respectivamente; véase `PRUEBAS_ADICIONALES.md`. |
+| **RNF07** | **Compatibilidad (meta):** las funcionalidades principales deberán superar una matriz de pruebas en las dos últimas versiones estables de Chrome, Firefox, Edge y Safari, en móvil y escritorio. **Pendiente prueba manual**. |
+
+
+# 7. Arquitectura de Navegación y UX 
+
+## Rutas principales y secundarias 
+
+### Rutas públicas 
+| Ruta | Vista | Descripción |
+|---|---|---|
+| `/login` | Inicio de sesión | Permite ingresar al sistema. | 
+| `/registro` | Registro | Permite crear una cuenta. | 
+
+### Rutas protegidas del Usuario
+
+| Ruta | Vista | Descripción |
+|---|---|---|
+| `/inicio` | Inicio | Presenta recursos priorizados y acceso al directorio. | 
+| `/recursos` | Recursos | Permite explorar y filtrar recursos por categoría. | 
+| `/recursos/:id` | Detalle de recurso | Permite consultar el contenido de un recurso específico. | 
+| `/directorio` | Directorio | Permite buscar y filtrar especialistas y grupos de apoyo. |
+| `/bitacora` | Bitácora emocional | Permite registrar estados emocionales y notas. | 
+| `/favoritos` | Favoritos | Presenta los recursos guardados por el usuario. |
+| `/perfil` | Perfil | Permite consultar y actualizar la relación con la persona en tratamiento. | 
+
+### Rutas protegidas del Administrador 
+
+| Ruta | Vista | Descripción |
+|---|---|---| 
+| `/admin/inicio` | Inicio administrador | Presenta el acceso general a la administración. |
+| `/admin/recursos` | Gestión de recursos | Lista los recursos y permite administrarlos. | 
+| `/admin/recursos/nuevo` | Crear recurso | Permite registrar un nuevo recurso. |
+| `/admin/recursos/:id/editar` | Editar recurso | Permite modificar un recurso existente. | 
+| `/admin/metricas` | Métricas | Presenta métricas de uso de recursos y perfiles. |
+
+## Relaciones jerárquicas entre vistas 
+
+```text 
+
+Aplicación
+│
+├── Rutas públicas
+│ ├── Login
+│ └── Registro
+│
+└── Rutas protegidas
+    │
+    ├── Usuario
+    │ ├── Inicio
+    │ ├── Recursos
+    │ │ └── Detalle de recurso
+    │ ├── Directorio
+    │ ├── Bitácora
+    │ ├── Favoritos
+    │ └── Perfil
+    │
+    └── Administrador
+        ├── Inicio
+        ├── Gestión de recursos
+        │ ├── Crear recurso
+        │ └── Editar recurso
+        └── Métricas
+```
+
+## Diferenciación de acceso según roles 
+
+El acceso a las vistas protegidas depende del estado de sesión y del rol del usuario. 
+
+### Matriz de acceso por rol 
+
+| Funcionalidad | Usuario | Administrador | 
+|---|:---:|:---:| 
+| Configurar perfil de apoyo | ✓ | — | 
+| Consultar recursos personalizados | ✓ | — | 
+| Consultar detalle de recurso | ✓ | ✓ | 
+| Registrar estado emocional | ✓ | — | 
+| Consultar directorio | ✓ | — | 
+| Gestionar favoritos | ✓ | — | 
+| Crear recursos | — | ✓ |
+| Editar recursos | — | ✓ | 
+| Eliminar recursos | — | ✓ | 
+| Consultar métricas | — | ✓ | 
+
+### Control de acceso a rutas Las rutas públicas permiten el acceso sin sesión. 
+
+Las rutas protegidas redirigen a `/login` cuando no existe una sesión válida. Un usuario con rol de administrador es enviado al área administrativa y un usuario normal al área principal de usuario. 
+
+## Flujos de Tareas 
+
+### Flujo de Tarea 1: Configuración del perfil y consulta de recursos 
+
+**Rol:** Usuario 
+**Objetivo:** configurar su relación con la persona en tratamiento y consultar recursos personalizados. 
+
+```text 
+Inicio
+  ↓
+Login
+  ↓
+Inicio de usuario
+  ↓
+¿Perfil configurado?
+  ├── No → Seleccionar relación → Guardar perfil
+  │                              ↓
+  └──────────────────────────────┘
+                ↓
+  Cargar recursos por perfil
+                ↓
+        Consultar recurso
+                ↓
+    Ver detalle del recurso
+                ↓
+        Guardar favorito
+```
+
+### Flujo de Tarea 2: Registro en la bitácora emocional 
+
+**Rol:** Usuario 
+**Objetivo:** registrar el estado emocional y consultar recursos sugeridos. 
+```text 
+Inicio
+  ↓
+Bitácora
+  ↓
+Seleccionar estado emocional
+  ↓
+Escribir nota opcional
+  ↓
+Guardar registro
+  ↓
+Mostrar confirmación
+  ↓
+Consultar recursos sugeridos
+```
+
+### Flujo de Tarea 3: Gestión de recursos 
+
+**Rol:** Administrador 
+
+**Objetivo:** crear, modificar o eliminar un recurso. 
+```text 
+Inicio administrador
+        ↓
+Gestión de recursos
+        ↓
+Seleccionar acción
+    ┌────┼───────────┐
+    ↓    ↓           ↓
+Crear  Editar     Eliminar
+    ↓    ↓           ↓
+  Completar formulario
+         ↓
+    Validar datos
+         ↓
+  Guardar / confirmar
+         ↓
+  Volver al listado
+```
+
+## Puntos críticos de interacción 
+
+1. **Inicio de sesión y acceso según rol:** los errores deben comunicarse claramente y las rutas no autorizadas deben redirigirse correctamente.
+2. **Configuración del perfil:** el usuario debe entender que la relación elegida se utiliza para organizar los recursos que verá primero.
+3. **Consulta de recursos:** las categorías y tarjetas deben facilitar la identificación del contenido y evitar una presentación excesivamente densa.
+4. **Bitácora emocional:** el registro debe entregar retroalimentación clara al guardar el estado y no perder el contenido ingresado accidentalmente.
+5. **Directorio:** la búsqueda y los filtros deben ser visibles y fáciles de utilizar.
+6. **Favoritos:** el cambio de estado debe entregar una confirmación clara y permitir consultar posteriormente los recursos guardados.
+7. **Cambio entre móvil y web:** la ubicación visual puede adaptarse al dispositivo, pero las etiquetas y comportamientos principales deben mantenerse consistentes. La navegación principal del usuario utiliza una **barra inferior tanto en móvil como en web**.
+
+## Justificación Técnica 
+
+### Usabilidad 
+
+Se utiliza una estructura de navegación simple y consistente, con acceso directo a las funciones principales del usuario. La barra inferior permite reconocer rápidamente Inicio, Recursos, Bitácora, Favoritos y Perfil. 
+
+### Eficiencia de interacción 
+
+Las acciones frecuentes se encuentran a pocos pasos de distancia. El detalle de los recursos utiliza rutas específicas y la gestión de favoritos puede realizarse desde el listado o desde el detalle. 
+
+### Claridad estructural 
+
+La aplicación separa las rutas públicas, las rutas de usuario y las rutas de administrador. 
+
+Esto facilita comprender qué funcionalidades corresponden a cada rol. 
+
+
+
+### Escalabilidad 
+
+La implementación mantiene una separación entre `pages`, `components`, `routes`, `services`, `context`, `types` y `theme`, permitiendo incorporar nuevas funcionalidades sin concentrar toda la lógica en una sola vista.
+
+# 8. Bocetos UI/UX y Figma
+## Prototipo del Proyecto en Figma
+
+Puede revisar y probar el prototipo interactivo de la aplicación móvil en Figma a través del siguiente botón o enlace directo:
+
+[![Figma (Camilo Alvarez)](https://img.shields.io/badge/Figma-Prototipo_Móvil-F24E1E?style=for-the-badge&logo=figma&logoColor=white)](https://www.figma.com/design/ArFJgsRMkSPx9ynuS6EP2q/Ingeneria-Web-y-Movil?node-id=0-1&t=wJgUQyJEX9MYP6sl-1)
+
+> **Enlace directo:** [Ver Prototipo Interactivo Movil en Figma](https://www.figma.com/proto/ArFJgsRMkSPx9ynuS6EP2q/Ingeneria-Web-y-Movil?node-id=21-172&t=eQtSfggjVVPXrLnN-1&scaling=scale-down&content-scaling=fixed&page-id=0%3A1&starting-point-node-id=21%3A172)
+
+
+Puede revisar y probar el prototipo interactivo de la aplicación Web en Figma a través del siguiente botón o enlace directo:
+
+[![Figma (Vicente Bravo)](https://img.shields.io/badge/Figma-Prototipo_Web-F24E1E?style=for-the-badge&logo=figma&logoColor=white)](https://www.figma.com/design/ArFJgsRMkSPx9ynuS6EP2q/Ingeneria-Web-y-Movil?node-id=1-2&t=es6vxbOcyCaW4nyd-1)
+
+> **Enlace directo:** [Ver Prototipo Interactivo Web en Figma](https://www.figma.com/proto/ArFJgsRMkSPx9ynuS6EP2q/Ingeneria-Web-y-Movil?node-id=321-6159&p=f&t=XGSERbgPnXcOLnwm-1&scaling=min-zoom&content-scaling=fixed&page-id=1%3A2)
+
+# 9. Frontend con Ionic React
+
+## Pantallas implementadas 
+
+El frontend actual contiene más de cuatro vistas funcionales y utiliza componentes propios de Ionic. 
+
+### Usuario 
+- Login.
+- Registro.
+- Inicio.
+- Recursos.
+- Detalle de recurso.
+- Directorio.
+- Bitácora emocional.
+- Favoritos.
+- Perfil.
+
+### Administrador 
+
+- Inicio administrador.
+- Gestión de recursos.
+- Crear recurso.
+- Editar recurso.
+- Métricas.
+- Gestión del directorio (crear, editar y eliminar entradas).
+
+### Componentes Ionic utilizados 
+
+Entre los componentes utilizados se encuentran: 
+
+- `IonPage`
+- `IonHeader`
+- `IonContent`
+- `IonTabs`
+- `IonTabBar`
+- `IonTabButton`
+- `IonRouterOutlet`
+- `IonInput`
+- `IonTextarea`
+- `IonSelect`
+- `IonSelectOption`
+- `IonButton`
+- `IonCard`
+- `IonSearchbar`
+- `IonSegment`
+- `IonSegmentButton`
+- `IonCheckbox`
+- `IonToast`
+- `IonSpinner`
+- `IonLoading`
+
+## Estructura del proyecto 
+```text 
+src/
+├── components/
+│     ├── BottomNavigation
+│     ├── Header
+│     ├── ProtectedRoute
+│     └── ResourceCard
+│
+├── context/
+│     └── AuthContext.tsx
+│
+├── data/
+│     └── mockData.ts
+│
+├── pages/
+│     ├── Login/
+│     ├── Registro/
+│     ├── Inicio/
+│     ├── Recursos/
+│     ├── Bitacora/
+│     ├── Directorio/
+│     ├── Favoritos/
+│     ├── Perfil/
+│     └── Admin/
+│
+├── routes/
+│     └── AppRoutes.tsx
+│
+├── services/
+│     └── api.ts
+│
+├── theme/
+│     ├── variables.css
+│     └── app.css
+│
+└── types/
+       └── index.ts
+```
+
+# 10. Instalación y ejecución 
+
+## Requisitos 
+
+- Node.js instalado.
+- npm instalado.
+- Navegador web moderno.
+
+## Instalación 
+
+```bash
+npm ci
+```
+## Ejecución en desarrollo 
+
+```bash 
+npm run dev
+```
+La aplicación estará disponible en la URL que indique Vite (normalmente `http://localhost:5173`).
+
+
+## Integración real con el backend (EP2)
+
+Esta versión **no usa inicio de sesión simulado**: las rutas de `src/services/api.ts` consumen la API Express + PostgreSQL con `fetch`. Las credenciales se verifican en el backend mediante bcrypt; la API entrega un JWT temporal en el login/registro y el frontend lo guarda en `sessionStorage`. Los permisos de usuario/administrador se verifican en el servidor, no por el prefijo del correo.
+
+1. Preparar PostgreSQL y ejecutar `sql/schema.sql` y `sql/seed.sql` desde el backend (ver su README).
+2. Iniciar el backend con `npm ci`, `.env` local y `npm run dev`.
+3. En este frontend, `VITE_API_URL=/api` es opcional: Vite reenvía `/api` a `localhost:3000`.
+4. Ejecutar `npm ci` y `npm run dev` (por defecto `http://localhost:5173`).
+5. Crear una cuenta de usuario en `/registro` e iniciar sesión desde `/login`. Para probar administración, generar la cuenta mediante `npm run seed:admin` del backend con variables de entorno locales.
+
+```dotenv
+VITE_API_URL=/api
+```
+
+> El archivo `.env` no se versiona. No guardar secretos en variables `VITE_*`, pues se incorporan al cliente.
+
+## Pruebas y alcance
+
+- `npm test`: pruebas sin dependencias sobre contratos básicos de la interfaz (validación de 8 caracteres, cliente JWT, rutas y métodos). **No sustituyen** a pruebas de navegador de extremo a extremo.
+- `npm run build`: compilación TypeScript y Vite para detectar errores de frontend.
+- El directorio tiene filtros para el usuario y una vista de administración en `/admin/directorio`.
+- La bitácora permite crear, consultar, **modificar y eliminar registros propios**.
+- Las recomendaciones de la bitácora se filtran por categoría real, no por identificadores semilla predefinidos.
+- El repositorio conserva `src/data/mockData.ts` para **etiquetas visuales y nombres de categorías**, no para autenticar ni suplantar la base de datos.
+
+## Evidencia UI/UX y observaciones EP1
+
+### Mapa de navegación implementado (a partir del código)
+
+```mermaid
+flowchart LR
+  A[Bienvenida / Login] --> B[Registro]
+  A --> C{Rol autenticado}
+  C -->|Usuario| D[Inicio]
+  D --> E[Recursos y detalles]
+  D --> F[Directorio]
+  D --> G[Bitácora]
+  D --> H[Favoritos]
+  D --> I[Perfil]
+  C -->|Administrador| J[Panel admin]
+  J --> K[CRUD recursos]
+  J --> L[CRUD directorio]
+  J --> M[Métricas]
+```
+
+## 11. Entrega Final: interfaz, rendimiento e integración
+
+La [matriz de trazabilidad](../docs/TRAZABILIDAD.md) relaciona las pantallas con los 18 requerimientos y explica cómo repetir las pruebas de aceptación.
+
+### 11.1. Funcionalidades y experiencia de usuario (EF1 y EF2)
+
+| Función | Implementación frontend | Resultado |
+|---|---|---|
+| Recursos | Listado por categoría, detalle completo y tarjetas con estado de favorito | Consultados desde PostgreSQL mediante `/api/recursos` |
+| Favoritos | Alta y baja con aviso `IonToast`; cada cambio usa una sola petición de escritura | Persistencia comprobada en la API desplegada |
+| Bitácora | Crear, leer, editar y eliminar registros propios; estados de carga y error | Flujo HTTP integrado comprobado |
+| Directorio | Búsqueda y filtro por tipo; panel de administración con CRUD | Filtros y CRUD comprobados |
+| Almacenamiento local | `localStorage` guarda solo los filtros de recursos y directorio | No almacena notas de bitácora ni contraseñas |
+| Avisos | `IonToast` comunica confirmaciones y fallos de operaciones | Visible en las pantallas correspondientes |
+
+Las rutas de `src/routes/AppRoutes.tsx` y las pantallas de `src/layouts/TabsLayout.tsx` se cargan por demanda con `React.lazy`. El listado de recursos recibe resúmenes sin el campo `contenido`; el detalle lo solicita al abrir un recurso. Nginx comprime CSS/JS y asigna caché larga a archivos de `assets/` que tienen hash. Permanecen los estados de carga, vacío y error para evitar pantallas ambiguas.
+
+### 11.2. Integración externa (EF5)
+
+En una entrada presencial del directorio, **Ubicar ciudad** llama a `GET /api/directorio/:id/ubicacion`. La API consulta Open-Meteo y devuelve coordenadas; la interfaz abre el centro aproximado de la ciudad en OpenStreetMap y muestra la atribución **Open-Meteo / GeoNames**. No se presenta ese punto como la dirección exacta del servicio. Las entradas iniciales del directorio son ficticias.
+
+### 11.3. Seguridad del cliente (EF3)
+
+El frontend muestra datos de recursos y bitácora como texto de React, sin `innerHTML`. El JWT temporal se mantiene en `sessionStorage`; `localStorage` solo contiene preferencias de filtros. Nginx define CSP, `X-Content-Type-Options`, `Referrer-Policy` y `X-Frame-Options`. La autorización efectiva se verifica en el backend mediante JWT y roles; ocultar una ruta en la UI no sustituye ese control.
+
+### 11.4. Despliegue y pruebas (EF6)
+
+Desde la raíz que contiene `compose.yaml` y ambas carpetas, preparar `.env` a partir de `.env.example` y ejecutar:
+
+```powershell
+docker compose up --build -d
+docker compose ps
+```
+
+Abrir `http://localhost:8080`. El `Dockerfile` compila la app con Node y la sirve con Nginx; `nginx.conf` redirige `/api` al backend. Solo el frontend se publica en `127.0.0.1:8080`. Las credenciales del administrador se configuran en el `.env` de la raíz y se crea la cuenta con `docker compose exec backend npm run seed:admin`.
+
+| Verificación EF | Resultado observado |
+|---|---|
+| `npm test` | 4/4 pruebas correctas |
+| `npm run build` | TypeScript y Vite correctos, 254 módulos transformados |
+| Docker Compose | Frontend, backend y PostgreSQL en estado `healthy` |
+| Navegador | Login y ubicación de ciudad desde el directorio completados en Edge aislado contra `http://localhost:8080` |
+
+Vite aún advierte que el paquete compartido de Ionic supera 500 kB antes de gzip (aprox. 1,29 MB; 287 kB comprimido). RNF06 superó la meta en Docker local. La auditoría axe de 42 combinaciones de ruta y ancho no encontró infracciones automáticas tras corregir controles, iconos, contraste y zoom. Quedan pendientes la revisión manual completa de WCAG 2.2 AA y la matriz RNF07 de navegadores. Las evidencias están en [`../docs/evidencias-ef/PRUEBAS_DOCKER.md`](../docs/evidencias-ef/PRUEBAS_DOCKER.md) y [`../docs/evidencias-ef/PRUEBAS_ADICIONALES.md`](../docs/evidencias-ef/PRUEBAS_ADICIONALES.md).
+
+
