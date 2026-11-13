@@ -1,5 +1,7 @@
 # Red de Apoyo Oncológico — Backend API RESTful
 
+**Estado de Entrega Final:** API integrada y desplegada con PostgreSQL y frontend en Docker Compose. Las secciones 1–11 conservan el contexto y las evidencias de EP2; la sección 12 reúne los cambios y pruebas actuales de EF.
+
 ## Índice
 
 1. [Descripción y alcance](#1-descripción-y-alcance)
@@ -12,12 +14,14 @@
 8. [Integración frontend–backend](#8-integración-frontendbackend)
 9. [Pruebas funcionales y evidencias EP2](#9-pruebas-funcionales-y-evidencias-ep2)
 10. [Modelo relacional PostgreSQL](#10-modelo-relacional-postgresql)
+11. [Correcciones realizadas después de EP1/EP2](#11-correcciones-realizadas-después-de-las-observaciones-ep1ep2)
+12. [Entrega Final: seguridad, rendimiento, integración y Docker](#12-entrega-final-seguridad-rendimiento-integración-y-docker)
 
 
 ---
 ## 1. Descripción y alcance
 
-La **API de Recursos para Redes de Apoyo Oncológico** busca facilitar el acceso a recursos de apoyo organizados según la relación que tiene cada persona con alguien en tratamiento oncológico. Durante **EP1** se construyó la interfaz de usuario, navegación y prototipos. En **EP2** se incorporó un servidor real, persistencia en PostgreSQL y autenticación con JWT para reemplazar los datos simulados en los flujos principales.
+La **API de Recursos para Redes de Apoyo Oncológico** busca facilitar el acceso a recursos de apoyo organizados según la relación que tiene cada persona con alguien en tratamiento oncológico. Durante **EP1** se construyó la interfaz de usuario, navegación y prototipos. En **EP2** se incorporó un servidor real, persistencia en PostgreSQL y autenticación con JWT para reemplazar los datos simulados en los flujos principales. La **Entrega Final** añade geocodificación externa, optimización de consultas, cabeceras de seguridad y despliegue local con Docker.
 
 ### Funcionalidades implementadas y comprobadas
 
@@ -88,11 +92,15 @@ backend/
 │   ├── authRoutes.js          # Endpoints de autenticación (/api/auth)
 │   ├── domainRoutes.js        # Endpoints de bitácora, directorio y métricas
 │   └── resourceRoutes.js      # Endpoints CRUD (/api/recursos)
+├── services/
+│   └── geocoding.js           # Open-Meteo, caché y tiempo límite
 ├── sql/
 │   ├── schema.sql             # Creación de tablas, PK, FK, restricciones e índices
 │   └── seed.sql               # Datos iniciales para pruebas del sistema
 ├── tests/
-│   └── validation.test.js     # Pruebas unitarias con node --test
+│   ├── validation.test.js     # Validaciones
+│   ├── correcciones.test.js   # Bitácora, directorio y errores
+│   └── geocoding.test.js      # API externa simulada
 ├── utils/
 │   ├── http.js                # Manejo centralizado de respuestas HTTP
 │   └── validation.js          # Validaciones de datos de entrada
@@ -101,13 +109,14 @@ backend/
 │   ├── EP2_MODELO_RELACIONAL.md  # Documentación del modelo PostgreSQL                          
 │   └── Red de Apoyo Oncológico/ # Colección Postman con 21 solicitudes HTTP               
 ├── .env.example               # Ejemplo de variables de entorno
+├── Dockerfile                 # Imagen de API para Compose
 ├── .gitignore                 # Exclusión de archivos sensibles
 ├── app.js                     # Configuración principal de Express y CORS
 ├── package.json               # Dependencias y scripts de Node.js
 ├── package-lock.json          # Versiones de dependencias
 ├── seed-admin.js              # Creación del administrador inicial
 ├── server.js                  # Punto de entrada del servidor
-└── README.md                  # Documentación general de EP2
+└── README.md                  # Documentación EP2 y Entrega Final
 
 ```
 
@@ -120,7 +129,7 @@ backend/
 - Node.js **20 o superior** y npm.
 - PostgreSQL instalado y funcionando.
 - `psql` o pgAdmin para crear e importar la base de datos.
-- Dos carpetas locales: una con la rama `frontend` y otra con la rama `backend`.
+- Las carpetas `red-apoyo-oncologico-app-frontend` y `red-apoyo-oncologico-app-backend` dentro del paquete integrado.
 
 ### 5.1. Configuración de la base de datos
 
@@ -244,10 +253,16 @@ Las respuestas exitosas tienen la forma `{ "data": ... }`; los errores se entreg
 | DELETE | `/recursos/:id` | Eliminar recurso | Administrador | 204 |
 | GET | `/bitacora` | Consultar bitácora propia | Usuario | 200 |
 | POST | `/bitacora` | Registrar estado emocional | Usuario | 201 |
+| PATCH | `/bitacora/:id` | Editar registro propio | Usuario | 200 / 404 |
+| DELETE | `/bitacora/:id` | Eliminar registro propio | Usuario | 204 / 404 |
 | GET | `/favoritos` | Listar favoritos propios | Usuario | 200 |
 | POST | `/favoritos/:id` | Agregar favorito | Usuario | 201 |
 | DELETE | `/favoritos/:id` | Quitar favorito | Usuario | 204 |
-| GET | `/directorio` | Obtener directorio demostrativo | Usuario | 200 |
+| GET | `/directorio` | Obtener directorio demostrativo | Autenticado | 200 |
+| POST | `/directorio` | Crear entrada | Administrador | 201 |
+| PUT | `/directorio/:id` | Editar entrada | Administrador | 200 / 404 |
+| DELETE | `/directorio/:id` | Eliminar entrada | Administrador | 204 / 404 |
+| GET | `/directorio/:id/ubicacion` | Ubicar ciudad presencial con Open-Meteo | Autenticado | 200 / 400 / 404 / 502 |
 | GET | `/metricas` | Consultar métricas por recurso y perfil | Administrador | 200 |
 
 ### 6.1. Registro de usuario — `POST /api/auth/register`
@@ -352,7 +367,7 @@ El directorio se consulta con `GET /api/directorio`; la interfaz permite filtrar
 | Token obligatorio | Middleware `requireAuth` | HTTP 401 sin Bearer comprobado |
 | Hash de contraseñas | `bcryptjs` con coste 12 | Implementado en registro y creación de administrador |
 | Consultas parametrizadas | PostgreSQL `pg` con `$1`, `$2`, etc. | Verificable en los modelos del backend |
-| Validaciones | Email, longitud de contraseña, categorías, perfiles y tiempos | **8 tests automáticos superados** |
+| Validaciones | Email, longitud de contraseña, categorías, perfiles y tiempos | 14 tests automáticos superados en EF |
 | CORS | Lista configurada mediante `FRONTEND_ORIGIN` | Configurado en `app.js` |
 | Manejo de errores | Códigos HTTP y mensajes JSON controlados | Casos 401/403/404 comprobados |
 | Minimización de datos | La API no devuelve `password_hash` en las respuestas de perfil y login | Implementado en consultas/controlador |
@@ -385,7 +400,7 @@ En **EP1**, parte de la interfaz utilizaba información simulada. En **EP2**, `s
 8. Agregar un favorito, cerrar sesión, volver a entrar y eliminarlo; comprobar la persistencia.
 9. Consultar el directorio desde Ionic y desde Postman.
 
-## 9. Pruebas funcionales y evidencias EP2
+## 9. Pruebas funcionales y evidencias EP2 (registro histórico)
 
 ### 9.1. Pruebas manuales de API
 
@@ -415,7 +430,7 @@ Ejecutadas desde la raíz de la rama `backend`:
 npm test
 ```
 
-**Resultado reportado:**
+**Resultado reportado en EP2 (el resultado actual de EF aparece en la sección 12):**
 
 ```text
 ℹ tests 8
@@ -434,7 +449,7 @@ Ejecutada desde la carpeta de la rama `frontend`:
 npm run build
 ```
 
-**Resultado reportado:** `tsc && vite build`, **253 módulos transformados** y compilación completada en **2,72 segundos**. Vite emitió una advertencia de un chunk JavaScript superior a **500 kB**, que no impidió la compilación.
+**Resultado reportado en EP2:** `tsc && vite build`, **253 módulos transformados** y compilación completada en **2,72 segundos**. En EF se compilaron 254 módulos. Vite mantiene una advertencia de un chunk JavaScript superior a **500 kB**, que no impide la compilación.
 
 ### 9.4. Evidencias
 
@@ -483,5 +498,70 @@ Se utilizan claves primarias, claves foráneas, restricciones `CHECK`, índices 
 | Intentos de login | 429 tras 10 intentos fallidos por IP en 15 minutos | Probar con credenciales incorrectas |
 | Errores JSON inválido | 400 con código `JSON_INVALIDO`, mensaje fijo | Enviar cuerpo malformado |
 | Configuración segura | `.gitignore` y `.env.example` | Verificar que `.env` no se publica |
+
+## 12. Entrega Final: seguridad, rendimiento, integración y Docker
+
+La [matriz de trazabilidad](../docs/TRAZABILIDAD.md) relaciona cada operación de la API con la pantalla que la utiliza y con la comprobación del resultado persistido.
+
+### 12.1. CRUD y control de acceso (EF1)
+
+El administrador puede crear, listar, consultar, editar y eliminar recursos y entradas del directorio. El usuario puede crear, consultar, editar y eliminar solo sus registros de bitácora; favoritos admite alta, listado y baja. Las rutas con `requireAuth` verifican el JWT y `requireRole` limita acciones administrativas. Las consultas de bitácora y favoritos utilizan el ID del usuario autenticado, no un ID suministrado por el cliente.
+
+| Módulo | Archivos principales | Prueba realizada |
+|---|---|---|
+| Recursos | `routes/resourceRoutes.js`, `controllers/resourceController.js`, `models/resourceModel.js` | CRUD HTTP como administrador |
+| Bitácora y favoritos | `routes/domainRoutes.js`, `controllers/domainController.js`, `models/domainModel.js` | CRUD propio y alta/baja de favorito |
+| Directorio | `routes/domainRoutes.js`, `models/domainModel.js` | CRUD HTTP como administrador |
+| Cuenta y perfiles | `routes/authRoutes.js`, `controllers/authController.js`, `models/userModel.js` | Registro y login de usuario y administrador |
+
+### 12.2. Seguridad de API (EF3)
+
+| Control | Implementación | Resultado |
+|---|---|---|
+| Inyección SQL | Parámetros `$1`, `$2`, etc. en consultas `pg`; categorías y perfiles pasan por listas permitidas | La API no concatena entrada libre en SQL |
+| XSS | JSON como datos, validación de tamaños, texto escapado por React y CSP en Nginx | CSP y cabeceras comprobadas por HTTP |
+| CORS | `FRONTEND_ORIGIN` exige orígenes HTTP(S) exactos sin comodines; en Compose se aceptan `localhost:8080` y `127.0.0.1:8080` | Origen ajeno: 403; origen permitido: 200 |
+| Contraseñas | `bcryptjs` con coste 12; `password_hash` no se entrega al cliente | Login y registro comprobados |
+| Sesión y roles | JWT HS256 con expiración; `requireAuth` y `requireRole` | Rutas administrativas y privadas comprobadas |
+| Respuestas | Límite JSON de 100 kB, errores controlados, `Cache-Control: no-store`, `nosniff`, `Referrer-Policy`, `X-Frame-Options` | Cabeceras comprobadas por HTTP |
+| Fuerza bruta | Hasta 10 fallos de login por IP en 15 minutos, con respuesta 429 | Test automatizado |
+
+El limitador de login se guarda en memoria del proceso; para varias réplicas se requeriría un almacén compartido. El despliegue público requiere HTTPS y un proxy configurado para el dominio real.
+
+### 12.3. Consultas y respuesta eficiente (EF4)
+
+`models/resourceModel.js` calcula perfiles y conteos de vistas/favoritos mediante agregaciones por recurso. `models/domainModel.js` usa agregaciones para métricas. La lista de recursos omite `contenido` y el detalle lo entrega al solicitar un ID. `sql/schema.sql` incorpora índices para categoría/orden, vistas, favoritos y perfiles. El pool PostgreSQL limita conexiones y tiempos de espera. La prueba RNF06 con 1000 recursos, 1000 entradas de directorio y 20 peticiones simultáneas dio p95 de 160,5 ms para recursos y 136,8 ms para directorio en Docker local. Los datos temporales se eliminaron; véase `PRUEBAS_ADICIONALES.md`.
+
+### 12.4. Servicio externo (EF5)
+
+`GET /api/directorio/:id/ubicacion` toma la ciudad de una entrada presencial o mixta ya almacenada y consulta la [API de geocodificación de Open-Meteo](https://open-meteo.com/en/docs/geocoding-api) mediante una URL fija con parámetros codificados. `services/geocoding.js` limita la espera a 3,5 segundos, mantiene una caché de 24 horas y traduce fallos externos a 502. La respuesta incluye ciudad, región, latitud, longitud y atribución. Solo representa el centro aproximado de la ciudad, no el domicilio del servicio. Se probó con respuesta simulada y con Santiago mediante la API real.
+
+### 12.5. Docker y configuración (EF6)
+
+El `Dockerfile` instala dependencias de producción y ejecuta Node como usuario sin privilegios. En la raíz del paquete, `compose.yaml` orquesta PostgreSQL, API y frontend Nginx, con healthchecks y volumen persistente. Solo se publica el frontend en `127.0.0.1:8080`; API y base de datos permanecen internas. Para ejecutar:
+
+```powershell
+Copy-Item .env.example .env
+# Sustituir POSTGRES_PASSWORD y JWT_SECRET por secretos propios.
+docker compose up --build -d
+docker compose ps
+Invoke-RestMethod http://localhost:8080/api/health
+```
+
+`DATABASE_URL` sirve para desarrollo sin Docker. En Compose se usan `DB_HOST`, `DB_PORT`, `DB_USER`, `DB_PASSWORD` y `DB_NAME`, evitando colocar caracteres especiales de una contraseña dentro de una URL. `FRONTEND_ORIGIN` define la lista de orígenes permitidos. `ADMIN_EMAIL`, `ADMIN_PASSWORD` y `ADMIN_NAME` se usan solo con `npm run seed:admin`; el script no reemplaza una cuenta existente.
+
+### 12.6. Pruebas actuales y evidencias
+
+| Verificación EF | Resultado |
+|---|---|
+| `npm test` | 14/14 pruebas correctas: validaciones, bitácora/directorio, limitador, errores JSON y geocodificación |
+| `docker compose config -q` | Correcto con Compose 5.7.0 |
+| `docker compose up --build -d` | Backend y frontend construidos; tres contenedores `running healthy` |
+| `GET /api/health` por puerto 8080 | `status=ok`, `database=connected` |
+| Prueba HTTP integrada | Registro, listado/detalle, CRUD de bitácora, favoritos, CRUD administrativo, CORS y cabeceras correctos |
+| API externa | Santiago geocodificado correctamente desde el backend en Docker |
+| Navegador | Login de usuario y consulta de ciudad completados en el frontend de producción |
+
+La evidencia resumida está en [`../docs/evidencias-ef/PRUEBAS_DOCKER.md`](../docs/evidencias-ef/PRUEBAS_DOCKER.md) y [`../docs/evidencias-ef/PRUEBAS_ADICIONALES.md`](../docs/evidencias-ef/PRUEBAS_ADICIONALES.md). Las entradas iniciales del directorio son ficticias; no representan servicios verificados.
 
 
