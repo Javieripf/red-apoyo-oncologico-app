@@ -2,6 +2,8 @@
 
 Frontend de una aplicación web y móvil desarrollada con **Ionic + React + TypeScript**, orientada a familiares, parejas, hijos, amigos y cuidadores de personas con cáncer.
 
+**Estado de Entrega Final:** frontend integrado con la API y PostgreSQL, compilado para producción y desplegado con Nginx mediante Docker Compose. Las secciones 1–10 conservan el contexto y las decisiones de EP1/EP2; la sección 11 documenta las mejoras y pruebas de EF.
+
 
 --- 
 
@@ -17,6 +19,7 @@ Frontend de una aplicación web y móvil desarrollada con **Ionic + React + Type
 8. [Bocetos UI/UX y Figma](#8-bocetos-uiux-y-figma)
 9. [Frontend con Ionic React](#9-frontend-con-ionic-react) - [Pantallas implementadas](#pantallas-implementadas) - [Estructura del proyecto](#estructura-del-proyecto) 
 10. [Instalación y ejecución](#10-instalación-y-ejecución)
+11. [Entrega Final: interfaz, rendimiento e integración](#11-entrega-final-interfaz-rendimiento-e-integración)
 
 
 ---
@@ -228,32 +231,34 @@ Los perfiles anteriores se construyen a partir de los siguientes supuestos preli
 
 Un requerimiento funcional describe una acción o comportamiento que el sistema deberá proporcionar. 
 
-| ID | Requerimiento funcional | Rol |
-|---|---|---|
-| **RF01** | La plataforma registra la relación del usuario con la persona en tratamiento para configurar su perfil de apoyo. | Usuario | 
-| **RF02** | La plataforma filtra los recursos educativos de acuerdo con el perfil configurado para presentar información pertinente. | Usuario | 
-| **RF03** | La plataforma almacena el estado emocional seleccionado para mantener un registro personal de autocuidado. | Usuario | 
-| **RF04** | La plataforma permite buscar entradas del directorio para localizar especialistas y redes de apoyo. | Usuario | 
-| **RF05** | La plataforma filtra los resultados del directorio según el tipo de apoyo para facilitar la identificación de especialistas y grupos. | Usuario | 
-| **RF06** | La plataforma guarda un recurso seleccionado en la lista de favoritos para permitir su consulta posterior. | Usuario | 
-| **RF07** | La plataforma retira un recurso de favoritos para mantener actualizada la lista personal. | Usuario | 
-| **RF08** | La plataforma registra nuevos recursos educativos para ampliar el catálogo disponible. | Administrador | 
-| **RF09** | La plataforma modifica los datos de un recurso existente para mantener su información actualizada. | Administrador |
-| **RF10** | La plataforma elimina un recurso del catálogo para retirar contenido que ya no corresponde mantener disponible. | Administrador | 
-| **RF11** | La plataforma presenta métricas de utilización para apoyar la administración de los recursos disponibles. | Administrador | 
-| **RF12** | La plataforma organiza cronológicamente los registros de la bitácora para facilitar la consulta del historial emocional. | Usuario |
-| **RF13** | La plataforma modifica el estado emocional de un registro propio para corregir una selección anterior. | Usuario |
-| **RF14** | La plataforma actualiza la nota de un registro propio para corregir su contenido. | Usuario |
-| **RF15** | La plataforma elimina un registro propio de la bitácora para permitir al usuario administrar su historial. | Usuario |
-| **RF16** | La plataforma registra una entrada en el directorio para ampliar la información de apoyo disponible. | Administrador |
-| **RF17** | La plataforma modifica una entrada del directorio para mantener sus datos actualizados. | Administrador |
-| **RF18** | La plataforma elimina una entrada del directorio para retirar información desactualizada. | Administrador | 
+Cada fila identifica el archivo de interfaz, la operación de backend y la aserción etiquetada con el mismo RF en [pruebas/escenarios.cjs](../pruebas/escenarios.cjs). La [matriz ampliada](../docs/TRAZABILIDAD.md) contiene el procedimiento, los resultados esperados y la evidencia de ejecución. La prueba automatizada combina navegador Edge para los recorridos de usuario y solicitudes HTTP para las operaciones administrativas y de bitácora.
+
+| ID | Requerimiento funcional | Rol | Implementación | Prueba verificable |
+| --- | --- | --- | --- | --- |
+| **RF01** | La plataforma registra la relación del usuario con la persona en tratamiento para configurar su perfil de apoyo. | Usuario | `Registro/Registro.tsx`, `authController.register`, `GET /auth/me` | RF01 comprueba que el login del nuevo usuario conserva `tipoRelacion=familiar`. |
+| **RF02** | La plataforma filtra los recursos educativos de acuerdo con el perfil configurado para presentar información pertinente. | Usuario | `Inicio/Inicio.tsx`, `resourceModel.findResources` | RF02 muestra en Inicio una guía exclusiva de familiares y confirma que el filtro de pareja la excluye. |
+| **RF03** | La plataforma almacena el estado emocional seleccionado para mantener un registro personal de autocuidado. | Usuario | `Bitacora/Bitacora.tsx`, `domainModel.createDiaryEntry` | RF03 crea un registro y consulta el historial para confirmar el estado del mismo ID. |
+| **RF04** | La plataforma permite buscar entradas del directorio para localizar especialistas y redes de apoyo. | Usuario | `Directorio/Directorio.tsx`, `domainModel.getDirectory` | RF04 busca «Viña del Mar» y comprueba qué entradas aparecen y desaparecen. |
+| **RF05** | La plataforma filtra los resultados del directorio según el tipo de apoyo para facilitar la identificación de especialistas y grupos. | Usuario | `Directorio/Directorio.tsx`, selector `tipo` | RF05 selecciona grupos, verifica el resultado y recarga para comprobar persistencia. |
+| **RF06** | La plataforma guarda un recurso seleccionado en la lista de favoritos para permitir su consulta posterior. | Usuario | `Recursos/DetalleRecurso.tsx`, `Favoritos/Favoritos.tsx`, `domainModel.addFavoriteRecord` | RF06 pulsa Guardar en favoritos y encuentra el recurso en la lista personal. |
+| **RF07** | La plataforma retira un recurso de favoritos para mantener actualizada la lista personal. | Usuario | `Favoritos/Favoritos.tsx`, `domainModel.removeFavoriteRecord` | RF07 pulsa Quitar y comprueba lista vacía y ausencia del ID en la API. |
+| **RF08** | La plataforma registra nuevos recursos educativos para ampliar el catálogo disponible. | Administrador | `Admin/CrearRecurso.tsx`, `resourceController.createResource` | RF08 crea por API con token administrador y lee por ID el título guardado. |
+| **RF09** | La plataforma modifica los datos de un recurso existente para mantener su información actualizada. | Administrador | `Admin/EditarRecurso.tsx`, `resourceController.updateResource` | RF09 edita por API y vuelve a leer el título con token de usuario. |
+| **RF10** | La plataforma elimina un recurso del catálogo para retirar contenido que ya no corresponde mantener disponible. | Administrador | `Admin/GestionRecursos.tsx`, `resourceController.deleteResource` | RF10 elimina por API y la lectura posterior devuelve 404. |
+| **RF11** | La plataforma presenta métricas de utilización para apoyar la administración de los recursos disponibles. | Administrador | `Admin/Metricas.tsx`, `domainModel.getResourceMetrics` | RF11 comprueba una lectura y un guardado; un usuario normal recibe 403. |
+| **RF12** | La plataforma organiza cronológicamente los registros de la bitácora para facilitar la consulta del historial emocional. | Usuario | `Bitacora/Bitacora.tsx`, `domainModel.getDiary` | RF12 crea dos entradas y confirma que la más reciente aparece primero. |
+| **RF13** | La plataforma modifica el estado emocional de un registro propio para corregir una selección anterior. | Usuario | `Bitacora/Bitacora.tsx`, `domainModel.updateDiaryEntry` | RF13 modifica el estado por API y lee de nuevo el registro. |
+| **RF14** | La plataforma actualiza la nota de un registro propio para corregir su contenido. | Usuario | `Bitacora/Bitacora.tsx`, `domainModel.updateDiaryEntry` | RF14 modifica la nota y confirma que el estado previo se conserva. |
+| **RF15** | La plataforma elimina un registro propio de la bitácora para permitir al usuario administrar su historial. | Usuario | `Bitacora/Bitacora.tsx`, `domainModel.removeDiaryEntry` | RF15 borra por API y confirma que el ID no aparece en el historial. |
+| **RF16** | La plataforma registra una entrada en el directorio para ampliar la información de apoyo disponible. | Administrador | `Admin/GestionDirectorio.tsx`, `domainModel.createDirectoryEntry` | RF16 crea por API y encuentra el ID y el nombre en el listado. |
+| **RF17** | La plataforma modifica una entrada del directorio para mantener sus datos actualizados. | Administrador | `Admin/GestionDirectorio.tsx`, `domainModel.updateDirectoryEntry` | RF17 edita por API y comprueba el nombre actualizado con token de usuario. |
+| **RF18** | La plataforma elimina una entrada del directorio para retirar información desactualizada. | Administrador | `Admin/GestionDirectorio.tsx`, `domainModel.removeDirectoryEntry` | RF18 elimina por API y confirma que la entrada desaparece del listado. |
 
 
 
 ## Funcionalidades Transversales 
 
-Estas funciones apoyan el funcionamiento general del sistema y se documentan separadamente de los siete requerimientos funcionales principales: 
+Estas funciones apoyan el funcionamiento general del sistema y se documentan separadamente de los 18 requerimientos funcionales anteriores:
 
 - **FT01:** Registro de usuario.
 - **FT02:** Inicio de sesión.
@@ -270,8 +275,8 @@ Estas funciones apoyan el funcionamiento general del sistema y se documentan sep
 | **RNF03** | **Tolerancia a errores:** el 100 % de las respuestas HTTP 4xx esperadas en formularios y operaciones deberá mostrarse mediante mensajes entendibles sin rastros de pila. Probar casos 400, 401, 403, 404, 409 y 429. |
 | **RNF04** | **Privacidad:** el 100 % de las solicitudes a bitácora y favoritos deberá requerir JWT válido; no se podrán consultar, editar ni eliminar registros de otra cuenta. Verificar con dos usuarios. |
 | **RNF05** | **Protección de contraseñas:** el 100 % de las contraseñas almacenadas deberá utilizar hashes bcrypt con costo mínimo 12; nunca se entregarán hashes en respuestas públicas. Verificar base de datos y API. |
-| **RNF06** | **Rendimiento (meta):** el 95 % de GET `/api/recursos` y `/api/directorio` deberá responder en menos de 800 ms con 1.000 entradas y 20 peticiones simultáneas en un ambiente de pruebas definido. Requiere medición de carga; **no verificado aún**. |
-| **RNF07** | **Compatibilidad (meta):** las funcionalidades principales deberán superar una matriz de pruebas en las dos últimas versiones estables de Chrome, Firefox, Edge y Safari, en móvil y escritorio. **Pendiente prueba manual**. |
+| **RNF06** | **Rendimiento (meta):** el 95 % de GET `/api/recursos` y `/api/directorio` deberá responder en menos de 800 ms con 1.000 entradas y 20 peticiones simultáneas en un ambiente de pruebas definido. **Verificado en Docker local:** p95 de 160,5 ms y 136,8 ms, respectivamente; véase `PRUEBAS_ADICIONALES.md`. |
+| **RNF07** | **Compatibilidad (meta):** las funcionalidades principales deberán superar una matriz de pruebas en las dos últimas versiones estables de Chrome, Firefox, Edge y Safari, en móvil y escritorio. |
 
 
 # 7. Arquitectura de Navegación y UX 
@@ -502,6 +507,7 @@ El frontend actual contiene más de cuatro vistas funcionales y utiliza componen
 - Crear recurso.
 - Editar recurso.
 - Métricas.
+- Gestión del directorio (crear, editar y eliminar entradas).
 
 ### Componentes Ionic utilizados 
 
@@ -578,8 +584,8 @@ src/
 
 ## Instalación 
 
-```bash 
-npm install
+```bash
+npm ci
 ```
 ## Ejecución en desarrollo 
 
@@ -593,14 +599,14 @@ La aplicación estará disponible en la URL que indique Vite (normalmente `http:
 
 Esta versión **no usa inicio de sesión simulado**: las rutas de `src/services/api.ts` consumen la API Express + PostgreSQL con `fetch`. Las credenciales se verifican en el backend mediante bcrypt; la API entrega un JWT temporal en el login/registro y el frontend lo guarda en `sessionStorage`. Los permisos de usuario/administrador se verifican en el servidor, no por el prefijo del correo.
 
-1. Preparar PostgreSQL, ejecutar `sql/schema.sql` y `sql/seed.sql` desde el backend (ver README de la rama `backend`).
-2. Iniciar el backend con `npm install`, `.env` local y `npm run dev`.
-3. En este frontend, copiar `.env.example` a `.env` y ajustar `VITE_API_URL` según el host de la API.
-4. Ejecutar `npm install` y `npm run dev` (por defecto `http://localhost:5173`).
+1. Preparar PostgreSQL y ejecutar `sql/schema.sql` y `sql/seed.sql` desde el backend (ver su README).
+2. Iniciar el backend con `npm ci`, `.env` local y `npm run dev`.
+3. En este frontend, `VITE_API_URL=/api` es opcional: Vite reenvía `/api` a `localhost:3000`.
+4. Ejecutar `npm ci` y `npm run dev` (por defecto `http://localhost:5173`).
 5. Crear una cuenta de usuario en `/registro` e iniciar sesión desde `/login`. Para probar administración, generar la cuenta mediante `npm run seed:admin` del backend con variables de entorno locales.
 
 ```dotenv
-VITE_API_URL=http://localhost:3000/api
+VITE_API_URL=/api
 ```
 
 > El archivo `.env` no se versiona. No guardar secretos en variables `VITE_*`, pues se incorporan al cliente.
@@ -633,5 +639,50 @@ flowchart LR
   J --> L[CRUD directorio]
   J --> M[Métricas]
 ```
+
+## 11. Entrega Final: interfaz, rendimiento e integración
+
+La [matriz de trazabilidad](../docs/TRAZABILIDAD.md) relaciona las pantallas con los 18 requerimientos y explica cómo repetir las pruebas de aceptación.
+
+### 11.1. Funcionalidades y experiencia de usuario (EF1 y EF2)
+
+| Función | Implementación frontend | Resultado |
+|---|---|---|
+| Recursos | Listado por categoría, detalle completo y tarjetas con estado de favorito | Consultados desde PostgreSQL mediante `/api/recursos` |
+| Favoritos | Alta y baja con aviso `IonToast`; cada cambio usa una sola petición de escritura | Persistencia comprobada en la API desplegada |
+| Bitácora | Crear, leer, editar y eliminar registros propios; estados de carga y error | Flujo HTTP integrado comprobado |
+| Directorio | Búsqueda y filtro por tipo; panel de administración con CRUD | Filtros y CRUD comprobados |
+| Almacenamiento local | `localStorage` guarda solo los filtros de recursos y directorio | No almacena notas de bitácora ni contraseñas |
+| Avisos | `IonToast` comunica confirmaciones y fallos de operaciones | Visible en las pantallas correspondientes |
+
+Las rutas de `src/routes/AppRoutes.tsx` y las pantallas de `src/layouts/TabsLayout.tsx` se cargan por demanda con `React.lazy`. El listado de recursos recibe resúmenes sin el campo `contenido`; el detalle lo solicita al abrir un recurso. Nginx comprime CSS/JS y asigna caché larga a archivos de `assets/` que tienen hash. Permanecen los estados de carga, vacío y error para evitar pantallas ambiguas.
+
+### 11.2. Integración externa (EF5)
+
+En una entrada presencial del directorio, **Ubicar ciudad** llama a `GET /api/directorio/:id/ubicacion`. La API consulta Open-Meteo y devuelve coordenadas; la interfaz abre el centro aproximado de la ciudad en OpenStreetMap y muestra la atribución **Open-Meteo / GeoNames**. No se presenta ese punto como la dirección exacta del servicio. Las entradas iniciales del directorio son ficticias.
+
+### 11.3. Seguridad del cliente (EF3)
+
+El frontend muestra datos de recursos y bitácora como texto de React, sin `innerHTML`. El JWT temporal se mantiene en `sessionStorage`; `localStorage` solo contiene preferencias de filtros. Nginx define CSP, `X-Content-Type-Options`, `Referrer-Policy` y `X-Frame-Options`. La autorización efectiva se verifica en el backend mediante JWT y roles; ocultar una ruta en la UI no sustituye ese control.
+
+### 11.4. Despliegue y pruebas (EF6)
+
+Desde la raíz que contiene `compose.yaml` y ambas carpetas, preparar `.env` a partir de `.env.example` y ejecutar:
+
+```powershell
+docker compose up --build -d
+docker compose ps
+```
+
+Abrir `http://localhost:8080`. El `Dockerfile` compila la app con Node y la sirve con Nginx; `nginx.conf` redirige `/api` al backend. Solo el frontend se publica en `127.0.0.1:8080`. Las credenciales del administrador se configuran en el `.env` de la raíz y se crea la cuenta con `docker compose exec backend npm run seed:admin`.
+
+| Verificación EF | Resultado observado |
+|---|---|
+| `npm test` | 4/4 pruebas correctas |
+| `npm run build` | TypeScript y Vite correctos, 254 módulos transformados |
+| Docker Compose | Frontend, backend y PostgreSQL en estado `healthy` |
+| Navegador | Login y ubicación de ciudad desde el directorio completados en Edge aislado contra `http://localhost:8080` |
+
+Las evidencias están en [`../docs/evidencias-ef/PRUEBAS_DOCKER.md`](../docs/evidencias-ef/PRUEBAS_DOCKER.md) y [`../docs/evidencias-ef/PRUEBAS_ADICIONALES.md`](../docs/evidencias-ef/PRUEBAS_ADICIONALES.md).
 
 
