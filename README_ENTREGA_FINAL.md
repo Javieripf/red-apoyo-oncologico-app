@@ -269,7 +269,7 @@ Las contraseñas se almacenan como **hash bcrypt**, no como texto ni como cifrad
 
 Esta configuración publica la aplicación **solo en el equipo local**. Para un servidor público se necesitan HTTPS, secretos nuevos, copias de seguridad de PostgreSQL, monitoreo y un origen CORS exacto para el dominio. Compose usa `WEB_PORT` para el puerto publicado y los dos orígenes locales. El limitador de login está en memoria y varias réplicas de la API requieren un almacén compartido.
 
-La auditoría axe **no certifica WCAG 2.2 AA**: falta revisión manual completa con teclado, lector de pantalla y estados de contraste. También queda pendiente la matriz RNF07 de las dos últimas versiones de Chrome, Firefox, Edge y Safari en móvil y escritorio. Vite advierte que el paquete compartido de Ionic pesa cerca de 1,29 MB sin comprimir (287 kB gzip), aunque las pantallas propias se cargan por demanda.
+
 
 ## 10. Solución de problemas
 

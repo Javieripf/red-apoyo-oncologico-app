@@ -231,32 +231,34 @@ Los perfiles anteriores se construyen a partir de los siguientes supuestos preli
 
 Un requerimiento funcional describe una acción o comportamiento que el sistema deberá proporcionar. 
 
-| ID | Requerimiento funcional | Rol |
-|---|---|---|
-| **RF01** | La plataforma registra la relación del usuario con la persona en tratamiento para configurar su perfil de apoyo. | Usuario | 
-| **RF02** | La plataforma filtra los recursos educativos de acuerdo con el perfil configurado para presentar información pertinente. | Usuario | 
-| **RF03** | La plataforma almacena el estado emocional seleccionado para mantener un registro personal de autocuidado. | Usuario | 
-| **RF04** | La plataforma permite buscar entradas del directorio para localizar especialistas y redes de apoyo. | Usuario | 
-| **RF05** | La plataforma filtra los resultados del directorio según el tipo de apoyo para facilitar la identificación de especialistas y grupos. | Usuario | 
-| **RF06** | La plataforma guarda un recurso seleccionado en la lista de favoritos para permitir su consulta posterior. | Usuario | 
-| **RF07** | La plataforma retira un recurso de favoritos para mantener actualizada la lista personal. | Usuario | 
-| **RF08** | La plataforma registra nuevos recursos educativos para ampliar el catálogo disponible. | Administrador | 
-| **RF09** | La plataforma modifica los datos de un recurso existente para mantener su información actualizada. | Administrador |
-| **RF10** | La plataforma elimina un recurso del catálogo para retirar contenido que ya no corresponde mantener disponible. | Administrador | 
-| **RF11** | La plataforma presenta métricas de utilización para apoyar la administración de los recursos disponibles. | Administrador | 
-| **RF12** | La plataforma organiza cronológicamente los registros de la bitácora para facilitar la consulta del historial emocional. | Usuario |
-| **RF13** | La plataforma modifica el estado emocional de un registro propio para corregir una selección anterior. | Usuario |
-| **RF14** | La plataforma actualiza la nota de un registro propio para corregir su contenido. | Usuario |
-| **RF15** | La plataforma elimina un registro propio de la bitácora para permitir al usuario administrar su historial. | Usuario |
-| **RF16** | La plataforma registra una entrada en el directorio para ampliar la información de apoyo disponible. | Administrador |
-| **RF17** | La plataforma modifica una entrada del directorio para mantener sus datos actualizados. | Administrador |
-| **RF18** | La plataforma elimina una entrada del directorio para retirar información desactualizada. | Administrador | 
+Cada fila identifica el archivo de interfaz, la operación de backend y la aserción etiquetada con el mismo RF en [pruebas/escenarios.cjs](../pruebas/escenarios.cjs). La [matriz ampliada](../docs/TRAZABILIDAD.md) contiene el procedimiento, los resultados esperados y la evidencia de ejecución. La prueba automatizada combina navegador Edge para los recorridos de usuario y solicitudes HTTP para las operaciones administrativas y de bitácora.
+
+| ID | Requerimiento funcional | Rol | Implementación | Prueba verificable |
+| --- | --- | --- | --- | --- |
+| **RF01** | La plataforma registra la relación del usuario con la persona en tratamiento para configurar su perfil de apoyo. | Usuario | `Registro/Registro.tsx`, `authController.register`, `GET /auth/me` | RF01 comprueba que el login del nuevo usuario conserva `tipoRelacion=familiar`. |
+| **RF02** | La plataforma filtra los recursos educativos de acuerdo con el perfil configurado para presentar información pertinente. | Usuario | `Inicio/Inicio.tsx`, `resourceModel.findResources` | RF02 muestra en Inicio una guía exclusiva de familiares y confirma que el filtro de pareja la excluye. |
+| **RF03** | La plataforma almacena el estado emocional seleccionado para mantener un registro personal de autocuidado. | Usuario | `Bitacora/Bitacora.tsx`, `domainModel.createDiaryEntry` | RF03 crea un registro y consulta el historial para confirmar el estado del mismo ID. |
+| **RF04** | La plataforma permite buscar entradas del directorio para localizar especialistas y redes de apoyo. | Usuario | `Directorio/Directorio.tsx`, `domainModel.getDirectory` | RF04 busca «Viña del Mar» y comprueba qué entradas aparecen y desaparecen. |
+| **RF05** | La plataforma filtra los resultados del directorio según el tipo de apoyo para facilitar la identificación de especialistas y grupos. | Usuario | `Directorio/Directorio.tsx`, selector `tipo` | RF05 selecciona grupos, verifica el resultado y recarga para comprobar persistencia. |
+| **RF06** | La plataforma guarda un recurso seleccionado en la lista de favoritos para permitir su consulta posterior. | Usuario | `Recursos/DetalleRecurso.tsx`, `Favoritos/Favoritos.tsx`, `domainModel.addFavoriteRecord` | RF06 pulsa Guardar en favoritos y encuentra el recurso en la lista personal. |
+| **RF07** | La plataforma retira un recurso de favoritos para mantener actualizada la lista personal. | Usuario | `Favoritos/Favoritos.tsx`, `domainModel.removeFavoriteRecord` | RF07 pulsa Quitar y comprueba lista vacía y ausencia del ID en la API. |
+| **RF08** | La plataforma registra nuevos recursos educativos para ampliar el catálogo disponible. | Administrador | `Admin/CrearRecurso.tsx`, `resourceController.createResource` | RF08 crea por API con token administrador y lee por ID el título guardado. |
+| **RF09** | La plataforma modifica los datos de un recurso existente para mantener su información actualizada. | Administrador | `Admin/EditarRecurso.tsx`, `resourceController.updateResource` | RF09 edita por API y vuelve a leer el título con token de usuario. |
+| **RF10** | La plataforma elimina un recurso del catálogo para retirar contenido que ya no corresponde mantener disponible. | Administrador | `Admin/GestionRecursos.tsx`, `resourceController.deleteResource` | RF10 elimina por API y la lectura posterior devuelve 404. |
+| **RF11** | La plataforma presenta métricas de utilización para apoyar la administración de los recursos disponibles. | Administrador | `Admin/Metricas.tsx`, `domainModel.getResourceMetrics` | RF11 comprueba una lectura y un guardado; un usuario normal recibe 403. |
+| **RF12** | La plataforma organiza cronológicamente los registros de la bitácora para facilitar la consulta del historial emocional. | Usuario | `Bitacora/Bitacora.tsx`, `domainModel.getDiary` | RF12 crea dos entradas y confirma que la más reciente aparece primero. |
+| **RF13** | La plataforma modifica el estado emocional de un registro propio para corregir una selección anterior. | Usuario | `Bitacora/Bitacora.tsx`, `domainModel.updateDiaryEntry` | RF13 modifica el estado por API y lee de nuevo el registro. |
+| **RF14** | La plataforma actualiza la nota de un registro propio para corregir su contenido. | Usuario | `Bitacora/Bitacora.tsx`, `domainModel.updateDiaryEntry` | RF14 modifica la nota y confirma que el estado previo se conserva. |
+| **RF15** | La plataforma elimina un registro propio de la bitácora para permitir al usuario administrar su historial. | Usuario | `Bitacora/Bitacora.tsx`, `domainModel.removeDiaryEntry` | RF15 borra por API y confirma que el ID no aparece en el historial. |
+| **RF16** | La plataforma registra una entrada en el directorio para ampliar la información de apoyo disponible. | Administrador | `Admin/GestionDirectorio.tsx`, `domainModel.createDirectoryEntry` | RF16 crea por API y encuentra el ID y el nombre en el listado. |
+| **RF17** | La plataforma modifica una entrada del directorio para mantener sus datos actualizados. | Administrador | `Admin/GestionDirectorio.tsx`, `domainModel.updateDirectoryEntry` | RF17 edita por API y comprueba el nombre actualizado con token de usuario. |
+| **RF18** | La plataforma elimina una entrada del directorio para retirar información desactualizada. | Administrador | `Admin/GestionDirectorio.tsx`, `domainModel.removeDirectoryEntry` | RF18 elimina por API y confirma que la entrada desaparece del listado. |
 
 
 
 ## Funcionalidades Transversales 
 
-Estas funciones apoyan el funcionamiento general del sistema y se documentan separadamente de los siete requerimientos funcionales principales: 
+Estas funciones apoyan el funcionamiento general del sistema y se documentan separadamente de los 18 requerimientos funcionales anteriores:
 
 - **FT01:** Registro de usuario.
 - **FT02:** Inicio de sesión.
@@ -274,7 +276,7 @@ Estas funciones apoyan el funcionamiento general del sistema y se documentan sep
 | **RNF04** | **Privacidad:** el 100 % de las solicitudes a bitácora y favoritos deberá requerir JWT válido; no se podrán consultar, editar ni eliminar registros de otra cuenta. Verificar con dos usuarios. |
 | **RNF05** | **Protección de contraseñas:** el 100 % de las contraseñas almacenadas deberá utilizar hashes bcrypt con costo mínimo 12; nunca se entregarán hashes en respuestas públicas. Verificar base de datos y API. |
 | **RNF06** | **Rendimiento (meta):** el 95 % de GET `/api/recursos` y `/api/directorio` deberá responder en menos de 800 ms con 1.000 entradas y 20 peticiones simultáneas en un ambiente de pruebas definido. **Verificado en Docker local:** p95 de 160,5 ms y 136,8 ms, respectivamente; véase `PRUEBAS_ADICIONALES.md`. |
-| **RNF07** | **Compatibilidad (meta):** las funcionalidades principales deberán superar una matriz de pruebas en las dos últimas versiones estables de Chrome, Firefox, Edge y Safari, en móvil y escritorio. **Pendiente prueba manual**. |
+| **RNF07** | **Compatibilidad (meta):** las funcionalidades principales deberán superar una matriz de pruebas en las dos últimas versiones estables de Chrome, Firefox, Edge y Safari, en móvil y escritorio. |
 
 
 # 7. Arquitectura de Navegación y UX 
@@ -681,6 +683,6 @@ Abrir `http://localhost:8080`. El `Dockerfile` compila la app con Node y la sirv
 | Docker Compose | Frontend, backend y PostgreSQL en estado `healthy` |
 | Navegador | Login y ubicación de ciudad desde el directorio completados en Edge aislado contra `http://localhost:8080` |
 
-Vite aún advierte que el paquete compartido de Ionic supera 500 kB antes de gzip (aprox. 1,29 MB; 287 kB comprimido). RNF06 superó la meta en Docker local. La auditoría axe de 42 combinaciones de ruta y ancho no encontró infracciones automáticas tras corregir controles, iconos, contraste y zoom. Quedan pendientes la revisión manual completa de WCAG 2.2 AA y la matriz RNF07 de navegadores. Las evidencias están en [`../docs/evidencias-ef/PRUEBAS_DOCKER.md`](../docs/evidencias-ef/PRUEBAS_DOCKER.md) y [`../docs/evidencias-ef/PRUEBAS_ADICIONALES.md`](../docs/evidencias-ef/PRUEBAS_ADICIONALES.md).
+Las evidencias están en [`../docs/evidencias-ef/PRUEBAS_DOCKER.md`](../docs/evidencias-ef/PRUEBAS_DOCKER.md) y [`../docs/evidencias-ef/PRUEBAS_ADICIONALES.md`](../docs/evidencias-ef/PRUEBAS_ADICIONALES.md).
 
 

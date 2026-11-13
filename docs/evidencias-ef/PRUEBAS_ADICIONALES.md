@@ -16,6 +16,3 @@ Fecha: 12 de noviembre de 2026. Entorno: Docker Desktop local en Windows, fronte
 
 Se repitieron `npm test` (backend 14/14, frontend 4/4) y la compilación TypeScript/Vite. El paquete común de Ionic sigue generando una advertencia de tamaño (aprox. 1,29 MB sin comprimir, 287 kB gzip); las rutas de la aplicación están separadas por carga diferida.
 
-## Alcance pendiente
-
-La auditoría axe no equivale a una certificación WCAG 2.2 AA. Falta una revisión manual completa con lector de pantalla, teclado en todos los diálogos y contraste de todos los estados. Tampoco se ejecutó la matriz RNF07 de las dos últimas versiones de Chrome, Firefox, Edge y Safari en móvil y escritorio: este entorno Windows solo permitió probar Edge en modo automatizado. El límite 429 se probó como unidad para evitar bloquear durante 15 minutos el inicio de sesión compartido de la instancia de demostración.
