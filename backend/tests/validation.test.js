@@ -1,0 +1,12 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import { email, password, validateResource, choice, relaciones } from '../utils/validation.js';
+const valido = { titulo:'Apoyo familiar', resumen:'Consejos de apoyo', contenido:'Texto de prueba suficientemente amplio', categoria:'autocuidado', perfiles:['familiar'], tiempoLecturaMin:4 };
+test('Email normaliza mayúsculas y espacios',()=> assert.equal(email('  UNO@Ejemplo.cl  '),'uno@ejemplo.cl'));
+test('Email inválido se rechaza',()=>assert.throws(()=>email('sin-arroba')));
+test('Contraseña de menos de 8 caracteres se rechaza',()=>assert.throws(()=>password('1234567')));
+test('Recurso completo es válido',()=> assert.equal(validateResource(valido).categoria,'autocuidado'));
+test('No permite perfiles duplicados',()=> assert.throws(()=>validateResource({...valido, perfiles:['familiar','familiar']})));
+test('No permite categoría arbitraria',()=> assert.throws(()=>validateResource({...valido, categoria:'otra'})));
+test('No permite tiempos negativos',()=> assert.throws(()=>validateResource({...valido, tiempoLecturaMin:-1})));
+test('Rechaza relación no prevista',()=> assert.throws(()=>choice('invalida',relaciones,'Relación')));

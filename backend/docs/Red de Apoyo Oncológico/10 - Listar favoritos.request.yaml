@@ -1,0 +1,12 @@
+$kind: http-request
+url: "{{base_url}}/favoritos"
+method: GET
+headers:
+  Authorization: Bearer {{user_token}}
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test("HTTP 200", () => pm.response.to.have.status(200));
+      pm.test('Se incluyó r1',()=>pm.expect(pm.response.json().data).to.include('r1'));
+    language: text/javascript
+order: 10000

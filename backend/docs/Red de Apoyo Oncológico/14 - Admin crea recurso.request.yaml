@@ -1,0 +1,28 @@
+$kind: http-request
+url: "{{base_url}}/recursos"
+method: POST
+headers:
+  Authorization: Bearer {{admin_token}}
+  Content-Type: application/json
+body:
+  type: json
+  content: |-
+    {
+      "titulo": "Guía de prueba EP2 G10",
+      "resumen": "Contenido de prueba para recurso",
+      "contenido": "Esta es una explicación suficientemente larga para verificar el CRUD de recursos.",
+      "categoria": "comunicacion",
+      "perfiles": [
+        "familiar",
+        "cuidador_a"
+      ],
+      "tiempoLecturaMin": 5,
+      "destacado": false
+    }
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test("HTTP 201", () => pm.response.to.have.status(201));
+      pm.collectionVariables.set('new_resource_id', pm.response.json().data.id);
+    language: text/javascript
+order: 14000

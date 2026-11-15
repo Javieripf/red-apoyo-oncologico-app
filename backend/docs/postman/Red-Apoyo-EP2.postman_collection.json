@@ -1,0 +1,1246 @@
+{
+  "info": {
+    "name": "Red de Apoyo Oncológico | EP2 corregida",
+    "description": "Ejecutar en orden desde una base de pruebas. Requiere schema/seed y cuenta admin creada con npm run seed:admin. Contiene pruebas 400, 401, 403, 404, CRUD, propiedad de bitácora y favorito duplicado. Los datos son ficticios. No usar contra producción.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "01 Salud y BD",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/health",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "health"
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
+              "pm.test('Base conectada',()=>pm.expect(pm.response.json().data.database).to.eql('connected'));"
+            ]
+          }
+        }
+      ],
+      "response": []
+    },
+    {
+      "name": "02 URL desconocida sin JWT es 404",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/no-existe",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "no-existe"
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 404\", () => pm.response.to.have.status(404));",
+              "pm.test('Error correcto',()=>pm.expect(pm.response.json().error.codigo).to.eql('NO_ENCONTRADO'));"
+            ]
+          }
+        }
+      ],
+      "response": []
+    },
+    {
+      "name": "03 Registro usuario A",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/auth/register",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "auth",
+            "register"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"nombre\": \"Usuario A G10\",\n  \"correo\": \"{{email_a}}\",\n  \"password\": \"{{user_password}}\",\n  \"tipoRelacion\": \"familiar\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.environment.set('email_a','g10.a.'+Date.now()+'@example.com');"
+            ]
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 201\", () => pm.response.to.have.status(201));",
+              "pm.environment.set('token_a',pm.response.json().data.token); pm.test('Rol usuario',()=>pm.expect(pm.response.json().data.usuario.rol).to.eql('usuario'));"
+            ]
+          }
+        }
+      ],
+      "response": []
+    },
+    {
+      "name": "04 Registro usuario B",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/auth/register",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "auth",
+            "register"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"nombre\": \"Usuario B G10\",\n  \"correo\": \"{{email_b}}\",\n  \"password\": \"{{user_password}}\",\n  \"tipoRelacion\": \"amigo_a\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.environment.set('email_b','g10.b.'+Date.now()+'@example.com');"
+            ]
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 201\", () => pm.response.to.have.status(201));",
+              "pm.environment.set('token_b',pm.response.json().data.token);"
+            ]
+          }
+        }
+      ],
+      "response": []
+    },
+    {
+      "name": "05 Login usuario A",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/auth/login",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "auth",
+            "login"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"correo\": \"{{email_a}}\",\n  \"password\": \"{{user_password}}\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
+              "pm.environment.set('token_a',pm.response.json().data.token);"
+            ]
+          }
+        }
+      ],
+      "response": []
+    },
+    {
+      "name": "06 Ruta protegida sin token",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/bitacora",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "bitacora"
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 401\", () => pm.response.to.have.status(401));",
+              "pm.test('Sin token',()=>pm.expect(pm.response.json().error.codigo).to.eql('NO_AUTENTICADO'));"
+            ]
+          }
+        }
+      ],
+      "response": []
+    },
+    {
+      "name": "07 Error JSON malformado normalizado",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/auth/login",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "auth",
+            "login"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{ este json NO es valido ",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 400\", () => pm.response.to.have.status(400));",
+              "pm.test('JSON_INVALIDO',()=>pm.expect(pm.response.json().error.codigo).to.eql('JSON_INVALIDO'));"
+            ]
+          }
+        }
+      ],
+      "response": []
+    },
+    {
+      "name": "08 Bitácora estado inválido",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token_a}}"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/bitacora",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "bitacora"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"estado\": \"no_existe\",\n  \"nota\": \"Texto\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 400\", () => pm.response.to.have.status(400));"
+            ]
+          }
+        }
+      ],
+      "response": []
+    },
+    {
+      "name": "09 Crear registro de bitácora A",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token_a}}"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/bitacora",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "bitacora"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"estado\": \"tranquilo_a\",\n  \"nota\": \"Registro original de prueba\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 201\", () => pm.response.to.have.status(201));",
+              "pm.environment.set('diario_a_id',pm.response.json().data.id);"
+            ]
+          }
+        }
+      ],
+      "response": []
+    },
+    {
+      "name": "10 Actualizar bitácora propia A",
+      "request": {
+        "method": "PATCH",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token_a}}"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/bitacora/{{diario_a_id}}",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "bitacora",
+            "{{diario_a_id}}"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"estado\": \"esperanzado_a\",\n  \"nota\": \"Nota actualizada\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
+              "pm.test('Nota actualizada',()=>pm.expect(pm.response.json().data.nota).to.eql('Nota actualizada'));"
+            ]
+          }
+        }
+      ],
+      "response": []
+    },
+    {
+      "name": "11 Listar bitácora A",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token_a}}"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/bitacora",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "bitacora"
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
+              "pm.test('Incluye propia',()=>pm.expect(pm.response.json().data.some(x=>x.id===pm.environment.get('diario_a_id'))).to.eql(true));"
+            ]
+          }
+        }
+      ],
+      "response": []
+    },
+    {
+      "name": "12 Usuario B no ve diario A",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token_b}}"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/bitacora",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "bitacora"
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
+              "pm.test('Aislado por usuario',()=>pm.expect(pm.response.json().data.some(x=>x.id===pm.environment.get('diario_a_id'))).to.eql(false));"
+            ]
+          }
+        }
+      ],
+      "response": []
+    },
+    {
+      "name": "13 Usuario B no modifica diario A",
+      "request": {
+        "method": "PATCH",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token_b}}"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/bitacora/{{diario_a_id}}",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "bitacora",
+            "{{diario_a_id}}"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"estado\": \"triste\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 404\", () => pm.response.to.have.status(404));"
+            ]
+          }
+        }
+      ],
+      "response": []
+    },
+    {
+      "name": "14 Usuario B no elimina diario A",
+      "request": {
+        "method": "DELETE",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token_b}}"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/bitacora/{{diario_a_id}}",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "bitacora",
+            "{{diario_a_id}}"
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 404\", () => pm.response.to.have.status(404));"
+            ]
+          }
+        }
+      ],
+      "response": []
+    },
+    {
+      "name": "15 Usuario A elimina su diario",
+      "request": {
+        "method": "DELETE",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token_a}}"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/bitacora/{{diario_a_id}}",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "bitacora",
+            "{{diario_a_id}}"
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 204\", () => pm.response.to.have.status(204));"
+            ]
+          }
+        }
+      ],
+      "response": []
+    },
+    {
+      "name": "16 Login admin (preparar .env local)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/auth/login",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "auth",
+            "login"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"correo\": \"{{admin_email}}\",\n  \"password\": \"{{admin_password}}\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
+              "pm.environment.set('token_admin',pm.response.json().data.token);pm.test('Administrador',()=>pm.expect(pm.response.json().data.usuario.rol).to.eql('administrador'));"
+            ]
+          }
+        }
+      ],
+      "response": []
+    },
+    {
+      "name": "17 Admin crea entrada directorio",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token_admin}}"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/directorio",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "directorio"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"nombre\": \"Apoyo G10 (ficticio)\",\n  \"tipo\": \"grupo_de_apoyo\",\n  \"especialidad\": \"Orientación familiar\",\n  \"modalidad\": \"online\",\n  \"ciudad\": \"Valparaíso\",\n  \"contacto\": \"contacto@example.com\",\n  \"descripcion\": \"Entrada ficticia para probar CRUD del administrador\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 201\", () => pm.response.to.have.status(201));",
+              "pm.environment.set('dir_id',pm.response.json().data.id);"
+            ]
+          }
+        }
+      ],
+      "response": []
+    },
+    {
+      "name": "18 Admin edita entrada directorio",
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token_admin}}"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/directorio/{{dir_id}}",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "directorio",
+            "{{dir_id}}"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"nombre\": \"Apoyo G10 actualizado (ficticio)\",\n  \"tipo\": \"grupo_de_apoyo\",\n  \"especialidad\": \"Orientación familiar\",\n  \"modalidad\": \"online\",\n  \"ciudad\": \"Valparaíso\",\n  \"contacto\": \"contacto@example.com\",\n  \"descripcion\": \"Entrada ficticia para probar CRUD del administrador\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
+              "pm.test('Editado',()=>pm.expect(pm.response.json().data.nombre).to.include('actualizado'));"
+            ]
+          }
+        }
+      ],
+      "response": []
+    },
+    {
+      "name": "19 Listado directorio",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token_a}}"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/directorio",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "directorio"
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
+              "pm.test('Incluye nuevo',()=>pm.expect(pm.response.json().data.some(x=>x.id===pm.environment.get('dir_id'))).to.eql(true));"
+            ]
+          }
+        }
+      ],
+      "response": []
+    },
+    {
+      "name": "20 Usuario no puede agregar a directorio",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token_a}}"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/directorio",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "directorio"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"nombre\": \"Apoyo G10 (ficticio)\",\n  \"tipo\": \"grupo_de_apoyo\",\n  \"especialidad\": \"Orientación familiar\",\n  \"modalidad\": \"online\",\n  \"ciudad\": \"Valparaíso\",\n  \"contacto\": \"contacto@example.com\",\n  \"descripcion\": \"Entrada ficticia para probar CRUD del administrador\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 403\", () => pm.response.to.have.status(403));"
+            ]
+          }
+        }
+      ],
+      "response": []
+    },
+    {
+      "name": "21 Admin elimina entrada directorio",
+      "request": {
+        "method": "DELETE",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token_admin}}"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/directorio/{{dir_id}}",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "directorio",
+            "{{dir_id}}"
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 204\", () => pm.response.to.have.status(204));"
+            ]
+          }
+        }
+      ],
+      "response": []
+    },
+    {
+      "name": "22 Admin crea recurso",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token_admin}}"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/recursos",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "recursos"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"titulo\": \"Recurso de prueba G10\",\n  \"resumen\": \"Resumen educativo de demostración\",\n  \"contenido\": \"Contenido educativo de prueba suficientemente extenso para ser válido.\",\n  \"categoria\": \"autocuidado\",\n  \"perfiles\": [\n    \"familiar\"\n  ],\n  \"tiempoLecturaMin\": 5,\n  \"destacado\": false\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 201\", () => pm.response.to.have.status(201));",
+              "pm.environment.set('recurso_id',pm.response.json().data.id);"
+            ]
+          }
+        }
+      ],
+      "response": []
+    },
+    {
+      "name": "23 Usuario no puede crear recurso",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token_a}}"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/recursos",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "recursos"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"titulo\": \"Recurso de prueba G10\",\n  \"resumen\": \"Resumen educativo de demostración\",\n  \"contenido\": \"Contenido educativo de prueba suficientemente extenso para ser válido.\",\n  \"categoria\": \"autocuidado\",\n  \"perfiles\": [\n    \"familiar\"\n  ],\n  \"tiempoLecturaMin\": 5,\n  \"destacado\": false\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 403\", () => pm.response.to.have.status(403));"
+            ]
+          }
+        }
+      ],
+      "response": []
+    },
+    {
+      "name": "24 Recurso inválido admin",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token_admin}}"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/recursos",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "recursos"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"titulo\": \"Recurso de prueba G10\",\n  \"resumen\": \"Resumen educativo de demostración\",\n  \"contenido\": \"Contenido educativo de prueba suficientemente extenso para ser válido.\",\n  \"categoria\": \"no_existe\",\n  \"perfiles\": [\n    \"familiar\"\n  ],\n  \"tiempoLecturaMin\": 5,\n  \"destacado\": false\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 400\", () => pm.response.to.have.status(400));"
+            ]
+          }
+        }
+      ],
+      "response": []
+    },
+    {
+      "name": "25 Agregar favorito nuevo",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token_a}}"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/favoritos/{{recurso_id}}",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "favoritos",
+            "{{recurso_id}}"
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 201\", () => pm.response.to.have.status(201));",
+              "pm.test('Nuevo',()=>pm.expect(pm.response.json().data.creado).to.eql(true));"
+            ]
+          }
+        }
+      ],
+      "response": []
+    },
+    {
+      "name": "26 Agregar favorito duplicado",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token_a}}"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/favoritos/{{recurso_id}}",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "favoritos",
+            "{{recurso_id}}"
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
+              "pm.test('Idempotente',()=>pm.expect(pm.response.json().data.creado).to.eql(false));"
+            ]
+          }
+        }
+      ],
+      "response": []
+    },
+    {
+      "name": "27 Leer recurso 1 vez",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token_a}}"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/recursos/{{recurso_id}}",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "recursos",
+            "{{recurso_id}}"
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));"
+            ]
+          }
+        }
+      ],
+      "response": []
+    },
+    {
+      "name": "28 Leer recurso repetido",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token_a}}"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/recursos/{{recurso_id}}",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "recursos",
+            "{{recurso_id}}"
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
+              "pm.test('Una vista para el día UTC',()=>pm.expect(pm.response.json().data.vistas).to.eql(1));"
+            ]
+          }
+        }
+      ],
+      "response": []
+    },
+    {
+      "name": "29 Admin consulta métricas",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token_admin}}"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/metricas",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "metricas"
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));"
+            ]
+          }
+        }
+      ],
+      "response": []
+    },
+    {
+      "name": "30 Usuario elimina favorito",
+      "request": {
+        "method": "DELETE",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token_a}}"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/favoritos/{{recurso_id}}",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "favoritos",
+            "{{recurso_id}}"
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 204\", () => pm.response.to.have.status(204));"
+            ]
+          }
+        }
+      ],
+      "response": []
+    },
+    {
+      "name": "31 Admin elimina recurso",
+      "request": {
+        "method": "DELETE",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token_admin}}"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/recursos/{{recurso_id}}",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "recursos",
+            "{{recurso_id}}"
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 204\", () => pm.response.to.have.status(204));"
+            ]
+          }
+        }
+      ],
+      "response": []
+    }
+  ]
+}
